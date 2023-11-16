@@ -1,59 +1,122 @@
 package pam;
 
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import pam.utils.ApiResponse;
 
 import static org.junit.Assert.*;
 
 public class ApiResponseTests {
+    @Test
+    public void testCustomResponse(){
+        ResponseEntity<Object> response = ApiResponse.customResponse("test", HttpStatus.OK);
+        assertNotNull(response);
+        assertTrue(response.getStatusCode().is2xxSuccessful());
+        assertEquals("test", response.getBody());
+    }
 
     @Test
     public void testOk(){
-        assertTrue(ApiResponse.ok("test").getStatusCode().is2xxSuccessful());
-        assertEquals("test", ApiResponse.ok("test").getBody());
-        assertEquals(1, ApiResponse.ok(1).getBody());
-        assertNotNull(ApiResponse.ok("test"));
+        ResponseEntity<Object> response = ApiResponse.ok("test");
+        assertNotNull(response);
+        assertTrue(response.getStatusCode().is2xxSuccessful());
+        assertEquals("test", response.getBody());
     }
 
     @Test
-    public void testBadRequest(){
-        assertTrue(ApiResponse.badRequest("test").getStatusCode().is4xxClientError());
-        assertEquals("test", ApiResponse.badRequest("test").getBody());
-        assertNotNull(ApiResponse.badRequest("test"));
+    public void testBadRequest__withMessage(){
+        ResponseEntity<Object> response = ApiResponse.badRequest("test");
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals("test", response.getBody());
+        assertNotNull(response);
     }
 
     @Test
-    public void testNotFound(){
-        assertTrue(ApiResponse.notFound("test").getStatusCode().is4xxClientError());
-        assertEquals("test", ApiResponse.notFound("test").getBody());
-        assertNotNull(ApiResponse.notFound("test"));
+    public void testBadRequest__default(){
+        ResponseEntity<Object> response = ApiResponse.badRequest();
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals(ApiResponse.BAD_REQUEST_DEFAULT, response.getBody());
+        assertNotNull(response);
     }
 
     @Test
-    public void testInternalServerError(){
-        assertTrue(ApiResponse.internalServerError("test").getStatusCode().is5xxServerError());
-        assertEquals("test", ApiResponse.internalServerError("test").getBody());
-        assertNotNull(ApiResponse.internalServerError("test"));
+    public void testNotFound__withMessage(){
+        ResponseEntity<Object> response = ApiResponse.notFound("test");
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals("test", response.getBody());
+        assertNotNull(response);
     }
 
     @Test
-    public void testUnauthorized(){
-        assertTrue(ApiResponse.unauthorized("test").getStatusCode().is4xxClientError());
-        assertEquals("test", ApiResponse.unauthorized("test").getBody());
-        assertNotNull(ApiResponse.unauthorized("test"));
+    public void testNotFound__default(){
+        ResponseEntity<Object> response = ApiResponse.notFound();
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals(ApiResponse.NOT_FOUND_DEFAULT, response.getBody());
+        assertNotNull(response);
     }
 
     @Test
-    public void testForbidden(){
-        assertTrue(ApiResponse.forbidden("test").getStatusCode().is4xxClientError());
-        assertEquals("test", ApiResponse.forbidden("test").getBody());
-        assertNotNull(ApiResponse.forbidden("test"));
+    public void testInternalServerError__withMessage(){
+        ResponseEntity<Object> response = ApiResponse.internalServerError("test");
+        assertTrue(response.getStatusCode().is5xxServerError());
+        assertEquals("test", response.getBody());
+        assertNotNull(response);
     }
 
     @Test
-    public void testNotImplemented(){
-        assertTrue(ApiResponse.notImplemented("test").getStatusCode().is5xxServerError());
-        assertEquals("test", ApiResponse.notImplemented("test").getBody());
-        assertNotNull(ApiResponse.notImplemented("test"));
+    public void testInternalServerError__default(){
+        ResponseEntity<Object> response = ApiResponse.internalServerError();
+        assertTrue(response.getStatusCode().is5xxServerError());
+        assertEquals(ApiResponse.INTERNAL_SERVER_ERROR_DEFAULT, response.getBody());
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testUnauthorized__withMessage(){
+        ResponseEntity<Object> response = ApiResponse.unauthorized("test");
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals("test", response.getBody());
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testUnauthorized__default(){
+        ResponseEntity<Object> response = ApiResponse.unauthorized();
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals(ApiResponse.UNAUTHORIZED_DEFAULT, response.getBody());
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testForbidden__withMessage(){
+        ResponseEntity<Object> response = ApiResponse.forbidden("test");
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals("test", response.getBody());
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testForbidden__default(){
+        ResponseEntity<Object> response = ApiResponse.forbidden();
+        assertTrue(response.getStatusCode().is4xxClientError());
+        assertEquals(ApiResponse.FORBIDDEN_DEFAULT, response.getBody());
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testNotImplemented__withMessage(){
+        ResponseEntity<Object> response = ApiResponse.notImplemented("test");
+        assertTrue(response.getStatusCode().is5xxServerError());
+        assertEquals("test", response.getBody());
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testNotImplemented__default(){
+        ResponseEntity<Object> response = ApiResponse.notImplemented();
+        assertTrue(response.getStatusCode().is5xxServerError());
+        assertEquals(ApiResponse.NOT_IMPLEMENTED_DEFAULT, response.getBody());
+        assertNotNull(response);
     }
 }
