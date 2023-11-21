@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import axiosSpring from "./axios/axiosSpring";
+import axiosSpring from "../utils/axios/axiosSpring";
 import ExampleItem from "./ExampleItem";
 
 const ExampleList = (props) => {
