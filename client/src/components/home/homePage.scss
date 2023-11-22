@@ -67,6 +67,9 @@
           border-radius: 10px;
           background: $filterBackground;
           border: 1px solid $filerBorder;
+          &.activeFilter{
+            background: darken($filterBackground, 10%);;
+          }
           &:hover{
             cursor: pointer;
             background: darken($filterBackground, 5%);
@@ -74,11 +77,11 @@
         }
         span{
           &[data-icon="true"]{
-            margin-right: 0.5rem;
+            margin-right: 0.3rem;
           }
           &:last-of-type{
-            font-size: 0.5rem;
-            margin-left: 0.5rem;
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
           }
         }
       }

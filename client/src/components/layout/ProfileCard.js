@@ -10,7 +10,7 @@ const ProfileCard = (props) => {
 
   return (
     <div className={props.class+'__profileCard'} onClick={handleClick}>
-      <b>Name</b>
+      <b>Nom</b>
       <img src={DefaultPP} alt='Profile'/>
       { listDisplayed ?
         (

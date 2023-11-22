@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {IoChevronBackCircleOutline, IoChevronForwardCircleOutline} from "react-icons/io5";
-import {FaChevronDown} from "react-icons/fa";
+import SimpleFilter from "./SimpleFilter";
+import RadiusFilter from "./RadiusFilter";
 
 const FilterList = (props) => {
   const className = props.class !== undefined ? props.class+'__filters' : '__filters';
-  const [activeFilter, setActiveFilter] = useState(props.filters[0].id);
+  const [activeFilter, setActiveFilter] = useState(undefined);
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const [subMenuDisplayed, setSubMenuDisplayed] = useState(false);
   const [maxScroll, setMaxScroll] = useState(0);
   const [listWidth, setListWidth] = useState(0);
+
+  const radiusOptions = [1, 5, 10, 20, 30, 50, 100];
+  const [selectedRadius, setSelectedRadius] = useState(radiusOptions[0]);
 
   const spaceBeforeShowingArrow = 30;
   const scrollStep = 200;
@@ -21,8 +25,16 @@ const FilterList = (props) => {
     setListWidth(element.offsetWidth);
   }, [props.filters]);
 
+  const handleRadius = (radius) => {
+    setSelectedRadius(radius);
+  }
+
   const handleActiveFilter = (event) => {
-    setActiveFilter(event.target.value);
+    if(event.target.value !== activeFilter){
+      setActiveFilter(event.target.value);
+    }else{
+      setActiveFilter(undefined);
+    }
   }
 
   const handleScroll = (event) => {
@@ -49,12 +61,10 @@ const FilterList = (props) => {
   }
 
   const handleSubMenu = (filter) => {
-    if(filter === subMenuDisplayed){
+    if(filter.id === subMenuDisplayed?.id){
       setSubMenuDisplayed(false);
     }else{
-      if(filter.expandable) {
-        setSubMenuDisplayed(filter);
-      }
+      setSubMenuDisplayed(filter);
       if(filter.onClick){
         filter.onClick();
       }
@@ -74,28 +84,28 @@ const FilterList = (props) => {
           :null
       }
       <ul className={className+'__list'} onScroll={handleScroll}>
+        <RadiusFilter index={-1} className={className} activeFilter={activeFilter} handleActiveFilter={handleActiveFilter} handleSubMenu={handleSubMenu}/>
         {props.filters.map((filter, index) => {
-          return <li key={index} className={className+'__list__item'}>
-            <input type='radio' id={filter.id} name={filter.id} value={filter.id} onChange={handleActiveFilter} checked={filter.id === activeFilter}/>
-            <label htmlFor={filter.id} onClick={() => handleSubMenu(filter)}>
-              {
-                filter.icon !== undefined ?
-                  <span data-icon='true'>{filter.icon}</span>
-                  :null
-              }
-              {filter.name} {
-              filter.expandable ?
-                <span><FaChevronDown /></span>
-                :null
-            }</label>
-          </li>
+          return <SimpleFilter key={index} index={index} className={className} filter={filter} activeFilter={activeFilter} handleActiveFilter={handleActiveFilter} handleSubMenu={handleSubMenu}/>
         })}
       </ul>
       {
         subMenuDisplayed !== false?
-          <ul className={className+'__subMenu'}>
-            This is a subMenu ({subMenuDisplayed.name})
-          </ul>
+          (
+            subMenuDisplayed.id === 'radius'? // TODO : think about mobile version
+              (
+                <div className={className+'__subMenu'+ ' radiusSubMenu'}>
+                  <span className='radiusSubMenu__title'>Dans un rayon de</span>
+                  <div className='radiusSubMenu__options'>
+                    {
+                      radiusOptions.map((radius, index) => {
+                        return <button key={index} className={'radiusSubMenu__options__item' + (selectedRadius===radius?' radiusSubMenu__options__item--active':'')} onClick={() => handleRadius(radius)}>{radius}km</button>
+                      })
+                    }
+                  </div>
+                </div>
+              ):null
+          )
           :null
       }
     </div>
