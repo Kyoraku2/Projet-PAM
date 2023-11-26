@@ -16,14 +16,27 @@ const FilterList = (props) => {
   const [selectedRadius, setSelectedRadius] = useState(radiusOptions[0]);
 
   const spaceBeforeShowingArrow = 30;
-  const scrollStep = 200;
+  const [scrollStep, setScrollStep] = useState(window.innerWidth-100);
 
   useEffect(() => {
     const element = document.querySelector('.'+className+'__list');
     setScrollPosition(element.scrollLeft);
     setMaxScroll(element.scrollWidth);
     setListWidth(element.offsetWidth);
+    const handleResize = () => {
+      const element = document.querySelector('.'+className+'__list');
+      setScrollStep(window.innerWidth-100);
+      setScrollPosition(element.scrollLeft);
+      setMaxScroll(element.scrollWidth);
+      setListWidth(element.offsetWidth);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [props.filters]);
+
 
   const handleRadius = (radius) => {
     setSelectedRadius(radius);

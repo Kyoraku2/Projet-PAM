@@ -1,56 +1,8 @@
 import MainMap from "./MainMap";
 import FilterList from "./FilterList";
-import './homePage.scss'
-import  './radiusSubMenu.scss'
-import {IoRestaurantOutline} from "react-icons/io5";
-
-const filters = [
-  {
-    id: 'restaurant',
-    name: 'Restaurant',
-    icon:<IoRestaurantOutline />
-  },
-  {
-    id: 'bar',
-    name: 'Bar'
-  },
-  {
-    id: 'cafe',
-    name: 'Cafe'
-  }
-]
-
-const icons = [
-  <IoFastFoodOutline />,
-  <IoRestaurantOutline />,
-  <CiBeerMugFull />,
-  <BsCupHot />,
-  <IoBalloonOutline />,
-  <PiBooks />,
-  <PiPark />,
-  <LuFerrisWheel />,
-  <CiDumbbell />,
-  <IoFilmOutline />,
-  <FaTheaterMasks />,
-  <AiOutlinePicture />,
-  <GiGreekTemple />,
-  <MdOutlineTempleBuddhist />,
-  <MdOutlineCastle />,
-  <FaKiwiBird />,
-  <MdOutlineCasino />,
-  <PiChampagne />,
-  <IoLibraryOutline />,
-  <CiShop />,
-  <RiShoppingBagLine />,
-  <LuCarrot />,
-  <MdOutlineLocalHotel />,
-  <IoCarOutline />,
-  <MdHealing />,
-  <MdOutlineWorkOutline />,
-  <RiParkingBoxLine />,
-  <PiTrain />,
-  <AiOutlineAppstore />
-]
+import './homePage.scss';
+import './radiusSubMenu.scss';
+import {filters} from "../../utils/filters";
 
 const Home = (props) => {
   return <section className='home'>
