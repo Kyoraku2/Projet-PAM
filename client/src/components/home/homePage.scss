@@ -1,0 +1,107 @@
+@import "../../utils/styles/vars";
+@import "../../utils/styles/mixins";
+
+.home{
+  display: flex;
+  flex-direction: column;
+  &__filters{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: $filterHeight;
+    align-items: center;
+    font-size: 0.8rem;
+    border-bottom: 1px solid $borderColor;
+    &__left, &__right{
+      position: absolute;
+      font-size: 1.5rem;
+      color: $filterArrowColor;
+      left: 0;
+      padding: 0.5rem;
+      background: rgb(255,255,255);
+      background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+      &:hover{
+        cursor: pointer;
+        color: darken($filterArrowColor, 5%);
+      }
+    }
+    &__right{
+      left: auto;
+      right: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%);
+    }
+
+    &__subMenu{
+      position: absolute;
+      display: flex;
+      align-items: center;
+      top: calc($filterHeight + 1px);
+      border-bottom: 1px solid $borderColor;
+      width: 100%;
+      height: $filterHeight;
+      z-index: 10000;
+      background: #fff;
+    }
+
+    &__list{
+      display: flex;
+      align-items: center;
+      overflow-x: scroll;
+      width: 100%;
+      height: $filterHeight;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &__item{
+        display: flex;
+        align-items: center;
+        width: max-content;
+        height: 1rem;
+        margin: 0 0.25rem;
+
+        &:last-child{
+          margin-right: 1rem;
+        }
+
+        input{
+          display: none;
+        }
+        label{
+          display: flex;
+          align-items: center;
+          padding: 0.5rem;
+          border-radius: 10px;
+          height: 100%;
+          background: $filterBackground;
+          border: 1px solid $filerBorder;
+          &.activeFilter{
+            background: darken($filterBackground, 10%);;
+          }
+          &:hover{
+            cursor: pointer;
+            background: darken($filterBackground, 5%);
+          }
+        }
+        span{
+          &[data-icon="true"]{
+            margin-right: 0.3rem;
+          }
+          &:last-of-type{
+            font-size: 0.75rem;
+            margin-left: 0.25rem;
+          }
+        }
+      }
+    }
+  }
+
+  &__map{
+    min-height: 500px;
+    width: 100%;
+    height: calc(100vh - $filterHeight - $navbarHeight - 2px);
+    & .leaflet-control-zoom{
+      margin-top: calc($filterHeight + 0.25rem);
+    }
+  }
+}
