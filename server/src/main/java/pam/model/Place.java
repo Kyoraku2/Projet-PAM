@@ -10,6 +10,16 @@ import java.util.Vector;
 
 @Entity
 public class Place {
+    public static final int MAX_NAME_LENGTH = 32;
+    public static final int MIN_NAME_LENGTH = 4;
+
+    public static final int MAX_DESCRIPTION_LENGTH = 255;
+
+    public static final String DEFAULT_IMAGE = "https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg";
+
+    public static final String DEFAULT_CATEGORY = CategoryEnum.OTHER.toString();
+
+    public static final String DEFAULT_DESCRIPTION = "No description";
 
     @Id
     @GeneratedValue
@@ -19,12 +29,12 @@ public class Place {
     private User owner;
 
     @NotBlank(message = "Name may not be empty")
-    @Column(length = 32)
-    @Size(min = 4, max = 32)
+    @Column(length = MAX_NAME_LENGTH)
+    @Size(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH)
     private String name;
 
-    @Column(length = 255)
-    @Size(min = 0, max = 255)
+    @Column(length = MAX_DESCRIPTION_LENGTH)
+    @Size(min = 0, max = MAX_DESCRIPTION_LENGTH)
     private String description;
 
     private String image;
@@ -110,5 +120,21 @@ public class Place {
 
     public Long getId() {
         return id;
+    }
+
+    public Collection<User> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Collection<User> favorites) {
+        this.favorites = favorites;
+    }
+
+    public Collection<List> getLists() {
+        return lists;
+    }
+
+    public void setLists(Collection<List> lists) {
+        this.lists = lists;
     }
 }

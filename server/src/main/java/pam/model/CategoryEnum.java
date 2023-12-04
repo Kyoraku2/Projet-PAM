@@ -1,7 +1,7 @@
 package pam.model;
 
 
-public enum CategoryEnum { //todo chose categories
+public enum CategoryEnum {
 
     FOOD,
     RESTAURANT,
@@ -39,7 +39,15 @@ public enum CategoryEnum { //todo chose categories
     PARKING,
     PUBLIC_TRANSPORT,
 
-    OTHER
+    OTHER;
 
+    public static boolean contains(String s){
+        for(CategoryEnum c : CategoryEnum.values()){
+            if(c.name().equals(s) || c.name().toLowerCase().equals(s)){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

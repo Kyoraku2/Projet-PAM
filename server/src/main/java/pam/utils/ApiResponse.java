@@ -3,6 +3,8 @@ package pam.utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public class ApiResponse {
     public static final String BAD_REQUEST_DEFAULT = "Bad Request";
     public static final String NOT_FOUND_DEFAULT = "Not Found";
@@ -21,6 +23,10 @@ public class ApiResponse {
 
     public static ResponseEntity<Object> badRequest(String message){
         return ResponseEntity.badRequest().body(message);
+    }
+
+    public static ResponseEntity<Object> badRequest(List<String> messages){
+        return ResponseEntity.badRequest().body(messages);
     }
 
     public static ResponseEntity<Object> badRequest(){
