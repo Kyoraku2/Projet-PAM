@@ -87,7 +87,6 @@ public class UserController {
         @RequestParam(value="username") String username,
         @RequestParam(value="password") String password,
         @RequestParam(value="email") String email,
-        @RequestParam(value="image", required = false) String image,
         @RequestParam(value="description", required = false) String description
     ){
         List<String> errors = new ArrayList<>();
@@ -123,7 +122,6 @@ public class UserController {
                         username,
                         password,
                         email,
-                        image==null ? DEFAULT_IMAGE : image,
                         description==null ? DEFAULT_DESCRIPTION : description
                 )
         );
@@ -136,7 +134,6 @@ public class UserController {
         @RequestParam(value="username") String username,
         @RequestParam(value="password") String password,
         @RequestParam(value="email") String email,
-        @RequestParam(value="image", required = false) String image,
         @RequestParam(value="description", required = false) String description
     ){
         List<String> errors = new ArrayList<>();
@@ -173,7 +170,6 @@ public class UserController {
                         username,
                         password,
                         email,
-                        image==null ? DEFAULT_IMAGE : image,
                         description==null ? DEFAULT_DESCRIPTION : description
                 )
         );
@@ -199,8 +195,4 @@ public class UserController {
     // create : OK
     // update : OK
     // delete : OK
-
-
-    // TODO : check for login
-    // TODO : manage image upload
 }

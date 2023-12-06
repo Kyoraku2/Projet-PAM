@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import pam.model.User;
 import pam.repositories.UserRepository;
 
+import static pam.model.User.DEFAULT_IMAGE;
+
 @Service
 public class UserServiceImpl implements UserService{
     @Autowired
@@ -26,8 +28,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User createUser(String username, String password, String email, String image, String description) {
-        User newUser = new User(username, password, email, image, description);
+    public User createUser(String username, String password, String email, String description) {
+        User newUser = new User(username, password, email, DEFAULT_IMAGE, description);
         return userRepository.save(newUser);
     }
 
@@ -37,12 +39,11 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User updateUser(long id, String username, String password, String email, String image, String description) {
+    public User updateUser(long id, String username, String password, String email, String description) {
         User userFromDB = userRepository.findOne(id);
         userFromDB.setUsername(username);
         userFromDB.setPassword(password);
         userFromDB.setEmail(email);
-        userFromDB.setImage(image);
         userFromDB.setDescription(description);
         return userRepository.save(userFromDB);
     }

@@ -12,11 +12,11 @@ public interface ListService {
     List getList(long listID);
     List getList(List list);
 
-    List createList(User owner, String name, String description, String image, boolean isShared);
+    List createList(User owner, String name, String description, boolean isShared);
     List createList(List list);
 
     List updateList(List list);
-    List updateList(long listID, String name, String description, String image, boolean isShared);
+    List updateList(long listID, String name, String description, boolean isShared);
 
     void deleteList(List list);
     void deleteList(long listID);

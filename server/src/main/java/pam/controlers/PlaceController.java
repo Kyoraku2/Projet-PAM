@@ -104,7 +104,6 @@ public class PlaceController {
     public ResponseEntity<Object> create(@RequestParam(value = "ownerID") Integer ownerID,
                                          @RequestParam(value = "name") String name,
                                          @RequestParam(value = "description", required = false) String description,
-                                         @RequestParam(value = "image", required = false) String image,
                                          // TODO : add coordinates
                                          @RequestParam(value = "category", required = false) String category){
         List<String> errors = new ArrayList<>();
@@ -116,10 +115,6 @@ public class PlaceController {
         }
         verifyDescription(description, errors);
 
-        if(image == null || image.isEmpty()){
-            image = DEFAULT_IMAGE;
-        }
-
         if(category == null || category.isEmpty()){
             category = DEFAULT_CATEGORY;
         }
@@ -128,7 +123,7 @@ public class PlaceController {
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        Place place = new Place(userService.getUser(ownerID), name, description, image, new Point(0,0), CategoryEnum.valueOf(category));
+        Place place = new Place(userService.getUser(ownerID), name, description, new Point(0,0), CategoryEnum.valueOf(category));
         return ApiResponse.ok(place);
     }
 
@@ -138,7 +133,6 @@ public class PlaceController {
                                          @RequestParam(value = "ownerID") Integer ownerID,
                                          @RequestParam(value = "name") String name,
                                          @RequestParam(value = "description", required = false) String description,
-                                         @RequestParam(value = "image", required = false) String image,
                                          // TODO : add coordinates
                                          @RequestParam(value = "category", required = false) String category){
         List<String> errors = new ArrayList<>();
@@ -151,10 +145,6 @@ public class PlaceController {
         }
         verifyDescription(description, errors);
 
-        if(image == null || image.isEmpty()){
-            image = DEFAULT_IMAGE;
-        }
-
         if(category == null || category.isEmpty()){
             category = DEFAULT_CATEGORY;
         }
@@ -163,7 +153,7 @@ public class PlaceController {
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        Place place = placeService.updatePlace(id, ownerID, name, description, image, new Point(0,0), category);
+        Place place = placeService.updatePlace(id, ownerID, name, description, new Point(0,0), category);
         return ApiResponse.ok(place);
     }
 
@@ -254,7 +244,4 @@ public class PlaceController {
     // Remove from favorites : OK
     // Get favorites of one user : OK
     // Get all places of one user : OK
-
-
-    // TODO : manage image upload
 }

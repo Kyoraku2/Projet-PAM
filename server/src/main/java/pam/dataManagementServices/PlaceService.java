@@ -11,10 +11,10 @@ public interface PlaceService {
 
     Place getPlace(long id);
 
-    Place createPlace(String name, String description, String image, Point location, String category , User owner);
+    Place createPlace(String name, String description, Point location, String category , User owner);
     Place createPlace(Place place);
 
-    Place updatePlace(long placeID, long ownerID, String name, String description, String image, Point location, String category);
+    Place updatePlace(long placeID, long ownerID, String name, String description, Point location, String category);
     Place updatePlace(Place place);
 
     void deletePlace(long id);

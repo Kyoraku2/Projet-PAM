@@ -11,7 +11,7 @@ import java.util.Vector;
 @Entity
 public class User {
     public static final String DEFAULT_DESCRIPTION = "Hello everyone!";
-    public static final String DEFAULT_IMAGE = "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png";
+    public static final String DEFAULT_IMAGE = "default.png";
 
     public static final int USERNAME_MIN_LENGTH = 4;
     public static final int USERNAME_MAX_LENGTH = 32;
@@ -48,6 +48,9 @@ public class User {
 
     Date signInDate;
 
+    @Enumerated(EnumType.STRING)
+    RoleEnum role;
+
     @ManyToMany
     @JoinTable(
         name= "favorites",
@@ -62,6 +65,7 @@ public class User {
         super();
         this.username = username;
         this.email = mail;
+        this.role = RoleEnum.USER;
         this.password = password;
         this.signInDate = new Date(System.currentTimeMillis());
     }
@@ -126,5 +130,13 @@ public class User {
 
     public void setFavorites(Collection<Place> favorites) {
         this.favorites = favorites;
+    }
+
+    public RoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEnum role) {
+        this.role = role;
     }
 }

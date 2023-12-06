@@ -46,8 +46,8 @@ public class ListServiceImpl implements ListService{
     }
 
     @Override
-    public List createList(User owner, String name, String description, String image, boolean isShared) {
-        List list = new List(owner, name, description, image, isShared);
+    public List createList(User owner, String name, String description, boolean isShared) {
+        List list = new List(owner, name, description, List.DEFAULT_IMAGE, isShared);
         return listRepository.save(list);
     }
 
@@ -61,17 +61,15 @@ public class ListServiceImpl implements ListService{
         List listFromDB = listRepository.findOne(list.getId());
         listFromDB.setName(list.getName());
         listFromDB.setDescription(list.getDescription());
-        listFromDB.setImage(list.getImage());
         listFromDB.setShared(list.isShared());
         return listRepository.save(listFromDB);
     }
 
     @Override
-    public List updateList(long listID, String name, String description, String image, boolean isShared) {
+    public List updateList(long listID, String name, String description, boolean isShared) {
         List listFromDB = listRepository.findOne(listID);
         listFromDB.setName(name);
         listFromDB.setDescription(description);
-        listFromDB.setImage(image);
         listFromDB.setShared(isShared);
         return listRepository.save(listFromDB);
     }

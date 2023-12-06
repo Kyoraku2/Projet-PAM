@@ -14,7 +14,7 @@ public class List {
 
     public static final int MAX_DESCRIPTION_LENGTH = 255;
 
-    public static final String DEFAULT_IMAGE = "";
+    public static final String DEFAULT_IMAGE = "default.png";
     public static final String DEFAULT_DESCRIPTION = "No description";
 
     @Id
@@ -48,12 +48,19 @@ public class List {
         this.owner = owner;
         this.name = name;
         this.isShared = false;
+        this.description = DEFAULT_DESCRIPTION;
+        this.image = DEFAULT_IMAGE;
     }
 
     public List(User owner, String name, String description, String image, boolean isShared) {
         this(owner, name);
         this.description = description;
         this.image = image;
+        this.isShared = isShared;
+    }
+
+    public List(User owner, String name, String description, boolean isShared) {
+        this(owner, name, description, DEFAULT_IMAGE, isShared);
     }
 
     public User getOwner() {

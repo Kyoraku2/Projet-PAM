@@ -39,8 +39,8 @@ public class PlaceServiceImpl implements PlaceService{
     }
 
     @Override
-    public Place createPlace(String name, String description, String image, Point location, String category, User owner) {
-        Place place = new Place(owner, name, description, image, location, CategoryEnum.valueOf(category));
+    public Place createPlace(String name, String description, Point location, String category, User owner) {
+        Place place = new Place(owner, name, description, location, CategoryEnum.valueOf(category));
         return placeRepository.save(place);
     }
 
@@ -50,11 +50,10 @@ public class PlaceServiceImpl implements PlaceService{
     }
 
     @Override
-    public Place updatePlace(long placeID, long ownerID, String name, String description, String image, Point location, String category) {
+    public Place updatePlace(long placeID, long ownerID, String name, String description, Point location, String category) {
         Place placeFromDB = placeRepository.findOne(placeID);
         placeFromDB.setName(name);
         placeFromDB.setDescription(description);
-        placeFromDB.setImage(image);
         placeFromDB.setCoordinates(location);
         placeFromDB.setCategory(CategoryEnum.valueOf(category));
         return placeRepository.save(placeFromDB);

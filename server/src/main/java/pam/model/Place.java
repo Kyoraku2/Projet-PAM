@@ -63,7 +63,6 @@ public class Place {
     public Place(User owner, String name, Point coordinates) {
         this.owner = owner;
         this.name = name;
-
         this.coordinates = coordinates;
     }
 
@@ -72,6 +71,10 @@ public class Place {
         this.description = description;
         this.image = image;
         this.category = category;
+    }
+
+    public Place(User owner, String name, String description, Point coordinates, CategoryEnum category) {
+        this(owner, name, description, DEFAULT_IMAGE, coordinates, category);
     }
 
     public User getOwner() {

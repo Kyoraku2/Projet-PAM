@@ -105,8 +105,7 @@ public class ListController {
     public ResponseEntity<Object> create(
             @RequestParam(value = "name") String name,
             @RequestParam(value = "ownerID") Integer ownerID,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "image", required = false) String image
+            @RequestParam(value = "description", required = false) String description
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check name
@@ -124,11 +123,7 @@ public class ListController {
             return ApiResponse.badRequest(errors);
         }
 
-        if(image == null || image.isEmpty()){
-            image = DEFAULT_IMAGE;
-        }
-
-        List list = new List(userService.getUser(ownerID), name, description, image, false);
+        List list = new List(userService.getUser(ownerID), name, description, false);
         return ApiResponse.ok(listService.createList(list));
     }
 
@@ -138,7 +133,6 @@ public class ListController {
             @RequestParam(value = "id") Integer id,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "image", required = false) String image,
             @RequestParam(value = "isShared", required = false) Boolean isShared
     ){
         java.util.List<String> errors = new ArrayList<>();
@@ -157,10 +151,6 @@ public class ListController {
             return ApiResponse.badRequest(errors);
         }
 
-        if(image == null || image.isEmpty()){
-            image = DEFAULT_IMAGE;
-        }
-
         if(isShared == null){
             isShared = false;
         }
@@ -169,7 +159,6 @@ public class ListController {
                 id,
                 name,
                 description,
-                image,
                 isShared
         ));
     }
