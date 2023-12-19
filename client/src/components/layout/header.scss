@@ -114,6 +114,7 @@
 @media screen and (max-width: 600px) {
   .nav {
     position: fixed;
+    background: white ;
     bottom: 0;
     border-top: 2px solid $borderColor;
     z-index: 10000000000;
