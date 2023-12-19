@@ -1,0 +1,159 @@
+@import "../../utils/styles/vars";
+@import "../../utils/styles/mixins";
+
+.profile{
+  display: flex;
+  //height: calc(100vh - $navbarHeight - 1px);
+  &__nav{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid $borderColor;
+    font-size: 1rem;
+    &__item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @include resetLinks();
+      width: 6rem;
+      padding: 0.75rem 2rem;
+
+      &:hover{
+        background: $navbarHoverBackground;
+        cursor: pointer;
+      }
+      &.active{
+        width: calc(6rem - 4px);
+        border-left: 4px solid red;
+      }
+    }
+  }
+
+  &__content{
+    overflow-y: scroll;
+    display: flex;
+    row-gap: 1rem;
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    h2{
+      margin: 1rem;
+      font-style: italic;
+      font-size: 1.25rem;
+      color: darken(#fff, 70%);
+    }
+
+    h3{
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    [for="profile_picture"]{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      &:hover{
+        cursor: pointer;
+      }
+      width: 100%;
+      & p:first-child{
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        font-style: normal;
+      }
+      & p:not(:first-child){
+        font-size: 1rem;
+        font-style: italic;
+        color: #5A5A5A;
+      }
+    }
+  
+    #profile_picture{
+      display: none;
+    }
+
+    &__item{
+      width: 90%;
+      article{
+        padding: 1rem;
+        background: #eeeeee;
+        border-radius: 5px;
+  
+        div{
+          display: flex;
+          column-gap: 1.5rem;
+          img{
+            margin: 1rem;
+            width: 10rem;
+            aspect-ratio: 1;
+            border-radius: 5px;
+          }
+          div{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            p{
+              margin: 0.5rem 0;
+              font-size: 1.1rem;
+              font-style: italic;
+            }
+          }
+        }
+      }
+
+      form{
+        padding: 1rem;
+        background: #eeeeee;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        label{
+          font-weight: 500;
+          margin-top: 0.75rem;
+        }
+        input, textarea{
+          border: 1px solid darken($borderColor, 10%);
+          line-height: 1.25rem;
+          padding: 0.25rem;
+          border-radius: 8px;
+          margin: 0.25rem 0;
+          &:read-only{
+            background: darken(#fcfcfc, 10%);
+          }
+        }
+        button{
+          margin: auto;
+          margin-top: 1rem;
+          align-self: flex-end;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          background: red;
+          color: white;
+          font-size: 1rem;
+          font-weight: 500;
+          &:hover{
+            background: darken(red, 10%);
+          }
+        }
+        [for="new_password"]{
+          display: flex;
+          flex-direction: column;
+          span{
+            font-size: 0.75rem;
+            font-weight: 400;
+            margin-top: 0.25rem;
+            color: #5A5A5A;
+            font-style: italic;
+          }
+        }
+        textarea{
+          resize: none;
+          height: 3rem;
+        }
+      }
+    }
+  }
+}
