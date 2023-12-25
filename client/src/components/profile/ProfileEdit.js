@@ -7,7 +7,7 @@ const ProfileEdit = (props) => {
       <div className="profile__content__item">
         <h2>Laissez les autres utilisateurs en connaître plus à propos de vous en choisissant une belle photo de profile.</h2>
         <article>
-          <h3>Changer votre image de profile</h3>
+          <h3># Changer votre image de profile</h3>
           <div>
             <img src={DefaultPP} alt='profile'/>
             <label htmlFor='profile_picture'>
@@ -24,13 +24,13 @@ const ProfileEdit = (props) => {
       <div className="profile__content__item">
         <h2>A propos de vous</h2>
         <form>
-            <h3>Changer vos informations personnelles</h3>
+            <h3># Changer vos informations personnelles</h3>
             <label htmlFor='username'>Username</label>
             <input type="text" id='username' name='username'></input>
             <label htmlFor='email'>Email</label>
             <input type="text" id='email' name='email'></input>
             <label htmlFor='description'>Bio</label>
-            <textarea type="text" id='description' name='description'></textarea>
+            <textarea id='description' name='description'></textarea>
             <label htmlFor='current_password'>Mot de passe courant</label>
             <input type="password" id='current_password' name='current_password'></input>
             <label htmlFor='new_password'>Nouveau mot de passe<span>Tips : laissez vide si aucun changement</span></label>

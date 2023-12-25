@@ -49,7 +49,7 @@
 
   &__listCollection{
     padding: 1rem 0.5rem;
-    max-height: calc(100vh - $navbarHeight - 2px - 2rem - 3rem);
+    max-height: calc(100vh - $navbarHeight - 3px - 2rem - 3rem);
     overflow-y: scroll;
     display: flex;
     flex-flow: row wrap;

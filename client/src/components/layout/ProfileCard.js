@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import DefaultPP from '../../assets/images/defaultPp.png';
 import {MdLogout} from "react-icons/md";
 import {FaHome} from "react-icons/fa";
@@ -7,10 +7,10 @@ import {FaUser} from "react-icons/fa6";
 
 const ProfileCard = (props) => {
   const [ listDisplayed, setListDisplayed ] = useState(false);
+
   const handleClick = () => {
     setListDisplayed(!listDisplayed);
   }
-
 
   return (
     <div className={props.class+'__profileCard'} onClick={handleClick}>

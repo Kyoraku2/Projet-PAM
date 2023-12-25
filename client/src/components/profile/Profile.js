@@ -4,6 +4,8 @@ import DefaultPP from '../../assets/images/defaultPp.png';
 import './profile.scss';
 import ProfileMainContent from "./ProfileMainContent";
 import ProfileEdit from './ProfileEdit';
+import ListCollection from '../list/ListCollection';
+import ListsPage from '../list/ListsPage';
 
 const Profile = (props) => {
   const [active, setActive] = useState(1); // [1, 2, 3, 4
@@ -19,7 +21,7 @@ const Profile = (props) => {
         setContent(<ProfileEdit/>);
         break;
       case 3:
-        setContent(<div>3</div>);
+        setContent(<ListsPage/>);
         break;
       case 4:
         setContent(<div>4</div>);

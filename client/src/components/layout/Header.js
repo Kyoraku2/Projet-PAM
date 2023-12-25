@@ -43,9 +43,9 @@ const Header = () => {
         </div>
 
         <div className='nav__right'>
-          <button className='nav__right__create'>
+          <a className='nav__right__create' href='/places/create'>
             Ajouter un lieu
-          </button>
+          </a>
 
           <ProfileCard class='nav__right'/>
         </div>
@@ -73,7 +73,7 @@ const Header = () => {
         <li className={'nav__links__item ' + (activeLink === 2 ? 'nav__links__item--active':'')}
             onClick={() => handleActiveLink(2)}
         >
-          <Link to={'/todo'}>
+          <Link to={'/places/create'}>
             <FaRegPlusSquare/>
             <span>Créer</span>
           </Link>

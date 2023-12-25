@@ -7,6 +7,7 @@ import Profile from "./components/profile/Profile";
 import './base.scss';
 import ListCollection from "./components/list/ListCollection";
 import ListsPage from "./components/list/ListsPage";
+import PlaceCreateForm from "./components/places/PlaceCreateForm";
 
 function App() {
 
@@ -18,7 +19,14 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/example" element={<ExampleList />} />
           <Route path="/profil" element={<Profile />} />
+
+          {/* Lists */}
           <Route path="/lists" element={<ListsPage />} />
+
+          {/* Places */}
+          <Route path="/places/create" element={<PlaceCreateForm />} />
+
+          {/* Errors */}
           <Route path="*" element={<NotFound/>} />
         </Routes>
         {/*<Footer/> TODO : display correclty*/}
