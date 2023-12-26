@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
-import {Link} from "react-router-dom";
-import DefaultPP from '../../assets/images/defaultPp.png';
 import './profile.scss';
 import ProfileMainContent from "./ProfileMainContent";
 import ProfileEdit from './ProfileEdit';
-import ListCollection from '../list/ListCollection';
 import ListsPage from '../list/ListsPage';
 
 const Profile = (props) => {

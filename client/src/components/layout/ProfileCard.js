@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState} from 'react';
 import DefaultPP from '../../assets/images/defaultPp.png';
 import {MdLogout} from "react-icons/md";
 import {FaHome} from "react-icons/fa";

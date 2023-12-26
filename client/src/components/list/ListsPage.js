@@ -2,7 +2,7 @@ import React from 'react';
 import './list.scss';
 import ListCollection from "./ListCollection";
 //import Tabs from "./Tabs";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 
 const ListsPage = (props) => {
 

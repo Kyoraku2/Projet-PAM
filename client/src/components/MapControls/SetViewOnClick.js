@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
-import {Rectangle, useMap, useMapEvents} from "react-leaflet";
+import {useMap} from "react-leaflet";
 import {FaRegDotCircle} from "react-icons/fa";
-
 
 
 const SetViewOnClick = (props) => {

@@ -5,9 +5,9 @@ import Home from "./components/home/Home";
 import NotFound from "./components/errors/NotFound";
 import Profile from "./components/profile/Profile";
 import './base.scss';
-import ListCollection from "./components/list/ListCollection";
 import ListsPage from "./components/list/ListsPage";
 import PlaceCreateForm from "./components/places/PlaceCreateForm";
+import ListCreateForm from "./components/list/ListCreateForm";
 
 function App() {
 
@@ -22,6 +22,7 @@ function App() {
 
           {/* Lists */}
           <Route path="/lists" element={<ListsPage />} />
+          <Route path="/lists/create" element={<ListCreateForm />} />
 
           {/* Places */}
           <Route path="/places/create" element={<PlaceCreateForm />} />

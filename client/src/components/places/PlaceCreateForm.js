@@ -3,9 +3,10 @@ import {filters} from "../../utils/filters";
 import DefaultList from "../../assets/images/defaultList.svg";
 import './create.scss';
 import axiosSpring from "../../utils/axios/axiosSpring";
-import {MapContainer, Marker, TileLayer, useMap} from "react-leaflet";
+import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import SetViewOnClick from "../MapControls/SetViewOnClick";
 import axios from "axios";
+import {INVALID_CHARS, NOMINATIM_BASE_URL} from "../../utils/consts";
 
 const PlaceCreateForm = (props) => {
   const [image, setImage] = useState(DefaultList);
@@ -17,12 +18,8 @@ const PlaceCreateForm = (props) => {
   const [addressError, setAddressError] = useState(null);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-
-  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
-  const invalidCharacters = ['<', '>', '/', '\\', '"', "'", '?', '*', ':', '|', '%', '$', '!', '@', '#', '&', '(', ')', '+', '=', '{', '}', '[', ']', ';', ',', '§', '°', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`', '²', '³', '€', '£', 'µ', '¤', '¨', '£', '¤', '¦', '¨', '´', '`'];
-  const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -36,14 +33,25 @@ const PlaceCreateForm = (props) => {
 
     if(props.isUpdate){
       // TODO : check
+      // Getting the infos
       axiosSpring.get('/api/places/'+props.placeID)
         .then((response) => {
           setName(response.data.name);
           setCategory(response.data.category);
           setDescription(response.data.description);
-          setAddress(response.data.address);
           setLatitude(response.data.latitude);
           setLongitude(response.data.longitude);
+        })
+        .catch((error) => console.log("error", error));
+
+      // Getting the image
+      axiosSpring.get('/api/place/image',{
+        params: {
+          placeID: props.placeID,
+        }
+      })
+        .then((response) => {
+          setImage(response.data.image);
         })
         .catch((error) => console.log("error", error));
     }
@@ -86,8 +94,8 @@ const PlaceCreateForm = (props) => {
     }
 
     // Check if no invalid caracters
-    for (let i = 0; i < invalidCharacters.length; i++) {
-      if (name.includes(invalidCharacters[i])) {
+    for (let i = 0; i < INVALID_CHARS.length; i++) {
+      if (name.includes(INVALID_CHARS[i])) {
         setNameError(
           'Le nom du lieu ne doit pas contenir de caractères spéciaux (sauf - et _)'
         );
@@ -98,25 +106,49 @@ const PlaceCreateForm = (props) => {
     setNameError(null);
 
 
-    const response = await axiosSpring.post('/api/places/create', {
-      ownerID: 1, // TODO
-      name: name,
-      category: category,
-      description: description,
-    }).then((response) => {
-      console.log(response);
-    }).catch((error) => {
-      console.log(error);
-    }); // TODO : make return place ID
+    if(props.isUpdate){
+      const response = await axiosSpring.put('/api/places/update', {
+        id: props.placeID,
+        name: name,
+        category: category,
+        description: description,
+        latitude: latitude,
+        longitude: longitude,
+      }).then((response) => {
+        console.log(response);
+      }).catch((error) => {
+        console.log(error);
+      });
 
-    axiosSpring.post('/api/place/images', {
-      placeID: 1, // TODO
-      image: image,
-    }).then((response) => {
-      console.log(response);
-    }).catch((error) => {
-      console.log(error);
-    });
+      axiosSpring.post('/api/place/image', {
+        placeID: props.placeID,
+        image: image,
+      }).then((response) => {
+        console.log(response);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }else{
+      const response = await axiosSpring.post('/api/places/create', {
+        ownerID: 1, // TODO
+        name: name,
+        category: category,
+        description: description,
+      }).then((response) => {
+        console.log(response);
+      }).catch((error) => {
+        console.log(error);
+      }); // TODO : make return place ID
+
+      axiosSpring.post('/api/place/image', {
+        placeID: 1, // TODO
+        image: image,
+      }).then((response) => {
+        console.log(response);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
   };
 
   return (
@@ -135,7 +167,6 @@ const PlaceCreateForm = (props) => {
           </label>
           <input type="file" id='place_image' name='place_image' onChange={(e) => {
             setImage(e.target.files[0])
-            console.log(e.target.files);
           }}></input>
         </div>
       </article>
