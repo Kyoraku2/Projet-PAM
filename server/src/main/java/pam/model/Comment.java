@@ -8,6 +8,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "owner_id", "place_id" }) })
 public class Comment {
+    public static final int MAX_COMMENT_LENGTH = 255;
+    public static final int MIN_CONTENT_LENGTH = 0;
 
     @Id
     @GeneratedValue
@@ -19,8 +21,8 @@ public class Comment {
     private Place place;
 
     @NotBlank(message = "Comment may not be empty")
-    @Column(length = 255)
-    @Size(min = 0, max = 255)
+    @Column(length = MAX_COMMENT_LENGTH)
+    @Size(min = MIN_CONTENT_LENGTH, max = MAX_COMMENT_LENGTH)
     private String content;
 
     public Comment() {

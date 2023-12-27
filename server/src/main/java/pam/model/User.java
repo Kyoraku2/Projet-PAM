@@ -1,6 +1,7 @@
 package pam.model;
 
 import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.sql.Date;
@@ -9,25 +10,36 @@ import java.util.Vector;
 
 @Entity
 public class User {
+    public static final String DEFAULT_DESCRIPTION = "Hello everyone!";
+    public static final String DEFAULT_IMAGE = "default.png";
+
+    public static final int USERNAME_MIN_LENGTH = 4;
+    public static final int USERNAME_MAX_LENGTH = 32;
+
+    public static final int DESCRIPTION_MIN_LENGTH = 0;
+    public static final int DESCRIPTION_MAX_LENGTH = 255;
+
+
+
 
     @Id
     @GeneratedValue
     long id;
 
-    @NotBlank(message = "Pseudo may not be empty")
-    @Column(unique=true, length = 32)
-    @Size(min = 4, max = 32)
-    String pseudo;
+    @NotBlank(message = "Username may not be empty")
+    @Column(unique=true, length = USERNAME_MAX_LENGTH)
+    @Size(min = USERNAME_MIN_LENGTH, max = USERNAME_MAX_LENGTH)
+    String username;
 
     @NotBlank(message = "Password may not be empty")
-    @Column(length = 32)
-    @Size(min = 8, max = 32)
+    //@Column(length = PASSWORD_MAX_LENGTH)
+    //@Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
     String password;
 
     String image;
 
-    @Column(length = 255)
-    @Size(min = 0, max = 255)
+    @Column(length = DESCRIPTION_MAX_LENGTH)
+    @Size(min = DESCRIPTION_MIN_LENGTH, max = DESCRIPTION_MAX_LENGTH)
     String description;
 
     @NotBlank(message = "Mail may not be empty")
@@ -35,6 +47,9 @@ public class User {
     String email;
 
     Date signInDate;
+
+    @Enumerated(EnumType.STRING)
+    RoleEnum role;
 
     @ManyToMany
     @JoinTable(
@@ -46,16 +61,17 @@ public class User {
 
     public User(){}
 
-    public User(String pseudo, String mail, String password) {
+    public User(String username, String mail, String password) {
         super();
-        this.pseudo = pseudo;
+        this.username = username;
         this.email = mail;
+        this.role = RoleEnum.USER;
         this.password = password;
         this.signInDate = new Date(System.currentTimeMillis());
     }
 
-    public User(String pseudo, String mail, String password, String image, String description) {
-        this(pseudo, mail, password);
+    public User(String username, String mail, String password, String image, String description) {
+        this(username, mail, password);
         this.image = image;
         this.description = description;
     }
@@ -64,12 +80,12 @@ public class User {
         return id;
     }
 
-    public String getPseudo() {
-        return pseudo;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -114,5 +130,13 @@ public class User {
 
     public void setFavorites(Collection<Place> favorites) {
         this.favorites = favorites;
+    }
+
+    public RoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEnum role) {
+        this.role = role;
     }
 }

@@ -5,11 +5,18 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Collection;
-import java.util.Set;
 import java.util.Vector;
 
 @Entity
 public class List {
+    public static final int MAX_NAME_LENGTH = 32;
+    public static final int MIN_NAME_LENGTH = 4;
+
+    public static final int MAX_DESCRIPTION_LENGTH = 255;
+
+    public static final String DEFAULT_IMAGE = "default.png";
+    public static final String DEFAULT_DESCRIPTION = "No description";
+
     @Id
     @GeneratedValue
     private Long id;
@@ -18,12 +25,12 @@ public class List {
     private User owner;
 
     @NotBlank(message = "Name may not be empty")
-    @Column(length = 32)
-    @Size(min = 4, max = 32)
+    @Column(length = MAX_NAME_LENGTH)
+    @Size(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH)
     private String name;
 
     @Column(length = 255)
-    @Size(min = 0, max = 255)
+    @Size(min = 0, max = MAX_DESCRIPTION_LENGTH)
     private String description;
 
     private String image;
@@ -41,12 +48,19 @@ public class List {
         this.owner = owner;
         this.name = name;
         this.isShared = false;
+        this.description = DEFAULT_DESCRIPTION;
+        this.image = DEFAULT_IMAGE;
     }
 
     public List(User owner, String name, String description, String image, boolean isShared) {
         this(owner, name);
         this.description = description;
         this.image = image;
+        this.isShared = isShared;
+    }
+
+    public List(User owner, String name, String description, boolean isShared) {
+        this(owner, name, description, DEFAULT_IMAGE, isShared);
     }
 
     public User getOwner() {
