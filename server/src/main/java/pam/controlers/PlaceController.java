@@ -186,12 +186,12 @@ public class PlaceController {
 
     @PutMapping("/places/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> update(
+    public ResponseEntity<Object> create(
             @PathVariable Long id,
-            @RequestParam(value = "place") String jsonPlace,
+            @RequestParam(value = "place") String placeJson,
             @RequestParam(value = "image", required = false) MultipartFile image
-            ){
-        PlaceRequestBody place = PlaceRequestBody.fromJSON(jsonPlace);
+    ){
+        PlaceRequestBody place = PlaceRequestBody.fromJSON(placeJson);
         List<String> errors = new ArrayList<>();
         verifyPlaceID(id, errors);
         verifyOwnerID(place.getOwnerID(), errors);

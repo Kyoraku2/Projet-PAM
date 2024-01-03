@@ -40,7 +40,7 @@ const PlaceCreateForm = (props) => {
       });
     }
 
-    if(props.isUpdate){
+    if(props.isUpdate && name === ""){
       // Getting the infos
       axiosSpring.get('/api/places/'+props.placeID)
         .then((response) => {
@@ -150,10 +150,10 @@ const PlaceCreateForm = (props) => {
 
 
     if(props.isUpdate){
-      // TODO : place is set but it seems that its not sent
       let formData = new FormData();
       formData.append('image', image);
       formData.append('place', JSON.stringify({
+        id: props.placeID,
         name: name,
         ownerID: 1, // TODO ownerID
         category: category,
