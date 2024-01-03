@@ -8,4 +8,5 @@ import pam.model.User;
 @Repository
 public interface PlaceRepository extends CrudRepository<Place,Long> {
     Iterable<Place> findAllByOwner(User owner);
+    Iterable<Place> findAllByLists_Id(long listId);
 }

@@ -4,29 +4,33 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import pam.dataManagementServices.ImageService;
 import pam.dataManagementServices.PlaceService;
 import pam.dataManagementServices.UserService;
 import pam.model.CategoryEnum;
 import pam.model.Place;
+import pam.model.PlaceRequestBody;
 import pam.utils.ApiResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static pam.model.Place.*;
 
 @RestController
-@RequestMapping("api/places")
+@RequestMapping("api")
 public class PlaceController {
     @Autowired
     private PlaceService placeService;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ImageService imageService;
 
     private static final Logger logger = Logger.getLogger(PlaceController.class);
 
@@ -35,7 +39,7 @@ public class PlaceController {
         logger.info("Initialize place controller...");
     }
 
-    private void verifyPlaceID(Integer placeID, List<String> errors){
+    private void verifyPlaceID(Long placeID, List<String> errors){
         // Check placeID
         if(placeID == null){
             errors.add("Missing placeID");
@@ -46,7 +50,7 @@ public class PlaceController {
         }
     }
 
-    private void verifyOwnerID(Integer ownerID, List<String> errors){
+    private void verifyOwnerID(Long ownerID, List<String> errors){
         // Check ownerID
         if(ownerID == null){
             errors.add("Missing ownerID");
@@ -71,10 +75,6 @@ public class PlaceController {
         }
     }
 
-    public void verifyCoordinates(){
-        // TODO
-    }
-
     public void verifyCategory(String category, List<String> errors){
         // Check category
         if(!CategoryEnum.contains(category)){
@@ -82,97 +82,188 @@ public class PlaceController {
         }
     }
 
-    @RequestMapping("/all")
+    private PlaceRequestBody addImage(PlaceRequestBody place) throws IOException {
+        byte[] image = imageService.getPlaceImage(place.getId());
+        if(image != null){
+            place.setImageResp(image);
+        }
+        return place;
+    }
+
+    private Iterable<PlaceRequestBody> addImages(Iterable<PlaceRequestBody> places) throws IOException {
+        ArrayList<PlaceRequestBody> res = new ArrayList<>();
+        for(PlaceRequestBody place : places){
+            res.add(addImage(place));
+        }
+        return res;
+    }
+
+
+    @GetMapping("/places")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> list(){
-        return ApiResponse.ok(placeService.getAllPlaces());
+        Iterable<PlaceRequestBody> res = PlaceRequestBody.convert(placeService.getAllPlaces());
+
+        try{
+            res = addImages(res);
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/details")
+    @GetMapping("/places/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> details(@RequestParam(value = "id") Integer id){
+    public ResponseEntity<Object> details(
+            @PathVariable Long id
+    ){
         List<String> errors = new ArrayList<>();
         verifyPlaceID(id, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(placeService.getPlace(id));
+
+        Place placeFromDB = placeService.getPlace(id);
+
+        PlaceRequestBody res;
+        try{
+            res = addImage(
+                    new PlaceRequestBody(placeFromDB)
+            );
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/create")
+    @PostMapping("/places")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> create(@RequestParam(value = "ownerID") Integer ownerID,
-                                         @RequestParam(value = "name") String name,
-                                         @RequestParam(value = "description", required = false) String description,
-                                         // TODO : add coordinates
-                                         @RequestParam(value = "category", required = false) String category){
+    public ResponseEntity<Object> create(
+            @RequestParam(value = "place") String placeJson,
+            @RequestParam(value = "image", required = false) MultipartFile image
+    ){
+        PlaceRequestBody place = PlaceRequestBody.fromJSON(placeJson);
         List<String> errors = new ArrayList<>();
-        verifyOwnerID(ownerID, errors);
-        verifyName(name, errors);
+        verifyOwnerID(place.getOwnerID(), errors);
+        verifyName(place.getName(), errors);
 
-        if(description == null || description.isEmpty()){
-            description = DEFAULT_DESCRIPTION;
+        if(place.getDescription() != null && !place.getDescription().isEmpty()){
+            verifyDescription(place.getDescription(), errors);
         }
-        verifyDescription(description, errors);
 
-        if(category == null || category.isEmpty()){
-            category = DEFAULT_CATEGORY;
+        if(place.getCategory() != null && !place.getCategory().toString().isEmpty()){
+            verifyCategory(place.getCategory().toString(), errors);
         }
-        verifyCategory(category, errors);
 
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        Place place = new Place(userService.getUser(ownerID), name, description, new Point(0,0), CategoryEnum.valueOf(category));
-        return ApiResponse.ok(place);
+
+        Place placeFromBD = placeService.createPlace(place);
+
+        if(image != null){
+            try{
+                imageService.uploadPlaceImage(placeFromBD.getId(), image);
+            }catch (IOException e){
+                return ApiResponse.internalServerError("Error while saving image: " + e.getMessage());
+            }
+        }
+
+        PlaceRequestBody res;
+        try{
+            res = addImage(
+                    new PlaceRequestBody(
+                            placeFromBD
+                    )
+            );
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/update")
+    @PutMapping("/places/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> update(@RequestParam(value = "id") Integer id,
-                                         @RequestParam(value = "ownerID") Integer ownerID,
-                                         @RequestParam(value = "name") String name,
-                                         @RequestParam(value = "description", required = false) String description,
-                                         // TODO : add coordinates
-                                         @RequestParam(value = "category", required = false) String category){
+    public ResponseEntity<Object> update(
+            @PathVariable Long id,
+            @RequestParam(value = "place") String jsonPlace,
+            @RequestParam(value = "image", required = false) MultipartFile image
+            ){
+        PlaceRequestBody place = PlaceRequestBody.fromJSON(jsonPlace);
         List<String> errors = new ArrayList<>();
         verifyPlaceID(id, errors);
-        verifyOwnerID(ownerID, errors);
-        verifyName(name, errors);
+        verifyOwnerID(place.getOwnerID(), errors);
+        verifyName(place.getName(), errors);
 
-        if(description == null || description.isEmpty()){
-            description = DEFAULT_DESCRIPTION;
+        if(place.getDescription() != null && !place.getDescription().isEmpty()){
+            verifyDescription(place.getDescription(), errors);
         }
-        verifyDescription(description, errors);
 
-        if(category == null || category.isEmpty()){
-            category = DEFAULT_CATEGORY;
+        if(place.getCategory() != null && !place.getCategory().toString().isEmpty()){
+            verifyCategory(place.getCategory().toString(), errors);
         }
-        verifyCategory(category, errors);
 
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        Place place = placeService.updatePlace(id, ownerID, name, description, new Point(0,0), category);
-        return ApiResponse.ok(place);
+
+        if(image != null){
+            try{
+                if(placeService.getPlace(id).getImage() != null){
+                    imageService.deletePlaceImage(id);
+                }
+                imageService.uploadPlaceImage(id, image);
+            }catch (Exception e){
+                return ApiResponse.badRequest("Error while saving image : " + e.getMessage());
+            }
+        }
+
+        PlaceRequestBody res;
+
+        try{
+            res = addImage(
+                    new PlaceRequestBody(
+                            placeService.updatePlace(place)
+                    )
+            );
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/delete")
+    @DeleteMapping("/places/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> delete(@RequestParam(value = "id") Integer id){
+    public ResponseEntity<Object> delete(
+            @PathVariable Long id
+    ){
         List<String> errors = new ArrayList<>();
         verifyPlaceID(id, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
+
+        try{
+            if(placeService.getPlace(id).getImage() != null){
+                imageService.deletePlaceImage(id);
+            }
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while deleting image : " + e.getMessage());
+        }
+
         placeService.deletePlace(id);
         return ApiResponse.ok("Place deleted");
     }
 
-    @RequestMapping("/addToFavorite")
+    @PatchMapping("/places/user/{userID}/addToFavorite/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> addToFavorite(@RequestParam(value = "userID") Integer userID,
-                                                @RequestParam(value = "placeID") Integer placeID){
+    public ResponseEntity<Object> addToFavorite(
+            @PathVariable Long userID,
+            @PathVariable Long placeID
+    ){
         List<String> errors = new ArrayList<>();
         verifyPlaceID(placeID, errors);
         verifyOwnerID(userID, errors);
@@ -185,15 +276,19 @@ public class PlaceController {
             return ApiResponse.badRequest("Place already in favorites");
         }
 
-        return ApiResponse.ok(placeService.addToFavorite(
-                userService.getUser(userID), placeService.getPlace(placeID)
-        ));
+        placeService.addToFavorite(
+                userService.getUser(userID),
+                placeService.getPlace(placeID)
+        );
+
+        return ApiResponse.ok("Place added to favorites");
     }
 
-    @RequestMapping("/removeFromFavorite")
+    @PatchMapping("/places/user/{userID}/removeFromFavorite/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> removeFromFavorite(@RequestParam(value = "userID") Integer userID,
-                                                     @RequestParam(value = "placeID") Integer placeID){
+    public ResponseEntity<Object> removeFromFavorite(
+            @PathVariable Long userID,
+            @PathVariable Long placeID){
         List<String> errors = new ArrayList<>();
         verifyPlaceID(placeID, errors);
         verifyOwnerID(userID, errors);
@@ -206,31 +301,96 @@ public class PlaceController {
             return ApiResponse.badRequest("Place not in favorites");
         }
 
-        return ApiResponse.ok(placeService.removeFromFavorite(
-                userService.getUser(userID), placeService.getPlace(placeID)
-        ));
+        placeService.removeFromFavorite(
+                userService.getUser(userID),
+                placeService.getPlace(placeID)
+        );
+
+        return ApiResponse.ok("Place removed from favorites");
     }
 
-    @RequestMapping("/user/favorites")
+    @GetMapping("/places/user/{userID}/favorites")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> getFavorites(@RequestParam(value = "userID") Integer userID){
+    public ResponseEntity<Object> getFavorites(
+            @RequestBody Long userID
+    ){
         List<String> errors = new ArrayList<>();
         verifyOwnerID(userID, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(placeService.getFavorites(userID));
+
+        Iterable<PlaceRequestBody> res;
+
+        try{
+            res = addImages(
+                    PlaceRequestBody.convert(
+                            placeService.getFavorites(userID)
+                    )
+            );
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/user")
+    @GetMapping("/places/user/{userID}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> getPlacesByUser(@RequestParam(value = "userID") Integer userID){
+    public ResponseEntity<Object> getPlacesByUser(@RequestParam(value = "userID") Long userID){
         List<String> errors = new ArrayList<>();
         verifyOwnerID(userID, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(placeService.getPlacesOfUser(userID));
+
+        Iterable<PlaceRequestBody> res;
+
+        try{
+            res = addImages(
+                    PlaceRequestBody.convert(
+                            placeService.getPlacesOfUser(userID)
+                    )
+            );
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
+    }
+
+    @GetMapping("/places/list/{listID}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> getPlacesByList(
+            @RequestParam(value = "listID") Long listID
+    ){
+        List<String> errors = new ArrayList<>();
+
+        if(listID == null){
+            errors.add("Missing listID");
+        }else{
+            if(listID < 0){
+                errors.add("Invalid listID");
+            }
+        }
+
+        if(!errors.isEmpty()){
+            return ApiResponse.badRequest(errors);
+        }
+
+        Iterable<PlaceRequestBody> res;
+
+        try{
+            res = addImages(
+                    PlaceRequestBody.convert(
+                            placeService.getPlacesOfList(listID)
+                    )
+            );
+        }catch (Exception e){
+            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
     }
 
 

@@ -8,9 +8,9 @@ import './base.scss';
 import ListsPage from "./components/list/ListsPage";
 import PlaceCreateForm from "./components/places/PlaceCreateForm";
 import ListCreateForm from "./components/list/ListCreateForm";
+import Alert from "./components/context/alerts/Alert";
 
 function App() {
-
   return (
     <div className="app">
       <Router>
@@ -22,14 +22,16 @@ function App() {
 
           {/* Lists */}
           <Route path="/lists" element={<ListsPage />} />
+          {/* <Route path="/lists/create" element={<ListCreateForm isUpdate={true} listID={3}/>} /> */}
           <Route path="/lists/create" element={<ListCreateForm />} />
 
           {/* Places */}
-          <Route path="/places/create" element={<PlaceCreateForm />} />
+          <Route path="/places/create" element={<PlaceCreateForm isUpdate={true} placeID={3}/>} />
 
           {/* Errors */}
           <Route path="*" element={<NotFound/>} />
         </Routes>
+        <Alert/>
         {/*<Footer/> TODO : display correclty*/}
       </Router>
     </div>

@@ -3,14 +3,16 @@ package pam.dataManagementServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pam.model.List;
+import pam.model.ListRequestBody;
 import pam.model.Place;
 import pam.model.User;
 import pam.repositories.ListRepository;
 import pam.repositories.PlaceRepository;
 
+import java.util.ArrayList;
+
 @Service
 public class ListServiceImpl implements ListService{
-
     @Autowired
     private ListRepository listRepository;
 
@@ -47,12 +49,22 @@ public class ListServiceImpl implements ListService{
 
     @Override
     public List createList(User owner, String name, String description, boolean isShared) {
-        List list = new List(owner, name, description, List.DEFAULT_IMAGE, isShared);
+        List list = new List(owner, name, description, null, isShared);
         return listRepository.save(list);
     }
 
     @Override
     public List createList(List list) {
+        return listRepository.save(list);
+    }
+    @Override
+    public List createList(ListRequestBody listRequestBody) {
+        List list = new List(
+                userService.getUser(listRequestBody.getOwnerID()),
+                listRequestBody.getName(),
+                listRequestBody.getDescription(),
+                listRequestBody.isShared()
+        );
         return listRepository.save(list);
     }
 
@@ -71,6 +83,15 @@ public class ListServiceImpl implements ListService{
         listFromDB.setName(name);
         listFromDB.setDescription(description);
         listFromDB.setShared(isShared);
+        return listRepository.save(listFromDB);
+    }
+
+    @Override
+    public List updateList(long listID, ListRequestBody listRequestBody) {
+        List listFromDB = listRepository.findOne(listID);
+        listFromDB.setName(listRequestBody.getName());
+        listFromDB.setDescription(listRequestBody.getDescription());
+        listFromDB.setShared(listRequestBody.isShared());
         return listRepository.save(listFromDB);
     }
 

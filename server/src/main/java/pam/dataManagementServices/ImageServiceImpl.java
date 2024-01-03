@@ -45,7 +45,9 @@ public class ImageServiceImpl implements ImageService{
 
         Files.copy(image.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
 
-        userRepository.findOne(userID).setImage(uuid);
+        User user = userRepository.findOne(userID);
+        user.setImage(uuid);
+        userRepository.save(user);
 
         return uuid;
     }
@@ -62,7 +64,9 @@ public class ImageServiceImpl implements ImageService{
 
         Files.copy(image.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
 
-        placeRepository.findOne(placeID).setImage(uuid);
+        Place place = placeRepository.findOne(placeID);
+        place.setImage(uuid);
+        placeRepository.save(place);
 
         return uuid;
     }
@@ -79,7 +83,9 @@ public class ImageServiceImpl implements ImageService{
 
         Files.copy(image.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
 
-        listRepository.findOne(listID).setImage(uuid);
+        List list = listRepository.findOne(listID);
+        list.setImage(uuid);
+        listRepository.save(list);
 
         return uuid;
     }
@@ -115,17 +121,44 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
-    public void deleteProfileImage(long userID) {
-        userRepository.findOne(userID).setImage(User.DEFAULT_IMAGE);
+    public void deleteProfileImage(long userID) throws IOException {
+        String uuid = userRepository.findOne(userID).getImage();
+        if(uuid == null){
+            return;
+        }
+        Path path = Paths.get(PATH_PROFILE_PIC + uuid);
+
+        Files.delete(path);
+        User user = userRepository.findOne(userID);
+        user.setImage(null);
+        userRepository.save(user);
     }
 
     @Override
-    public void deletePlaceImage(long placeID) {
-        placeRepository.findOne(placeID).setImage(Place.DEFAULT_IMAGE);
+    public void deletePlaceImage(long placeID) throws IOException {
+        String uuid = placeRepository.findOne(placeID).getImage();
+        if(uuid == null){
+            return;
+        }
+        Path path = Paths.get(PATH_PLACE_PIC + uuid);
+
+        Files.delete(path);
+        Place place = placeRepository.findOne(placeID);
+        place.setImage(null);
+        placeRepository.save(place);
     }
 
     @Override
-    public void deleteListImage(long listID) {
-        listRepository.findOne(listID).setImage(List.DEFAULT_IMAGE);
+    public void deleteListImage(long listID) throws IOException {
+        String uuid = listRepository.findOne(listID).getImage();
+        if(uuid == null){
+            return;
+        }
+        Path path = Paths.get(PATH_LIST_PIC + uuid);
+
+        Files.delete(path);
+        List list = listRepository.findOne(listID);
+        list.setImage(null);
+        listRepository.save(list);
     }
 }

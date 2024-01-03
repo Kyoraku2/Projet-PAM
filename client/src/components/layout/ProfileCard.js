@@ -21,7 +21,7 @@ const ProfileCard = (props) => {
           <>
             <div className="clickToClose"></div>
             <div className={props.class+'__profileCard__list'}>
-              <Link to='/'><FaHome/><span>Acceuil</span></Link>
+              <Link to='/'><FaHome/><span>Accueil</span></Link>
               <Link to='/profil'><FaUser/><span>Profile</span></Link>
               <Link to='/logout'><MdLogout/><span>Déconnexion</span></Link>
             </div>

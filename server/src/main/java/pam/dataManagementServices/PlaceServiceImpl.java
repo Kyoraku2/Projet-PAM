@@ -5,6 +5,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import pam.model.CategoryEnum;
 import pam.model.Place;
+import pam.model.PlaceRequestBody;
 import pam.model.User;
 import pam.repositories.PlaceRepository;
 import pam.repositories.UserRepository;
@@ -34,13 +35,18 @@ public class PlaceServiceImpl implements PlaceService{
     }
 
     @Override
+    public Iterable<Place> getPlacesOfList(long listId) {
+        return placeRepository.findAllByLists_Id(listId);
+    }
+
+    @Override
     public Place getPlace(long id) {
         return placeRepository.findOne(id);
     }
 
     @Override
-    public Place createPlace(String name, String description, Point location, String category, User owner) {
-        Place place = new Place(owner, name, description, location, CategoryEnum.valueOf(category));
+    public Place createPlace(String name, String description, double latitude, double longitude, String category, User owner) {
+        Place place = new Place(owner, name, description, latitude, longitude, CategoryEnum.valueOf(category));
         return placeRepository.save(place);
     }
 
@@ -50,11 +56,25 @@ public class PlaceServiceImpl implements PlaceService{
     }
 
     @Override
-    public Place updatePlace(long placeID, long ownerID, String name, String description, Point location, String category) {
+    public Place createPlace(PlaceRequestBody placeRequestBody) {
+        Place place = new Place(
+                userRepository.findOne(placeRequestBody.getOwnerID()),
+                placeRequestBody.getName(),
+                placeRequestBody.getDescription(),
+                placeRequestBody.getLatitude(),
+                placeRequestBody.getLongitude(),
+                placeRequestBody.getCategory()
+        );
+        return placeRepository.save(place);
+    }
+
+    @Override
+    public Place updatePlace(long placeID, long ownerID, String name, String description, double latitude, double longitude, String category) {
         Place placeFromDB = placeRepository.findOne(placeID);
         placeFromDB.setName(name);
         placeFromDB.setDescription(description);
-        placeFromDB.setCoordinates(location);
+        placeFromDB.setLatitude(latitude);
+        placeFromDB.setLongitude(longitude);
         placeFromDB.setCategory(CategoryEnum.valueOf(category));
         return placeRepository.save(placeFromDB);
     }
@@ -62,6 +82,18 @@ public class PlaceServiceImpl implements PlaceService{
     @Override
     public Place updatePlace(Place place) {
         return placeRepository.save(place);
+    }
+
+    // TODO maybe add verifications
+    @Override
+    public Place updatePlace(PlaceRequestBody placeRequestBody) {
+        Place placeFromDB = placeRepository.findOne(placeRequestBody.getId());
+        placeFromDB.setName(placeRequestBody.getName());
+        placeFromDB.setDescription(placeRequestBody.getDescription());
+        placeFromDB.setLatitude(placeRequestBody.getLatitude());
+        placeFromDB.setLongitude(placeRequestBody.getLongitude());
+        placeFromDB.setCategory(placeRequestBody.getCategory());
+        return placeRepository.save(placeFromDB);
     }
 
     @Override

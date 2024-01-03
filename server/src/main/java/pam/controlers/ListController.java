@@ -2,23 +2,26 @@ package pam.controlers;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import pam.dataManagementServices.ImageService;
 import pam.dataManagementServices.ListService;
 import pam.dataManagementServices.PlaceService;
 import pam.dataManagementServices.UserService;
 import pam.model.List;
+import pam.model.ListRequestBody;
+import pam.model.Place;
 import pam.utils.ApiResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static pam.model.List.*;
 
 @RestController
-@RequestMapping("api/lists")
+@RequestMapping("api")
 public class ListController {
     @Autowired
     private ListService listService;
@@ -29,6 +32,9 @@ public class ListController {
     @Autowired
     private PlaceService placeService;
 
+    @Autowired
+    private ImageService imageService;
+
     private static final Logger logger = Logger.getLogger(ListController.class);
 
     public ListController(){
@@ -36,25 +42,17 @@ public class ListController {
         logger.info("Initialize list controller...");
     }
 
-    private void verifyListID(Integer listID, java.util.List<String> errors){
+    private void verifyListID(long listID, java.util.List<String> errors){
         // Check listID
-        if(listID == null){
-            errors.add("Missing listID");
-        }else{
-            if(listService.getList(listID) == null || listID < 0){
-                errors.add("Invalid listID");
-            }
+        if(listService.getList(listID) == null || listID < 0){
+            errors.add("Invalid listID");
         }
     }
 
-    private void verifyOwnerID(Integer ownerID, java.util.List<String> errors){
+    private void verifyOwnerID(long ownerID, java.util.List<String> errors){
         // Check ownerID
-        if(ownerID == null){
-            errors.add("Missing ownerID");
-        }else{
-            if(userService.getUser(ownerID) == null || ownerID < 0){
-                errors.add("Invalid ownerID");
-            }
+        if(userService.getUser(ownerID) == null || ownerID < 0){
+            errors.add("Invalid ownerID");
         }
     }
 
@@ -72,7 +70,7 @@ public class ListController {
         }
     }
 
-    private void verifyPlaceID(Integer placeID, java.util.List<String> errors){
+    private void verifyPlaceID(Long placeID, java.util.List<String> errors){
         // Check placeID
         if(placeID == null){
             errors.add("Missing placeID");
@@ -83,163 +81,255 @@ public class ListController {
         }
     }
 
-    @RequestMapping("/all")
-    @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> list(){
-        return ApiResponse.ok(listService.getAllLists());
+    private ListRequestBody addImage(ListRequestBody list) throws IOException {
+        byte[] image = imageService.getListImage(list.getId());
+        if(image != null){
+            list.setImageResp(image);
+        }
+        return list;
     }
 
-    @RequestMapping("/details")
+    private Iterable<ListRequestBody> addImages(Iterable<ListRequestBody> lists) throws IOException {
+        ArrayList<ListRequestBody> res = new ArrayList<>();
+        for(ListRequestBody list : lists){
+            res.add(addImage(list));
+        }
+        return res;
+    }
+
+    @GetMapping("/lists")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> details(@RequestParam(value = "id") Integer id){
+    public ResponseEntity<Object> list(
+            @RequestParam(value = "userID") Long userID
+    ){
+        if(userID != null){
+            java.util.List<String> errors = new ArrayList<>();
+            // Check ownerID
+            verifyOwnerID(userID, errors);
+            if(!errors.isEmpty()){
+                return ApiResponse.badRequest(errors);
+            }
+
+            Iterable<ListRequestBody> lists;
+
+            try{
+                lists = addImages(
+                        ListRequestBody.convert(
+                                listService.getListsByOwnerID(userID)
+                        )
+                );
+            }catch (IOException e){
+                return ApiResponse.internalServerError("Error while loading images: " + e.getMessage());
+            }
+
+            return ApiResponse.ok(lists);
+        }
+        Iterable<ListRequestBody> lists;
+        try{
+            lists = addImages(
+                    ListRequestBody.convert(
+                            listService.getAllLists()
+                    )
+            );
+        }catch (IOException e){
+            return ApiResponse.internalServerError("Error while loading images: " + e.getMessage());
+        }
+        return ApiResponse.ok(lists);
+    }
+
+    @GetMapping(value = "/lists/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> details(
+            @PathVariable Long id
+    ){
         java.util.List<String> errors = new ArrayList<>();
         verifyListID(id, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(listService.getList(id));
+        List listFromDB = listService.getList(id);
+        ListRequestBody list;
+        try{
+            list = addImage(
+                    new ListRequestBody(
+                            listFromDB
+                    )
+            );
+        }catch (IOException e){
+            return ApiResponse.internalServerError("Error while loading image: " + e.getMessage());
+        }
+        list.setPlaces(listFromDB.getPlaces());
+        return ApiResponse.ok(list);
     }
 
-    @RequestMapping("/create")
+    @PostMapping("/lists")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> create(
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "ownerID") Integer ownerID,
-            @RequestParam(value = "description", required = false) String description
+            @RequestParam(value = "list") String jsonList,
+            @RequestParam(value = "image", required = false) MultipartFile image
     ){
+        ListRequestBody list = ListRequestBody.fromJSON(jsonList);
         java.util.List<String> errors = new ArrayList<>();
         // Check name
-        verifyName(name, errors);
+        verifyName(list.getName(), errors);
 
         // Check ownerID
-        verifyOwnerID(ownerID, errors);
+        verifyOwnerID(list.getOwnerID(), errors);
 
-        if(description == null || description.isEmpty()){
-            description = DEFAULT_DESCRIPTION;
+        if(list.getDescription() != null && !list.getDescription().isEmpty()){
+            verifyDescription(list.getDescription(), errors);
         }
-        verifyDescription(description, errors);
 
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
 
-        List list = new List(userService.getUser(ownerID), name, description, false);
-        return ApiResponse.ok(listService.createList(list));
+        List listFromDB = listService.createList(list);
+
+        if(image != null){
+            try{
+                imageService.uploadListImage(listFromDB.getId(), image);
+            }catch (IOException e){
+                return ApiResponse.internalServerError("Error while saving image: " + e.getMessage());
+            }
+        }
+
+        ListRequestBody res;
+
+        try{
+            res = addImage(
+                    new ListRequestBody(
+                            listFromDB
+                    )
+            );
+        }catch (IOException e){
+            return ApiResponse.internalServerError("Error while loading image: " + e.getMessage());
+        }
+
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/update")
+    @PutMapping("/lists/{listID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> update(
-            @RequestParam(value = "id") Integer id,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "isShared", required = false) Boolean isShared
+            @PathVariable Long listID,
+            @RequestParam(value = "list") String jsonList,
+            @RequestParam(value = "image", required = false) MultipartFile image
     ){
+        ListRequestBody list = ListRequestBody.fromJSON(jsonList);
         java.util.List<String> errors = new ArrayList<>();
         // Check listID
-        verifyListID(id, errors);
-        verifyName(name, errors);
+        verifyListID(listID, errors);
+        // Check name
+        verifyName(list.getName(), errors);
+        // Check ownerID
+        verifyOwnerID(list.getOwnerID(), errors);
 
-
-        if(description != null){
-            verifyDescription(description, errors);
-        }else{
-            description = DEFAULT_DESCRIPTION;
+        if(list.getDescription() != null && !list.getDescription().isEmpty()){
+            verifyDescription(list.getDescription(), errors);
         }
 
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
 
-        if(isShared == null){
-            isShared = false;
+        List listFromDB = listService.updateList(listID, list);
+
+        if(image != null){
+            try{
+                if(listFromDB.getImage() != null){
+                    // Delete old image
+                    imageService.deleteListImage(listFromDB.getId());
+                }
+                // Upload new image
+                imageService.uploadListImage(listFromDB.getId(), image);
+            }catch (IOException e){
+                return ApiResponse.internalServerError("Error while saving image: " + e.getMessage());
+            }
         }
 
-        return ApiResponse.ok(listService.updateList(
-                id,
-                name,
-                description,
-                isShared
-        ));
+        ListRequestBody res;
+
+        try{
+            res = addImage(
+                    new ListRequestBody(
+                            listFromDB
+                    )
+            );
+        }catch (IOException e){
+            return ApiResponse.internalServerError("Error while loading image: " + e.getMessage());
+        }
+
+        res.setPlaces(listFromDB.getPlaces());
+        return ApiResponse.ok(res);
     }
 
-    @RequestMapping("/addPlace")
+    @PatchMapping("/lists/{listID}/addPlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> addPlace(
-            @RequestParam(value = "listID") Integer listID,
-            @RequestParam(value = "placeID") Integer placeID
+            @PathVariable Long id,
+            @PathVariable Long placeID
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check listID
-        verifyListID(listID, errors);
+        verifyListID(id, errors);
         // Check placeID
         verifyPlaceID(placeID, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(listService.addPlace(
-                listService.getList(listID),
+
+        listService.addPlace(
+                listService.getList(id),
                 placeService.getPlace(placeID)
-        ));
+        );
+
+        return ApiResponse.ok("Place added to list");
     }
 
-    @RequestMapping("/removePlace")
+    @PatchMapping("/lists/{id}/removePlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> removePlace(
-            @RequestParam(value = "listID") Integer listID,
-            @RequestParam(value = "placeID") Integer placeID
+            @PathVariable Long id,
+            @PathVariable Long placeID
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check listID
-        verifyListID(listID, errors);
+        verifyListID(id, errors);
         // Check placeID
         verifyPlaceID(placeID, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(listService.removePlace(
-                listService.getList(listID),
+
+        listService.removePlace(
+                listService.getList(id),
                 placeService.getPlace(placeID)
-        ));
+        );
+
+        return ApiResponse.ok("Place removed from list");
     }
 
-    @RequestMapping("/delete")
+    @DeleteMapping("/lists/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> delete(
-            @RequestParam(value = "id") Integer id
+            @PathVariable Long id
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check listID
         verifyListID(id, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
+        }
+
+        try{
+            if(listService.getList(id).getImage() != null){
+                imageService.deleteListImage(listService.getList(id).getId());
+            }
+        }catch (IOException e){
+            return ApiResponse.internalServerError("Error while deleting image: " + e.getMessage());
         }
         listService.deleteList(id);
         return ApiResponse.ok("List deleted");
     }
-
-    @RequestMapping("/user/all")
-    @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> getAllListsOfUser(
-            @RequestParam(value = "userID") Integer userID
-    ){
-        java.util.List<String> errors = new ArrayList<>();
-        // Check ownerID
-        verifyOwnerID(userID, errors);
-        if(!errors.isEmpty()){
-            return ApiResponse.badRequest(errors);
-        }
-        return ApiResponse.ok(listService.getListsByOwner(userService.getUser(userID)));
-    }
-
-
-    // list : OK
-    // details : OK
-    // create : OK
-    // update : OK
-    // addPlace : OK
-    // removePlace : OK
-    // addPlaces : OK
-    // delete : OK
-    // get all lists of one user : OK
 }

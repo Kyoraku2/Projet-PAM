@@ -1,63 +1,77 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import DefaultList from "../../assets/images/defaultList.svg";
 import {INVALID_CHARS} from "../../utils/consts";
 import axiosSpring from "../../utils/axios/axiosSpring";
 import './create.scss';
+import AlertContext from "../context/alerts/AlertContext";
+import {ALERT_TYPES} from "../context/alerts/Alert";
 
 const ListCreateForm = (props) => {
+  const {alert, setAlert} = useContext(AlertContext);
+
   const [image, setImage] = useState(DefaultList);
+  const [imagePreview, setImagePreview] = useState(DefaultList);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [nameError, setNameError] = useState(null);
 
-  const [selectedPlaces, setSelectedPlaces] = useState([]);
-
-  const [places, setPlaces] = useState([{
-    id: 1,
-    name: 'test test test ',
-  }, {
-    id: 2,
-    name: 'test2',
-  },
-    {
-      id: 3,
-      name: 'test3',
-    }]);
-
   useEffect(() => {
-    if(props.isUpdate){
-      // TODO : check
+    if(props.isUpdate) {
       // Getting the infos
-      axiosSpring.get('/api/lists/details', { // TODO : add to backend the fact that it returns the places
-        params: {
-          id: props.listID,
-        }
-      })
+      axiosSpring.get('/api/lists/' + props.listID)
         .then((response) => {
-          setName(response.data.name);
-          setDescription(response.data.description);
-          setPlaces(response.data.places)
-        })
-        .catch((error) => console.log("error", error));
+          if(response.status === 200) {
+            setName(response.data.name);
+            setDescription(response.data.description);
 
-      // Getting the image
-      axiosSpring.get('/api/list/image',{
-        params: {
-          listID: props.listID,
-        }
-      })
-        .then((response) => {
-          setImage(response.data.image);
+            axiosSpring.get("/api/list/image?placeID="+props.listID,{
+              responseType: 'arraybuffer',
+            }).then(
+              response => {
+                if(response.status === 200){
+                  // Create a blob from the image
+                  const blob = new Blob([response.data], {type: 'image/png'});
+                  // Create a data URL from the blob
+                  const dataUrl = URL.createObjectURL(blob);
+                  // Set the data URL to display the image
+                  // TODO
+                }
+              }
+            ).catch(
+              error => {
+                console.log(error);
+              }
+            )
+
+            setAlert({
+              type: ALERT_TYPES.SUCCESS.type,
+              message: 'Liste récupérée avec succès',
+              icon: ALERT_TYPES.SUCCESS.icon
+            });
+          }else{
+            setAlert({
+              type: ALERT_TYPES.ERROR.type,
+              message: 'Erreur lors de la récupération de la liste',
+              icon: ALERT_TYPES.ERROR.icon
+            });
+          }
         })
-        .catch((error) => console.log("error", error));
+        .catch((error) => {
+          console.log(error);
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la création de la liste',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        });
     }
-
   }, []);
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     // Check if not empty
     if (name == null || name === '' || name === undefined) {
-      setNameError('Le nom du lieu est obligatoire');
+      setNameError('Le nom de la liste est obligatoire');
       return;
     }
 
@@ -81,54 +95,87 @@ const ListCreateForm = (props) => {
 
     setNameError(null);
 
-    // TODO : check
-    if(props.isUpdate){
-      const response = axiosSpring.put('/api/lists/update', {
+    if (props.isUpdate) {
+      let formData = new FormData();
+      formData.append('image', image);
+      formData.append('list', JSON.stringify({
         id: props.listID,
         name: name,
         description: description,
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.log(error);
-      }); // TODO : make return list ID
+        ownerID: 1, // TODO ownerID
+        isShared: false,
+      }));
 
-      axiosSpring.post('/api/list/image', {
-        listID: props.listID,
-        image: image,
-      }).then((response) => {
-        console.log(response);
+      axiosSpring.put('/api/lists/'+props.listID, formData)
+        .then((response) => {
+        if(response.status === 200) {
+          setAlert({
+            type: ALERT_TYPES.SUCCESS.type,
+            message: 'Liste modifiée avec succès',
+            icon: ALERT_TYPES.SUCCESS.icon
+          });
+        }else{
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la modification de la liste',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        }
       }).catch((error) => {
         console.log(error);
+        setAlert({
+          type: ALERT_TYPES.ERROR.type,
+          message: 'Erreur lors de la création de la liste',
+          icon: ALERT_TYPES.ERROR.icon
+        });
       });
-    }else{
-      const response = axiosSpring.post('/api/lists/create', {
-        ownerID: 1, // TODO
+    } else {
+      let formData = new FormData();
+      formData.append('image', image);
+      formData.append('list', JSON.stringify({
         name: name,
         description: description,
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.log(error);
-      }); // TODO : make return list ID
+        ownerID: 1, // TODO ownerID
+        isShared: false,
+      }));
 
-      axiosSpring.post('/api/list/image', {
-        listID: 1, // TODO
-        image: image,
-      }).then((response) => {
+      axiosSpring.post('/api/lists', formData).then((response) => {
         console.log(response);
+        if(response.status === 200) {
+          setAlert({
+            type: ALERT_TYPES.SUCCESS.type,
+            message: 'Liste créée avec succès',
+            icon: ALERT_TYPES.SUCCESS.icon
+          });
+        }else{
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la création de la liste',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        }
       }).catch((error) => {
         console.log(error);
+        setAlert({
+          type: ALERT_TYPES.ERROR.type,
+          message: 'Erreur lors de la création de la liste',
+          icon: ALERT_TYPES.ERROR.icon
+        });
       });
     }
+
+    // Reset the form
+    setName("");
+    setDescription("");
+    setImage(DefaultList);
+
+    // Redirect to the list page
+    // TODO
   }
 
-  const handlePlaceChange = (id) => {
-    if(selectedPlaces.includes(id) === false){
-      setSelectedPlaces([...selectedPlaces, id]);
-    }else{
-      setSelectedPlaces(selectedPlaces.filter((place) => place !== id));
-    }
+  const handleImageUpload = (file) => {
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
   }
 
   return (
@@ -136,8 +183,8 @@ const ListCreateForm = (props) => {
       <article className="listCreate__image">
         <h1># Image de la liste</h1>
         <div className="listCreate__image__content">
-          <label htmlFor='place_image'>
-            <img src={image === DefaultList ? image : URL.createObjectURL(image)} alt='default place'/>
+          <label htmlFor='list_image'>
+            <img src={imagePreview} alt='list'/>
             <div>
               <h2>Choisir une image...</h2>
               <p>Une image carrée serait parfait ;)</p>
@@ -145,30 +192,14 @@ const ListCreateForm = (props) => {
               <p>(Image optionnelle)</p>
             </div>
           </label>
-          <input type="file" id='place_image' name='place_image' onChange={(e) => {
-            setImage(e.target.files[0]);
+          <input type="file" id='list_image' name='list_image' onChange={(e) => {
+            handleImageUpload(e.target.files[0]);
           }}></input>
         </div>
       </article>
 
-      <article className="listCreate__places">
-        <h1># Lieux de la liste</h1>
-        <ul className="listCreate__places__content">
-          {
-            places.map((place) => {
-              return(
-                <li key={place.id} onClick={() => handlePlaceChange(place.id)} className={"listCreate__places__content__item " + (selectedPlaces.includes(place.id)?" selected":"")}>
-                  <h2>{place.name}</h2>
-                </li>
-              )
-            })
-          }
-        </ul>
-      </article>
-
-
       <article className="listCreate__infos">
-        <h1># Informations sur le lieu</h1>
+        <h1># Informations sur la liste</h1>
         <div className="listCreate__infos__form">
           <label htmlFor='name'>Nom de la liste</label>
           <input type="text" placeholder='Nom de la liste' value={name} id='name' name='name' onChange={(e) => setName(e.target.value)}></input>
@@ -176,10 +207,10 @@ const ListCreateForm = (props) => {
             nameError !== null ? <p className="listCreate__infos__form__error">{nameError}</p> : null
           }
           <label htmlFor='description'>Description <span>Tips : optionnelle</span></label>
-          <textarea id='description' value={description} placeholder='Ce lieu est génial car...' name='description' onChange={(e) => setDescription(e.target.value)}></textarea>
+          <textarea id='description' value={description} placeholder='Cette liste contient...' name='description' onChange={(e) => setDescription(e.target.value)}></textarea>
         </div>
       </article>
-      <button className="placeCreate__submit" onClick={handleSubmit}>{
+      <button className="listCreate__submit" onClick={handleSubmit}>{
         props.isUpdate ? 'Modifier la liste' : 'Créer la liste'
       }</button>
     </section>

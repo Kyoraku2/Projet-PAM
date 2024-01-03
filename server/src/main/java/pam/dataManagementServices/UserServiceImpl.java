@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import pam.model.User;
 import pam.repositories.UserRepository;
 
-import static pam.model.User.DEFAULT_IMAGE;
-
 @Service
 public class UserServiceImpl implements UserService{
     @Autowired
@@ -29,7 +27,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User createUser(String username, String password, String email, String description) {
-        User newUser = new User(username, password, email, DEFAULT_IMAGE, description);
+        User newUser = new User(username, password, email, null, description);
         return userRepository.save(newUser);
     }
 

@@ -141,7 +141,7 @@ public class ImageController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setUserProfileImage(
             @RequestParam(value = "userID") Integer userID,
-            @RequestParam(value = "image") MultipartFile image
+            @RequestBody MultipartFile image
             ){
         // Verifications
         if(userID == null){
@@ -171,6 +171,10 @@ public class ImageController {
         if(uuid == null){
             return ApiResponse.internalServerError("Error while uploading image: "+image.getOriginalFilename());
         }
+
+        user.setImage(uuid);
+        userService.updateUser(user);
+
         return ApiResponse.ok("Image uploaded successfully: "+image.getOriginalFilename());
     }
 
@@ -178,7 +182,7 @@ public class ImageController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setPlaceImage(
             @RequestParam(value = "placeID") Integer placeID,
-            @RequestParam(value = "image") MultipartFile image
+            @RequestBody MultipartFile image
     ){
         // Verifications
         if(placeID == null){
@@ -208,6 +212,10 @@ public class ImageController {
         if(uuid == null){
             return ApiResponse.internalServerError("Error while uploading image: "+image.getOriginalFilename());
         }
+
+        place.setImage(uuid);
+        placeService.updatePlace(place);
+
         return ApiResponse.ok("Image uploaded successfully: "+image.getOriginalFilename());
     }
 
@@ -215,7 +223,7 @@ public class ImageController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setListImage(
             @RequestParam(value = "listID") Integer listID,
-            @RequestParam(value = "image") MultipartFile image
+            @RequestBody MultipartFile image
     ){
         // Verifications
         if(listID == null){
@@ -245,6 +253,10 @@ public class ImageController {
         if(uuid == null){
             return ApiResponse.internalServerError("Error while uploading image: "+image.getOriginalFilename());
         }
+
+        list.setImage(uuid);
+        listService.updateList(list);
+
         return ApiResponse.ok("Image uploaded successfully: "+image.getOriginalFilename());
     }
 
@@ -252,7 +264,7 @@ public class ImageController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deleteUserProfileImage(
             @RequestParam(value = "userID") Integer userID
-    ){
+    ) throws IOException {
         // Verifications
         if(userID == null){
             return ApiResponse.badRequest("Missing userID");
@@ -276,7 +288,7 @@ public class ImageController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deletePlaceImage(
             @RequestParam(value = "placeID") Integer placeID
-    ){
+    ) throws IOException {
         // Verifications
         if(placeID == null){
             return ApiResponse.badRequest("Missing placeID");
@@ -301,7 +313,7 @@ public class ImageController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deleteListImage(
             @RequestParam(value = "listID") Integer listID
-    ){
+    ) throws IOException {
         // Verifications
         if(listID == null){
             return ApiResponse.badRequest("Missing listID");

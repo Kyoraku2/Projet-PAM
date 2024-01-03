@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {filters} from "../../utils/filters";
 import DefaultList from "../../assets/images/defaultList.svg";
 import './create.scss';
@@ -7,9 +7,14 @@ import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import SetViewOnClick from "../MapControls/SetViewOnClick";
 import axios from "axios";
 import {INVALID_CHARS, NOMINATIM_BASE_URL} from "../../utils/consts";
+import AlertContext from "../context/alerts/AlertContext";
+import {ALERT_TYPES} from "../context/alerts/Alert";
 
 const PlaceCreateForm = (props) => {
+  const {alert, setAlert} = useContext(AlertContext);
+
   const [image, setImage] = useState(DefaultList);
+  const [imagePreview, setImagePreview] = useState(DefaultList);
   const [name, setName] = useState("");
   const [category, setCategory] = useState(null);
   const [description, setDescription] = useState("");
@@ -20,6 +25,10 @@ const PlaceCreateForm = (props) => {
   const [longitude, setLongitude] = useState(null);
   const [results, setResults] = useState([]);
 
+  const handleImageChange = (file) => {
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -32,28 +41,58 @@ const PlaceCreateForm = (props) => {
     }
 
     if(props.isUpdate){
-      // TODO : check
       // Getting the infos
       axiosSpring.get('/api/places/'+props.placeID)
         .then((response) => {
-          setName(response.data.name);
-          setCategory(response.data.category);
-          setDescription(response.data.description);
-          setLatitude(response.data.latitude);
-          setLongitude(response.data.longitude);
-        })
-        .catch((error) => console.log("error", error));
+          if(response.status === 200) {
+            setName(response.data.name);
+            setCategory(response.data.category);
+            setDescription(response.data.description);
+            setLatitude(response.data.latitude);
+            setLongitude(response.data.longitude);
 
-      // Getting the image
-      axiosSpring.get('/api/place/image',{
-        params: {
-          placeID: props.placeID,
-        }
-      })
-        .then((response) => {
-          setImage(response.data.image);
+            if(image === DefaultList){
+              axiosSpring.get("/api/place/image?placeID="+props.placeID,{
+                responseType: 'arraybuffer',
+              }).then(
+                response => {
+                  if(response.status === 200){
+                    // Create a blob from the image
+                    const blob = new Blob([response.data], {type: 'image/png'});
+                    // Create a data URL from the blob
+                    const dataUrl = URL.createObjectURL(blob);
+                    // Set the data URL to display the image
+                    handleImageChange(blob);
+                  }
+                }
+              ).catch(
+                error => {
+                  console.log(error);
+                }
+              )
+            }
+
+            setAlert({
+              type: ALERT_TYPES.SUCCESS.type,
+              message: 'Lieu récupéré avec succès',
+              icon: ALERT_TYPES.SUCCESS.icon
+            });
+          }else{
+            setAlert({
+              type: ALERT_TYPES.ERROR.type,
+              message: 'Erreur lors de la récupération du lieu',
+              icon: ALERT_TYPES.ERROR.icon
+            });
+          }
         })
-        .catch((error) => console.log("error", error));
+        .catch((error) => {
+          console.log(error);
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la récupération du lieu',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        });
     }
   }, [latitude, longitude]);
 
@@ -103,50 +142,82 @@ const PlaceCreateForm = (props) => {
       }
     }
 
+    if(category === null){
+      setCategory(filters[filters.length-1].id);
+    }
+
     setNameError(null);
 
 
     if(props.isUpdate){
-      const response = await axiosSpring.put('/api/places/update', {
-        id: props.placeID,
+      // TODO : place is set but it seems that its not sent
+      let formData = new FormData();
+      formData.append('image', image);
+      formData.append('place', JSON.stringify({
         name: name,
+        ownerID: 1, // TODO ownerID
         category: category,
         description: description,
         latitude: latitude,
         longitude: longitude,
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.log(error);
-      });
+      }));
 
-      axiosSpring.post('/api/place/image', {
-        placeID: props.placeID,
-        image: image,
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.log(error);
-      });
+      axiosSpring.put('/api/places/'+props.placeID, formData)
+        .then((response) => {
+          if(response.status === 200) {
+            setAlert({
+              type: ALERT_TYPES.SUCCESS.type,
+              message: 'Lieu modifié avec succès',
+              icon: ALERT_TYPES.SUCCESS.icon
+            });
+          }else{
+            setAlert({
+              type: ALERT_TYPES.ERROR.type,
+              message: 'Erreur lors de la modification du lieu',
+              icon: ALERT_TYPES.ERROR.icon
+            });
+          }
+        }).catch((error) => {
+          console.log(error);
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la modification du lieu',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        });
     }else{
-      const response = await axiosSpring.post('/api/places/create', {
-        ownerID: 1, // TODO
+      let formData = new FormData();
+      formData.append('image', image);
+      formData.append('place', JSON.stringify({
         name: name,
+        ownerID: 1, // TODO ownerID
         category: category,
         description: description,
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.log(error);
-      }); // TODO : make return place ID
+        latitude: latitude,
+        longitude: longitude,
+      }));
 
-      axiosSpring.post('/api/place/image', {
-        placeID: 1, // TODO
-        image: image,
-      }).then((response) => {
-        console.log(response);
+      axiosSpring.post('/api/places', formData).then((response) => {
+        if(response.status === 200) {
+          setAlert({
+            type: ALERT_TYPES.SUCCESS.type,
+            message: 'Lieu créé avec succès',
+            icon: ALERT_TYPES.SUCCESS.icon
+          });
+        }else{
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la création du lieu',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        }
       }).catch((error) => {
         console.log(error);
+        setAlert({
+          type: ALERT_TYPES.ERROR.type,
+          message: 'Erreur lors de la création du lieu',
+          icon: ALERT_TYPES.ERROR.icon
+        });
       });
     }
   };
@@ -157,7 +228,7 @@ const PlaceCreateForm = (props) => {
         <h1># Image du lieu</h1>
         <div className="placeCreate__image__content">
           <label htmlFor='place_image'>
-            <img src={image === DefaultList ? image : URL.createObjectURL(image)} alt='default place'/>
+            <img src={imagePreview} alt='place'/>
             <div>
               <h2>Choisir une image...</h2>
               <p>Une image carrée serait parfait ;)</p>
@@ -166,7 +237,7 @@ const PlaceCreateForm = (props) => {
             </div>
           </label>
           <input type="file" id='place_image' name='place_image' onChange={(e) => {
-            setImage(e.target.files[0])
+            handleImageChange(e.target.files[0]);
           }}></input>
         </div>
       </article>
@@ -242,7 +313,7 @@ const PlaceCreateForm = (props) => {
           <select id='category' name='category' defaultValue={filters[filters.length-1].name} onChange={(e) => setCategory(e.target.value)}>
             {
               filters.map((filter, index) => {
-                return <option key={index} value={filter.name} >{filter.name}</option>
+                return <option key={index} value={filter.id} >{filter.name}</option>
               })
             }
           </select>
@@ -256,7 +327,5 @@ const PlaceCreateForm = (props) => {
     </section>
   );
 };
-
-// TODO : image preview
 
 export default PlaceCreateForm;

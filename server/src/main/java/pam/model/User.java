@@ -11,7 +11,6 @@ import java.util.Vector;
 @Entity
 public class User {
     public static final String DEFAULT_DESCRIPTION = "Hello everyone!";
-    public static final String DEFAULT_IMAGE = "default.png";
 
     public static final int USERNAME_MIN_LENGTH = 4;
     public static final int USERNAME_MAX_LENGTH = 32;
