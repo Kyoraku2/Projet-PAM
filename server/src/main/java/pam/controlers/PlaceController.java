@@ -82,34 +82,11 @@ public class PlaceController {
         }
     }
 
-    private PlaceRequestBody addImage(PlaceRequestBody place) throws IOException {
-        byte[] image = imageService.getPlaceImage(place.getId());
-        if(image != null){
-            place.setImageResp(image);
-        }
-        return place;
-    }
-
-    private Iterable<PlaceRequestBody> addImages(Iterable<PlaceRequestBody> places) throws IOException {
-        ArrayList<PlaceRequestBody> res = new ArrayList<>();
-        for(PlaceRequestBody place : places){
-            res.add(addImage(place));
-        }
-        return res;
-    }
-
 
     @GetMapping("/places")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> list(){
-        Iterable<PlaceRequestBody> res = PlaceRequestBody.convert(placeService.getAllPlaces());
-
-        try{
-            res = addImages(res);
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(placeService.getAllPlaces());
     }
 
     @GetMapping("/places/{id}")
@@ -123,18 +100,7 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        Place placeFromDB = placeService.getPlace(id);
-
-        PlaceRequestBody res;
-        try{
-            res = addImage(
-                    new PlaceRequestBody(placeFromDB)
-            );
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok( placeService.getPlace(id));
     }
 
     @PostMapping("/places")
@@ -170,18 +136,7 @@ public class PlaceController {
             }
         }
 
-        PlaceRequestBody res;
-        try{
-            res = addImage(
-                    new PlaceRequestBody(
-                            placeFromBD
-                    )
-            );
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(placeFromBD);
     }
 
     @PutMapping("/places/{id}")
@@ -209,6 +164,9 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
+        place.setId(id);
+        Place placeFromBD = placeService.updatePlace(place);
+
         if(image != null){
             try{
                 if(placeService.getPlace(id).getImage() != null){
@@ -220,19 +178,7 @@ public class PlaceController {
             }
         }
 
-        PlaceRequestBody res;
-
-        try{
-            res = addImage(
-                    new PlaceRequestBody(
-                            placeService.updatePlace(place)
-                    )
-            );
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(placeFromBD);
     }
 
     @DeleteMapping("/places/{id}")
@@ -320,19 +266,7 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        Iterable<PlaceRequestBody> res;
-
-        try{
-            res = addImages(
-                    PlaceRequestBody.convert(
-                            placeService.getFavorites(userID)
-                    )
-            );
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(placeService.getFavorites(userID));
     }
 
     @GetMapping("/places/user/{userID}")
@@ -344,19 +278,7 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        Iterable<PlaceRequestBody> res;
-
-        try{
-            res = addImages(
-                    PlaceRequestBody.convert(
-                            placeService.getPlacesOfUser(userID)
-                    )
-            );
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(placeService.getPlacesOfUser(userID));
     }
 
     @GetMapping("/places/list/{listID}")
@@ -378,19 +300,7 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        Iterable<PlaceRequestBody> res;
-
-        try{
-            res = addImages(
-                    PlaceRequestBody.convert(
-                            placeService.getPlacesOfList(listID)
-                    )
-            );
-        }catch (Exception e){
-            return ApiResponse.badRequest("Error while getting image : " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(placeService.getPlacesOfList(listID));
     }
 
 

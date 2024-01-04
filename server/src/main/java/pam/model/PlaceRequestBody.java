@@ -12,7 +12,6 @@ public class PlaceRequestBody {
     private String category;
     private Long ownerID;
     private String ownerName;
-    private byte[] imageResp;
 
     public PlaceRequestBody() {
     }
@@ -60,14 +59,6 @@ public class PlaceRequestBody {
 
     public Long getOwnerID() {
         return ownerID;
-    }
-
-    public byte[] getImageResp() {
-        return imageResp;
-    }
-
-    public void setImageResp(byte[] imageResp) {
-        this.imageResp = imageResp;
     }
 
     public String getOwnerName() {

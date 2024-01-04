@@ -4,11 +4,18 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pam.dataManagementServices.UserService;
 import pam.model.User;
+import pam.model.UserRequestBody;
 import pam.utils.ApiResponse;
 
 import java.util.ArrayList;
@@ -19,7 +26,7 @@ import java.util.regex.Pattern;
 import static pam.model.User.*;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -60,16 +67,16 @@ public class UserController {
         }
     }
 
-    @RequestMapping("all")
+    @GetMapping("users")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> list(){
         return ApiResponse.ok(userService.getAllUsers());
     }
 
-    @RequestMapping("details")
+    @GetMapping("users/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getOneUser(
-        @RequestParam(value="id", required = false) Integer id
+        @PathVariable(value="id") Long id
     ){
         if(id == null){
             return ApiResponse.badRequest("Missing id");
@@ -81,37 +88,35 @@ public class UserController {
         return ApiResponse.ok(user);
     }
 
-    @RequestMapping("create")
+    @PostMapping("users")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> createUser(
-        @RequestParam(value="username") String username,
-        @RequestParam(value="password") String password,
-        @RequestParam(value="email") String email,
-        @RequestParam(value="description", required = false) String description
+        @RequestParam(value = "user") String userJson
     ){
+        UserRequestBody user = UserRequestBody.fromJson(userJson);
         List<String> errors = new ArrayList<>();
         // Check username
-        if(username == null){
+        if(user.getUsername() == null){
             errors.add("Missing username");
         }else{
-            verifyUsername(username, errors);
+            verifyUsername(user.getUsername(), errors);
         }
 
         // Check password
-        if(password == null){
+        if(user.getPassword() == null){
             errors.add("Missing password");
         }
 
         // Check email
-        if(email == null){
+        if(user.getEmail() == null){
             errors.add("Missing email");
         }else{
-            verifyEmail(email, errors);
+            verifyEmail(user.getEmail(), errors);
         }
 
         // Check description
-        if(description != null){
-            verifyDescription(description, errors);
+        if(user.getDescription() != null){
+            verifyDescription(user.getDescription(), errors);
         }
 
         if(!errors.isEmpty()){
@@ -119,23 +124,21 @@ public class UserController {
         }
         return ApiResponse.ok(
                 userService.createUser(
-                        username,
-                        password,
-                        email,
-                        description==null ? DEFAULT_DESCRIPTION : description
+                        user.getUsername(),
+                        user.getPassword(),
+                        user.getEmail(),
+                        user.getDescription()
                 )
         );
     }
 
-    @RequestMapping("update")
+    @PutMapping("users/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> updateUser(
-        @RequestParam(value="id") Integer id,
-        @RequestParam(value="username") String username,
-        @RequestParam(value="password") String password,
-        @RequestParam(value="email") String email,
-        @RequestParam(value="description", required = false) String description
+        @PathVariable(value="id") Long id,
+        @RequestParam(value = "user") String userJson
     ){
+        UserRequestBody user = UserRequestBody.fromJson(userJson);
         List<String> errors = new ArrayList<>();
         // Check id
         if(id == null) {
@@ -147,18 +150,18 @@ public class UserController {
         }
 
         // Check username
-        if(username != null){
-            verifyUsername(username, errors);
+        if(user.getUsername() != null){
+            verifyUsername(user.getUsername(), errors);
         }
 
         // Check email
-        if(email != null){
-            verifyEmail(email, errors);
+        if(user.getEmail() != null){
+            verifyEmail(user.getEmail(), errors);
         }
 
         // Check description
-        if(description != null){
-            verifyDescription(description, errors);
+        if(user.getDescription() != null){
+            verifyDescription(user.getDescription(), errors);
         }
 
         if(!errors.isEmpty()){
@@ -167,18 +170,18 @@ public class UserController {
         return ApiResponse.ok(
                 userService.updateUser(
                         id,
-                        username,
-                        password,
-                        email,
-                        description==null ? DEFAULT_DESCRIPTION : description
+                        user.getUsername(),
+                        user.getPassword(),
+                        user.getEmail(),
+                        user.getDescription()
                 )
         );
     }
 
-    @RequestMapping("delete")
+    @DeleteMapping("users/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deleteUser(
-        @RequestParam(value="id") Integer id
+        @PathVariable(value="id") Long id
     ){
         if(id == null){
             return ApiResponse.badRequest("Missing id");
@@ -188,6 +191,23 @@ public class UserController {
         }
         userService.deleteUser(id);
         return ApiResponse.ok("User deleted");
+    }
+
+    @PatchMapping("users/{id}/position")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> updatePosition(
+        @PathVariable(value="id") Long id,
+        @RequestParam(value="latitude") double latitude,
+        @RequestParam(value="longitude") double longitude
+    ){
+        if(id == null){
+            return ApiResponse.badRequest("Missing id");
+        }
+        if(id < 0 || userService.getUser(id) == null){
+            return ApiResponse.badRequest("Invalid id");
+        }
+        userService.updatePosition(id, latitude, longitude);
+        return ApiResponse.ok("Position updated");
     }
 
     // list : OK

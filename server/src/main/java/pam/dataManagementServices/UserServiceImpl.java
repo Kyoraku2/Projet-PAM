@@ -60,4 +60,12 @@ public class UserServiceImpl implements UserService{
     public void deleteUser(User user) {
         userRepository.delete(user);
     }
+
+    @Override
+    public User updatePosition(long id, double latitude, double longitude) {
+        User userFromDB = userRepository.findOne(id);
+        userFromDB.setLatitude(latitude);
+        userFromDB.setLongitude(longitude);
+        return userRepository.save(userFromDB);
+    }
 }

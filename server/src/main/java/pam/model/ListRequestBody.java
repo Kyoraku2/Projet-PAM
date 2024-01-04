@@ -1,8 +1,6 @@
 package pam.model;
 
 import com.google.gson.Gson;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -12,7 +10,6 @@ public class ListRequestBody {
     private String description;
     private Long ownerID;
     private String ownerName;
-    private byte[] imageResp;
     private boolean isShared;
     private Collection<Place> placesResp;
 
@@ -93,14 +90,6 @@ public class ListRequestBody {
         this.id = id;
     }
 
-    public byte[] getImageResp() {
-        return imageResp;
-    }
-
-    public void setImageResp(byte[] imageResp) {
-        this.imageResp = imageResp;
-    }
-
     public Collection<Place> getPlaces() {
         return placesResp;
     }
@@ -110,7 +99,7 @@ public class ListRequestBody {
     }
 
     public String toString(){
-        return "ListRequestBody: " + this.name + " " + this.description + " " + this.ownerID + " " + this.ownerName + " " + this.isShared + " " + this.id + " " + this.placesResp + " " + Arrays.toString(this.imageResp);
+        return "ListRequestBody: " + this.name + " " + this.description + " " + this.ownerID + " " + this.ownerName + " " + this.isShared + " " + this.id + " " + this.placesResp;
     }
 
     public static ListRequestBody fromJSON(String json){

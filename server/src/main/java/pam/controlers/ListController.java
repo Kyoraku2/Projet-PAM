@@ -81,60 +81,10 @@ public class ListController {
         }
     }
 
-    private ListRequestBody addImage(ListRequestBody list) throws IOException {
-        byte[] image = imageService.getListImage(list.getId());
-        if(image != null){
-            list.setImageResp(image);
-        }
-        return list;
-    }
-
-    private Iterable<ListRequestBody> addImages(Iterable<ListRequestBody> lists) throws IOException {
-        ArrayList<ListRequestBody> res = new ArrayList<>();
-        for(ListRequestBody list : lists){
-            res.add(addImage(list));
-        }
-        return res;
-    }
-
     @GetMapping("/lists")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> list(
-            @RequestParam(value = "userID") Long userID
-    ){
-        if(userID != null){
-            java.util.List<String> errors = new ArrayList<>();
-            // Check ownerID
-            verifyOwnerID(userID, errors);
-            if(!errors.isEmpty()){
-                return ApiResponse.badRequest(errors);
-            }
-
-            Iterable<ListRequestBody> lists;
-
-            try{
-                lists = addImages(
-                        ListRequestBody.convert(
-                                listService.getListsByOwnerID(userID)
-                        )
-                );
-            }catch (IOException e){
-                return ApiResponse.internalServerError("Error while loading images: " + e.getMessage());
-            }
-
-            return ApiResponse.ok(lists);
-        }
-        Iterable<ListRequestBody> lists;
-        try{
-            lists = addImages(
-                    ListRequestBody.convert(
-                            listService.getAllLists()
-                    )
-            );
-        }catch (IOException e){
-            return ApiResponse.internalServerError("Error while loading images: " + e.getMessage());
-        }
-        return ApiResponse.ok(lists);
+    public ResponseEntity<Object> list(){
+        return ApiResponse.ok(listService.getAllLists());
     }
 
     @GetMapping(value = "/lists/{id}")
@@ -147,19 +97,7 @@ public class ListController {
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        List listFromDB = listService.getList(id);
-        ListRequestBody list;
-        try{
-            list = addImage(
-                    new ListRequestBody(
-                            listFromDB
-                    )
-            );
-        }catch (IOException e){
-            return ApiResponse.internalServerError("Error while loading image: " + e.getMessage());
-        }
-        list.setPlaces(listFromDB.getPlaces());
-        return ApiResponse.ok(list);
+        return ApiResponse.ok(listService.getList(id));
     }
 
     @PostMapping("/lists")
@@ -194,19 +132,7 @@ public class ListController {
             }
         }
 
-        ListRequestBody res;
-
-        try{
-            res = addImage(
-                    new ListRequestBody(
-                            listFromDB
-                    )
-            );
-        }catch (IOException e){
-            return ApiResponse.internalServerError("Error while loading image: " + e.getMessage());
-        }
-
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(listFromDB);
     }
 
     @PutMapping("/lists/{listID}")
@@ -248,20 +174,7 @@ public class ListController {
             }
         }
 
-        ListRequestBody res;
-
-        try{
-            res = addImage(
-                    new ListRequestBody(
-                            listFromDB
-                    )
-            );
-        }catch (IOException e){
-            return ApiResponse.internalServerError("Error while loading image: " + e.getMessage());
-        }
-
-        res.setPlaces(listFromDB.getPlaces());
-        return ApiResponse.ok(res);
+        return ApiResponse.ok(listFromDB);
     }
 
     @PatchMapping("/lists/{listID}/addPlace/{placeID}")
@@ -331,5 +244,20 @@ public class ListController {
         }
         listService.deleteList(id);
         return ApiResponse.ok("List deleted");
+    }
+
+    @GetMapping("/lists/user/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> getUserLists(
+            @PathVariable Long id
+    ){
+        java.util.List<String> errors = new ArrayList<>();
+        // Check ownerID
+        verifyOwnerID(id, errors);
+        if(!errors.isEmpty()){
+            return ApiResponse.badRequest(errors);
+        }
+
+        return ApiResponse.ok(listService.getListsByOwnerID(id));
     }
 }

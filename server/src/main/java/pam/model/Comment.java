@@ -34,6 +34,10 @@ public class Comment {
         this.content = content;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public User getOwner() {
         return owner;
     }
