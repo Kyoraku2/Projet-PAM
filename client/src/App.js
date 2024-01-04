@@ -9,6 +9,7 @@ import ListsPage from "./components/list/ListsPage";
 import PlaceCreateForm from "./components/places/PlaceCreateForm";
 import ListCreateForm from "./components/list/ListCreateForm";
 import Alert from "./components/context/alerts/Alert";
+import ListDetails from "./components/list/ListDetails";
 
 function App() {
   return (
@@ -24,15 +25,17 @@ function App() {
           <Route path="/lists" element={<ListsPage />} />
           {/* <Route path="/lists/create" element={<ListCreateForm isUpdate={true} listID={3}/>} /> */}
           <Route path="/lists/create" element={<ListCreateForm />} />
+          <Route path="/lists/update/:listID" element={<ListCreateForm isUpdate={true}/>} />
+          <Route path="/lists/:listID" element={<ListDetails />} />
 
           {/* Places */}
-          <Route path="/places/create" element={<PlaceCreateForm isUpdate={true} placeID={3}/>} />
+          <Route path="/places/create" element={<PlaceCreateForm />} />
+          <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
 
           {/* Errors */}
           <Route path="*" element={<NotFound/>} />
         </Routes>
         <Alert/>
-        {/*<Footer/> TODO : display correclty*/}
       </Router>
     </div>
   );

@@ -68,3 +68,21 @@ button:hover{
 html{
   font-family: 'Roboto', sans-serif;
 }
+
+@media screen and (max-width: 430px){
+  html {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 330px){
+  html {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 300px){
+  html {
+    font-size: 10px;
+  }
+}

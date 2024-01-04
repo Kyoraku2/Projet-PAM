@@ -9,8 +9,6 @@ import pam.model.User;
 import pam.repositories.ListRepository;
 import pam.repositories.PlaceRepository;
 
-import java.util.ArrayList;
-
 @Service
 public class ListServiceImpl implements ListService{
     @Autowired
@@ -107,8 +105,11 @@ public class ListServiceImpl implements ListService{
 
     @Override
     public List removePlace(List list, Place place) {
-        list.getPlaces().remove(place);
-        return listRepository.save(list);
+        List listFromBD = listRepository.findOne(list.getId());
+        Place placeFromBD = placeRepository.findOne(place.getId());
+        listFromBD.getPlaces().remove(place);
+        placeFromBD.getLists().remove(list);
+        return listRepository.save(listFromBD);
     }
 
     @Override
@@ -116,13 +117,17 @@ public class ListServiceImpl implements ListService{
         List list = listRepository.findOne(listID);
         Place place = placeRepository.findOne(placeID);
         list.getPlaces().remove(place);
+        place.getLists().remove(list);
         return listRepository.save(list);
     }
 
     @Override
     public List addPlace(List list, Place place) {
-        list.getPlaces().add(place);
-        return listRepository.save(list);
+        List listFromBD = listRepository.findOne(list.getId());
+        Place placeFromBD = placeRepository.findOne(place.getId());
+        listFromBD.getPlaces().add(place);
+        placeFromBD.getLists().add(list);
+        return listRepository.save(listFromBD);
     }
 
     @Override
@@ -130,6 +135,7 @@ public class ListServiceImpl implements ListService{
         List list = listRepository.findOne(listID);
         Place place = placeRepository.findOne(placeID);
         list.getPlaces().add(place);
+        place.getLists().add(list);
         return listRepository.save(list);
     }
 }

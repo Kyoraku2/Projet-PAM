@@ -14,7 +14,23 @@ export const AlertProvider = ({children}) => {
       const timer = setTimeout(() => {
         setAlert(null);
       }, TIME_TO_HIDE);
-      // TODO : maybe animate the timer width
+      const timerElement = document.querySelector('.alert__timer');
+      let i = 0;
+      if (i === 0) {
+        i = 1;
+        var width = 1;
+        var id = setInterval(frame, 10);
+        function frame() {
+          if (width >= 100) {
+            clearInterval(id);
+            i = 0;
+          } else {
+            // Incrementing width depending on TIME_TO_HIDE
+            width += 100 / (TIME_TO_HIDE / 10);
+            timerElement.children[0].style.width = width + "%"; 
+          }
+        }
+      }
       return () => clearTimeout(timer);
     }
   }, [alert]);

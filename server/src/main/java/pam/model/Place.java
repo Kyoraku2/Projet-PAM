@@ -1,7 +1,6 @@
 package pam.model;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;

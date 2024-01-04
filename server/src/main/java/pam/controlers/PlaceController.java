@@ -2,7 +2,6 @@ package pam.controlers;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Point;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,7 +85,10 @@ public class PlaceController {
     @GetMapping("/places")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> list(){
-        return ApiResponse.ok(placeService.getAllPlaces());
+        Iterable<PlaceRequestBody> placesResp = PlaceRequestBody.convert(
+            placeService.getAllPlaces()
+        );
+        return ApiResponse.ok(placesResp);
     }
 
     @GetMapping("/places/{id}")
@@ -100,7 +102,9 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        return ApiResponse.ok( placeService.getPlace(id));
+        return ApiResponse.ok(
+            new PlaceRequestBody(placeService.getPlace(id))
+        );
     }
 
     @PostMapping("/places")
@@ -136,7 +140,7 @@ public class PlaceController {
             }
         }
 
-        return ApiResponse.ok(placeFromBD);
+        return ApiResponse.ok(new PlaceRequestBody(placeFromBD));
     }
 
     @PutMapping("/places/{id}")
@@ -178,7 +182,7 @@ public class PlaceController {
             }
         }
 
-        return ApiResponse.ok(placeFromBD);
+        return ApiResponse.ok(new PlaceRequestBody(placeFromBD));
     }
 
     @DeleteMapping("/places/{id}")
@@ -258,7 +262,7 @@ public class PlaceController {
     @GetMapping("/places/user/{userID}/favorites")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getFavorites(
-            @RequestBody Long userID
+            @PathVariable Long userID
     ){
         List<String> errors = new ArrayList<>();
         verifyOwnerID(userID, errors);
@@ -271,20 +275,26 @@ public class PlaceController {
 
     @GetMapping("/places/user/{userID}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> getPlacesByUser(@RequestParam(value = "userID") Long userID){
+    public ResponseEntity<Object> getPlacesByUser(
+            @PathVariable(value = "userID") Long userID
+    ){
         List<String> errors = new ArrayList<>();
         verifyOwnerID(userID, errors);
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
 
-        return ApiResponse.ok(placeService.getPlacesOfUser(userID));
+        Iterable<PlaceRequestBody> placesResp = PlaceRequestBody.convert(
+                placeService.getPlacesOfUser(userID)
+        );
+
+        return ApiResponse.ok(placesResp);
     }
 
     @GetMapping("/places/list/{listID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getPlacesByList(
-            @RequestParam(value = "listID") Long listID
+            @PathVariable(value = "listID") Long listID
     ){
         List<String> errors = new ArrayList<>();
 
@@ -300,7 +310,11 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        return ApiResponse.ok(placeService.getPlacesOfList(listID));
+        Iterable<PlaceRequestBody> placesResp = PlaceRequestBody.convert(
+                placeService.getPlacesOfList(listID)
+        );
+
+        return ApiResponse.ok(placesResp);
     }
 
 

@@ -2,7 +2,6 @@ package pam.controlers;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +11,6 @@ import pam.dataManagementServices.PlaceService;
 import pam.dataManagementServices.UserService;
 import pam.model.List;
 import pam.model.ListRequestBody;
-import pam.model.Place;
 import pam.utils.ApiResponse;
 
 import java.io.IOException;
@@ -83,8 +81,16 @@ public class ListController {
 
     @GetMapping("/lists")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> list(){
-        return ApiResponse.ok(listService.getAllLists());
+    public ResponseEntity<Object> list(
+        @RequestParam(value = "shared", required = false) Boolean shared
+    ){
+        if(shared == null || !shared){
+            Iterable<ListRequestBody> listRequestBodies = ListRequestBody.convert(
+                listService.getAllLists()
+            );
+            return ApiResponse.ok(listRequestBodies);
+        }
+        return ApiResponse.noContent("Not Implemented");
     }
 
     @GetMapping(value = "/lists/{id}")
@@ -97,7 +103,7 @@ public class ListController {
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-        return ApiResponse.ok(listService.getList(id));
+        return ApiResponse.ok(new ListRequestBody(listService.getList(id)));
     }
 
     @PostMapping("/lists")
@@ -123,7 +129,6 @@ public class ListController {
         }
 
         List listFromDB = listService.createList(list);
-
         if(image != null){
             try{
                 imageService.uploadListImage(listFromDB.getId(), image);
@@ -132,7 +137,7 @@ public class ListController {
             }
         }
 
-        return ApiResponse.ok(listFromDB);
+        return ApiResponse.ok(new ListRequestBody(listFromDB));
     }
 
     @PutMapping("/lists/{listID}")
@@ -174,14 +179,14 @@ public class ListController {
             }
         }
 
-        return ApiResponse.ok(listFromDB);
+        return ApiResponse.ok(new ListRequestBody(listFromDB));
     }
 
     @PatchMapping("/lists/{listID}/addPlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> addPlace(
-            @PathVariable Long id,
-            @PathVariable Long placeID
+            @PathVariable(value = "listID") Long id,
+            @PathVariable(value = "placeID") Long placeID
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check listID
@@ -200,11 +205,11 @@ public class ListController {
         return ApiResponse.ok("Place added to list");
     }
 
-    @PatchMapping("/lists/{id}/removePlace/{placeID}")
+    @PatchMapping("/lists/{listID}/removePlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> removePlace(
-            @PathVariable Long id,
-            @PathVariable Long placeID
+            @PathVariable(value = "listID") Long id,
+            @PathVariable(value = "placeID") Long placeID
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check listID
@@ -258,6 +263,10 @@ public class ListController {
             return ApiResponse.badRequest(errors);
         }
 
-        return ApiResponse.ok(listService.getListsByOwnerID(id));
+        Iterable<ListRequestBody> listRequestBodies = ListRequestBody.convert(
+                listService.getListsByOwnerID(id)
+        );
+
+        return ApiResponse.ok(listRequestBodies);
     }
 }

@@ -5,9 +5,13 @@ import axiosSpring from "../../utils/axios/axiosSpring";
 import './create.scss';
 import AlertContext from "../context/alerts/AlertContext";
 import {ALERT_TYPES} from "../context/alerts/Alert";
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ListCreateForm = (props) => {
-  const {alert, setAlert} = useContext(AlertContext);
+  const {setAlert} = useContext(AlertContext);
+
+  const {listID} = useParams();
+  const navigate = useNavigate();
 
   const [image, setImage] = useState(DefaultList);
   const [imagePreview, setImagePreview] = useState(DefaultList);
@@ -15,26 +19,37 @@ const ListCreateForm = (props) => {
   const [description, setDescription] = useState("");
   const [nameError, setNameError] = useState(null);
 
+  const handleImageChange = (file) => {
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const resetAndRedirect = (id) => {
+    setName("");
+    setDescription("");
+    setImage(DefaultList);
+    setImagePreview(DefaultList);
+    navigate('/lists/'+id);
+  }
+
   useEffect(() => {
-    if(props.isUpdate) {
+    if(props.isUpdate && name === "") {
       // Getting the infos
-      axiosSpring.get('/api/lists/' + props.listID)
+      axiosSpring.get('/api/lists/' + listID)
         .then((response) => {
           if(response.status === 200) {
             setName(response.data.name);
             setDescription(response.data.description);
 
-            axiosSpring.get("/api/list/image?placeID="+props.listID,{
+            axiosSpring.get("/api/list/"+listID+"/image",{
               responseType: 'arraybuffer',
             }).then(
               response => {
                 if(response.status === 200){
                   // Create a blob from the image
                   const blob = new Blob([response.data], {type: 'image/png'});
-                  // Create a data URL from the blob
-                  const dataUrl = URL.createObjectURL(blob);
                   // Set the data URL to display the image
-                  // TODO
+                  handleImageChange(blob);
                 }
               }
             ).catch(
@@ -65,7 +80,7 @@ const ListCreateForm = (props) => {
           });
         });
     }
-  }, []);
+  }, [props, listID, setAlert, name]);
 
 
   const handleSubmit = async () => {
@@ -99,14 +114,14 @@ const ListCreateForm = (props) => {
       let formData = new FormData();
       formData.append('image', image);
       formData.append('list', JSON.stringify({
-        id: props.listID,
+        id: listID,
         name: name,
         description: description,
         ownerID: 1, // TODO ownerID
         isShared: false,
       }));
 
-      axiosSpring.put('/api/lists/'+props.listID, formData)
+      axiosSpring.put('/api/lists/'+listID, formData)
         .then((response) => {
         if(response.status === 200) {
           setAlert({
@@ -114,6 +129,7 @@ const ListCreateForm = (props) => {
             message: 'Liste modifiée avec succès',
             icon: ALERT_TYPES.SUCCESS.icon
           });
+          resetAndRedirect(response.data.id);
         }else{
           setAlert({
             type: ALERT_TYPES.ERROR.type,
@@ -140,13 +156,13 @@ const ListCreateForm = (props) => {
       }));
 
       axiosSpring.post('/api/lists', formData).then((response) => {
-        console.log(response);
         if(response.status === 200) {
           setAlert({
             type: ALERT_TYPES.SUCCESS.type,
             message: 'Liste créée avec succès',
             icon: ALERT_TYPES.SUCCESS.icon
           });
+          resetAndRedirect(response.data.id);
         }else{
           setAlert({
             type: ALERT_TYPES.ERROR.type,
@@ -163,19 +179,6 @@ const ListCreateForm = (props) => {
         });
       });
     }
-
-    // Reset the form
-    setName("");
-    setDescription("");
-    setImage(DefaultList);
-
-    // Redirect to the list page
-    // TODO
-  }
-
-  const handleImageUpload = (file) => {
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
   }
 
   return (
@@ -193,7 +196,7 @@ const ListCreateForm = (props) => {
             </div>
           </label>
           <input type="file" id='list_image' name='list_image' onChange={(e) => {
-            handleImageUpload(e.target.files[0]);
+            handleImageChange(e.target.files[0]);
           }}></input>
         </div>
       </article>

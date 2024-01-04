@@ -13,10 +13,10 @@ const ListsPage = (props) => {
                     <Tab>Partagées</Tab>
                 </TabList>
                 <TabPanel>
-                    <ListCollection class="listsPage"/>
+                    <ListCollection class="listsPage" shared={false}/>
                 </TabPanel>
                 <TabPanel>
-                    <ListCollection class="listsPage"/>
+                    <ListCollection class="listsPage" shared={true}/>
                 </TabPanel>
             </Tabs>
     );

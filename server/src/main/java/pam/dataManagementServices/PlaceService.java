@@ -1,6 +1,5 @@
 package pam.dataManagementServices;
 
-import org.springframework.data.geo.Point;
 import pam.model.Place;
 import pam.model.PlaceRequestBody;
 import pam.model.User;

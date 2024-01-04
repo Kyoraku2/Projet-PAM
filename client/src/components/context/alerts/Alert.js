@@ -50,10 +50,11 @@ const Alert = (props) => {
           {alert.message}
         </div>
       </div>
-      <div className="alert__timer"></div>
+      <div className="alert__timer">
+        <div></div>
+      </div>
     </div>
   );
-  return <div>hello</div>
 };
 
 export default Alert;

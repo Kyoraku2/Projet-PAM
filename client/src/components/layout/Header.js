@@ -3,7 +3,7 @@ import logo from '../../assets/images/logo.svg';
 import {Link} from "react-router-dom";
 import ProfileCard from "./ProfileCard";
 import './header.scss';
-import {FaMapMarkerAlt, FaRegPlusSquare, FaSearch} from "react-icons/fa";
+import {FaListUl, FaMapMarkerAlt, FaRegPlusSquare} from "react-icons/fa";
 import {FaMap, FaUser} from "react-icons/fa6";
 
 const Header = () => {
@@ -32,7 +32,20 @@ const Header = () => {
         <Link to={'/'} className='nav__logo'>
           <img src={logo} alt='Application logo'/>
         </Link>
+        <ul className='nav__link'>
+          <li className='nav__link__item'>
+            <Link to={'/places'}>
+              Lieux
+            </Link>
+          </li>
+          <li className='nav__link__item'>
+            <Link to={'/lists'}>
+              Listes
+            </Link>
+          </li>
+        </ul>
 
+        {/*}
         <div className='nav__search'>
           <form>
             <input type='text' placeholder='Rerchercher...'/>
@@ -41,10 +54,11 @@ const Header = () => {
             </button>
           </form>
         </div>
+        */}
 
         <div className='nav__right'>
           <a className='nav__right__create' href='/places/create'>
-            Ajouter un lieu
+            Créer un lieu
           </a>
 
           <ProfileCard class='nav__right'/>
@@ -64,7 +78,7 @@ const Header = () => {
         <li className={'nav__links__item ' + (activeLink === 1 ? 'nav__links__item--active':'')}
           onClick={() => handleActiveLink(1)}
         >
-          <Link to={'/todo'}>
+          <Link to={'/places'}>
             <FaMapMarkerAlt/>
             <span>Lieux</span>
           </Link>
@@ -82,16 +96,16 @@ const Header = () => {
         <li className={'nav__links__item ' + (activeLink === 3 ? 'nav__links__item--active':'')}
             onClick={() => handleActiveLink(3)}
         >
-          <Link to={'/todo'}>
-            <FaSearch/>
-            <span>Rechercher</span>
+          <Link to={'/lists'}>
+            <FaListUl />
+            <span>Listes</span>
           </Link>
         </li>
 
         <li className={'nav__links__item ' + (activeLink === 4 ? 'nav__links__item--active':'')}
             onClick={() => handleActiveLink(4)}
         >
-          <Link to={'/todo'}>
+          <Link to={'/profil'}>
             <FaUser/>
             <span>Profil</span>
           </Link>

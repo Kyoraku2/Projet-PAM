@@ -33,4 +33,14 @@
       }
     }
   }
+
+  &__label{
+    margin: 0 0.5rem;
+    font-weight: bold;
+    color: darken(#fff,70%);
+  }
+
+  &__slider{
+    
+  }
 }

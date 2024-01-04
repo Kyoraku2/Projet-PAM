@@ -1,7 +1,6 @@
 package pam.dataManagementServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import pam.model.CategoryEnum;
 import pam.model.Place;

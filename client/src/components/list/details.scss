@@ -1,0 +1,133 @@
+@import "../../utils/styles/vars";
+@import "../../utils/styles/mixins";
+
+.listDetails{
+    display: flex;
+    padding: 1rem 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: calc(100vh - $navbarHeight - 2rem - 1px);
+
+    &__actions{
+        position: absolute;
+        top: $navbarHeight;
+        margin: 1rem;
+        right: 0;
+        button{
+            color: darken($color: #fff, $amount: 60%);
+            font-size: 2rem;
+        }
+
+        &__edit, &__share{
+            &:hover{
+                color: #0084DC
+            }
+        }
+        &__delete{
+            &:hover{
+                color: #DA0100
+            }
+        }
+    }
+
+    &__content{
+        width: 75%;
+        background: #eeeeee;
+        padding: 1.5rem;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: row;
+        column-gap: 1rem;
+
+        &__infos{
+            width: 100%;
+            h1{
+                font-size: 1.5rem;
+                font-weight: 500;
+                color: darken(#fff, 75%);
+            }
+
+            h2{
+                margin: 0.5rem 0;
+                font-size: 1.15rem;
+                font-weight: 500;
+                color: darken(#fff, 75%);
+            }
+    
+            span{
+                display: block;
+                margin: 0.25rem 0;
+                font-size: 1rem;
+                font-weight: 400;
+                font-style: italic;
+                color: darken(#fff, 50%);
+            }
+    
+            p{
+                span{
+                    display: inline-block;
+                    font-weight: 500;
+                    color: darken(#fff, 75%);
+                    font-style: normal;
+                    padding-right: 0.5rem;
+                }
+                font-size: 1rem;
+                font-weight: 400;
+            }
+
+            &>div{
+                display: flex;
+                align-items: center;
+                button{
+                    font-size: 1rem;
+                    display: flex;
+                    align-items: center;
+                    &:hover{
+                        color: #0084DC;
+                    }
+                }
+            }
+
+            &__places{
+                width: 100%;
+                max-height: 15rem;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                @include scrollBarBis();
+                border-top: 1px solid $borderColor;
+                
+                a{
+                    border-bottom: 1px solid $borderColor;
+                    background-color: lighten($color: $borderColor, $amount: 10%);
+                    padding: 0.5rem;
+                    display: block;
+                    width: 100%;
+                    @include resetLinks();
+                    &:hover{
+                        background: darken($color: #eeeeee, $amount: 5%);
+                    }
+                }
+            }
+        }
+
+        
+        
+        img{
+            width: 50%;
+            border-radius: 5px;
+            box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+        }
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .listDetails{
+        &__content{
+            flex-direction: column;
+            align-items: center;
+            row-gap: 1rem;
+        }
+    }
+}

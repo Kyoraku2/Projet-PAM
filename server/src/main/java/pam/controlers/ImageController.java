@@ -37,10 +37,10 @@ public class ImageController {
         logger.info("Initialize image controller...");
     }
 
-    @GetMapping("/user/profileImage")
+    @GetMapping("/user/{id}/profileImage")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getUserProfileImage(
-            @RequestParam(value = "userID") Integer userID
+            @PathVariable(value = "id") Long userID
     ){
         // Verifications
         if(userID == null){
@@ -64,16 +64,16 @@ public class ImageController {
         }
 
         if(image == null){
-            return ApiResponse.notFound("Image not found");
+            return ApiResponse.noContent("No image found");
         }
 
         return ApiResponse.ok(image);
     }
 
-    @GetMapping("/place/image")
+    @GetMapping("/place/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getPlaceImage(
-            @RequestParam(value = "placeID") Integer placeID
+            @PathVariable(value = "id") Integer placeID
     ){
         // Verifications
         if(placeID == null){
@@ -98,16 +98,16 @@ public class ImageController {
         }
 
         if(image == null){
-            return ApiResponse.notFound("Image not found");
+            return ApiResponse.noContent("No image found");
         }
 
         return ApiResponse.ok(image);
     }
 
-    @GetMapping("/list/image")
+    @GetMapping("/list/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getListImage(
-            @RequestParam(value = "listID") Integer listID
+            @PathVariable(value = "id") Integer listID
     ){
         // Verifications
         if(listID == null){
@@ -132,15 +132,15 @@ public class ImageController {
         }
 
         if(image == null){
-            return ApiResponse.notFound("Image not found");
+            return ApiResponse.noContent("No image found");
         }
         return ApiResponse.ok(image);
     }
 
-    @PostMapping("/user/profileImage")
+    @PostMapping("/user/{id}/profileImage")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setUserProfileImage(
-            @RequestParam(value = "userID") Integer userID,
+            @PathVariable(value = "id") Long userID,
             @RequestBody MultipartFile image
             ){
         // Verifications
@@ -178,10 +178,10 @@ public class ImageController {
         return ApiResponse.ok("Image uploaded successfully: "+image.getOriginalFilename());
     }
 
-    @PostMapping("/place/image")
+    @PostMapping("/place/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setPlaceImage(
-            @RequestParam(value = "placeID") Integer placeID,
+            @PathVariable(value = "id") Integer placeID,
             @RequestBody MultipartFile image
     ){
         // Verifications
@@ -219,10 +219,10 @@ public class ImageController {
         return ApiResponse.ok("Image uploaded successfully: "+image.getOriginalFilename());
     }
 
-    @PostMapping("/list/image")
+    @PostMapping("/list/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setListImage(
-            @RequestParam(value = "listID") Integer listID,
+            @PathVariable(value = "id") Integer listID,
             @RequestBody MultipartFile image
     ){
         // Verifications
@@ -260,10 +260,10 @@ public class ImageController {
         return ApiResponse.ok("Image uploaded successfully: "+image.getOriginalFilename());
     }
 
-    @DeleteMapping("/user/profileImage")
+    @DeleteMapping("/user/{id}/profileImage")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deleteUserProfileImage(
-            @RequestParam(value = "userID") Integer userID
+            @PathVariable(value = "id") Long userID
     ) throws IOException {
         // Verifications
         if(userID == null){
@@ -284,10 +284,10 @@ public class ImageController {
         return ApiResponse.ok("Image deleted");
     }
 
-    @DeleteMapping("/place/image")
+    @DeleteMapping("/place/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deletePlaceImage(
-            @RequestParam(value = "placeID") Integer placeID
+            @PathVariable(value = "id") Integer placeID
     ) throws IOException {
         // Verifications
         if(placeID == null){
@@ -309,10 +309,10 @@ public class ImageController {
         return ApiResponse.ok("Image deleted");
     }
 
-    @DeleteMapping("/list/image")
+    @DeleteMapping("/list/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deleteListImage(
-            @RequestParam(value = "listID") Integer listID
+            @PathVariable(value = "id") Integer listID
     ) throws IOException {
         // Verifications
         if(listID == null){

@@ -1,17 +1,33 @@
 package pam.model;
 
 import com.google.gson.Gson;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class ListRequestBody {
+    public class ReducedPlace {
+        private Long id;
+        private String name;    
+
+        public ReducedPlace(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public Long getId() {
+            return id;
+        }
+        
+        public String getName() {
+            return name;
+        }
+    }
     private Long id;
     private String name;
     private String description;
     private Long ownerID;
     private String ownerName;
     private boolean isShared;
-    private Collection<Place> placesResp;
+    private Collection<ReducedPlace> placesResp;
 
     public ListRequestBody() {
     }
@@ -25,7 +41,9 @@ public class ListRequestBody {
         this.id = list.getId();
         if(list.getPlaces() != null){
             placesResp = new java.util.ArrayList<>();
-            placesResp.addAll(list.getPlaces());
+            for(Place place : list.getPlaces()){
+                placesResp.add(new ReducedPlace(place.getId(), place.getName()));
+            }
         }
     }
 
@@ -90,11 +108,11 @@ public class ListRequestBody {
         this.id = id;
     }
 
-    public Collection<Place> getPlaces() {
+    public Collection<ReducedPlace> getPlaces() {
         return placesResp;
     }
 
-    public void setPlaces(Collection<Place> places) {
+    public void setPlaces(Collection<ReducedPlace> places) {
         this.placesResp = places;
     }
 

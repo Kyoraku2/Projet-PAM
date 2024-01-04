@@ -13,10 +13,30 @@
     align-items: center;
     img{
       height: 100%;
+      aspect-ratio: 1;
     }
   }
 
-  &__search{
+  &__link{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    &__item{
+      a{
+        @include resetLinks();
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        margin-right: 1rem;
+        font-size: 1rem;
+        font-weight: 400;
+        &:hover{
+          background: $navbarHoverBackground;
+        }
+      }
+    }
+  }
+
+  /*&__search{
     display: flex;
     align-items: center;
     form{
@@ -45,7 +65,7 @@
         aspect-ratio: 1;
       }
     }
-  }
+  }*/
 
   &__right{
     display: flex;

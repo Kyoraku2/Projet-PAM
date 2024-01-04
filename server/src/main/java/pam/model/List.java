@@ -120,6 +120,14 @@ public class List {
         this.places = places;
     }
 
+    public void addPlace(Place place){
+        this.places.add(place);
+    }
+
+    public void removePlace(Place place){
+        this.places.remove(place);
+    }
+
     public String toString(){
         return "List: " + this.name + " " + this.description + " " + this.image + " " + this.isShared + " " + this.owner + " " + this.places + " " + this.id;
     }

@@ -9,14 +9,16 @@ import axios from "axios";
 import {INVALID_CHARS, NOMINATIM_BASE_URL} from "../../utils/consts";
 import AlertContext from "../context/alerts/AlertContext";
 import {ALERT_TYPES} from "../context/alerts/Alert";
+import { useParams } from 'react-router-dom';
 
 const PlaceCreateForm = (props) => {
   const {alert, setAlert} = useContext(AlertContext);
+  const {placeID} = useParams();
 
   const [image, setImage] = useState(DefaultList);
   const [imagePreview, setImagePreview] = useState(DefaultList);
   const [name, setName] = useState("");
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState(filters[filters.length-1].id);
   const [description, setDescription] = useState("");
   const [nameError, setNameError] = useState(null);
   const [address, setAddress] = useState(null);
@@ -42,7 +44,7 @@ const PlaceCreateForm = (props) => {
 
     if(props.isUpdate && name === ""){
       // Getting the infos
-      axiosSpring.get('/api/places/'+props.placeID)
+      axiosSpring.get('/api/places/'+placeID)
         .then((response) => {
           if(response.status === 200) {
             setName(response.data.name);
@@ -52,15 +54,13 @@ const PlaceCreateForm = (props) => {
             setLongitude(response.data.longitude);
 
             if(image === DefaultList){
-              axiosSpring.get("/api/place/image?placeID="+props.placeID,{
+              axiosSpring.get("/api/place/"+placeID+"/image",{
                 responseType: 'arraybuffer',
               }).then(
                 response => {
                   if(response.status === 200){
                     // Create a blob from the image
                     const blob = new Blob([response.data], {type: 'image/png'});
-                    // Create a data URL from the blob
-                    const dataUrl = URL.createObjectURL(blob);
                     // Set the data URL to display the image
                     handleImageChange(blob);
                   }
@@ -94,7 +94,7 @@ const PlaceCreateForm = (props) => {
           });
         });
     }
-  }, [latitude, longitude]);
+  }, [latitude, longitude, setAlert, placeID, name, image, props]);
 
   const handleSearch = (query) => {
     const params = {
@@ -153,7 +153,7 @@ const PlaceCreateForm = (props) => {
       let formData = new FormData();
       formData.append('image', image);
       formData.append('place', JSON.stringify({
-        id: props.placeID,
+        id: placeID,
         name: name,
         ownerID: 1, // TODO ownerID
         category: category,
@@ -162,7 +162,7 @@ const PlaceCreateForm = (props) => {
         longitude: longitude,
       }));
 
-      axiosSpring.put('/api/places/'+props.placeID, formData)
+      axiosSpring.put('/api/places/'+placeID, formData)
         .then((response) => {
           if(response.status === 200) {
             setAlert({
@@ -310,7 +310,7 @@ const PlaceCreateForm = (props) => {
             nameError !== null ? <p className="placeCreate__infos__form__error">{nameError}</p> : null
           }
           <label htmlFor='category'>Catégorie <span>Défaut : Autre</span></label>
-          <select id='category' name='category' defaultValue={filters[filters.length-1].name} onChange={(e) => setCategory(e.target.value)}>
+          <select id='category' name='category' defaultValue={category} onChange={(e) => setCategory(e.target.value)}>
             {
               filters.map((filter, index) => {
                 return <option key={index} value={filter.id} >{filter.name}</option>
