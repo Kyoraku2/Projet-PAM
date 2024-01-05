@@ -97,9 +97,13 @@
   }
 
   &__map{
+    position: relative;
     min-height: 500px;
     width: 100%;
     height: calc(100vh - $filterHeight - $navbarHeight - 2px);
+
+    @include centerBtn();
+
     & .leaflet-control-zoom{
       margin-top: calc($filterHeight + 0.25rem);
     }

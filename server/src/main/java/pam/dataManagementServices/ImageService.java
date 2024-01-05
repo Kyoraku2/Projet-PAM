@@ -11,7 +11,7 @@ public interface ImageService {
     byte[] getProfileImage(long userID) throws IOException;
     byte[] getPlaceImage(long placeID) throws IOException;
     byte[] getListImage(long listID) throws IOException;
-    void deleteProfileImage(long userID);
-    void deletePlaceImage(long placeID);
-    void deleteListImage(long listID);
+    void deleteProfileImage(long userID) throws IOException;
+    void deletePlaceImage(long placeID) throws IOException;
+    void deleteListImage(long listID) throws IOException;
 }

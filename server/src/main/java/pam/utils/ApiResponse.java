@@ -72,4 +72,8 @@ public class ApiResponse {
     public static ResponseEntity<Object> notImplemented(){
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(NOT_IMPLEMENTED_DEFAULT);
     }
+
+    public static ResponseEntity<Object> noContent(String message){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
+    }
 }

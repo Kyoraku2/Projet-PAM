@@ -11,7 +11,6 @@ import java.util.Vector;
 @Entity
 public class User {
     public static final String DEFAULT_DESCRIPTION = "Hello everyone!";
-    public static final String DEFAULT_IMAGE = "default.png";
 
     public static final int USERNAME_MIN_LENGTH = 4;
     public static final int USERNAME_MAX_LENGTH = 32;
@@ -48,6 +47,9 @@ public class User {
 
     Date signInDate;
 
+    double latitude;
+    double longitude;
+
     @Enumerated(EnumType.STRING)
     RoleEnum role;
 
@@ -68,6 +70,9 @@ public class User {
         this.role = RoleEnum.USER;
         this.password = password;
         this.signInDate = new Date(System.currentTimeMillis());
+        this.description = DEFAULT_DESCRIPTION;
+        this.latitude = 0;
+        this.longitude = 0;
     }
 
     public User(String username, String mail, String password, String image, String description) {
@@ -138,5 +143,25 @@ public class User {
 
     public void setRole(RoleEnum role) {
         this.role = role;
+    }
+
+    public void setSignInDate(Date signInDate) {
+        this.signInDate = signInDate;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

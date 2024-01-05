@@ -1,7 +1,6 @@
 package pam.model;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.geo.Point;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -15,9 +14,7 @@ public class Place {
 
     public static final int MAX_DESCRIPTION_LENGTH = 255;
 
-    public static final String DEFAULT_IMAGE = "https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg";
-
-    public static final String DEFAULT_CATEGORY = CategoryEnum.OTHER.toString();
+    public static final CategoryEnum DEFAULT_CATEGORY = CategoryEnum.OTHER;
 
     public static final String DEFAULT_DESCRIPTION = "No description";
 
@@ -39,8 +36,9 @@ public class Place {
 
     private String image;
 
-    @Column(name = "coordinates", columnDefinition = "POINT")
-    private Point coordinates;
+    private double latitude;
+
+    private double longitude;
 
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
@@ -60,21 +58,26 @@ public class Place {
     public Place() {
     }
 
-    public Place(User owner, String name, Point coordinates) {
+    public Place(User owner, String name, double latitude, double longitude) {
         this.owner = owner;
         this.name = name;
-        this.coordinates = coordinates;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public Place(User owner, String name, String description, String image, Point coordinates, CategoryEnum category) {
-        this(owner, name, coordinates);
+    public Place(User owner, String name, String description, String image, double latitude, double longitude, CategoryEnum category) {
+        this(owner, name, latitude, longitude);
         this.description = description;
         this.image = image;
-        this.category = category;
+        if(category != null){
+            this.category = category;
+        }else{
+            this.category = DEFAULT_CATEGORY;
+        }
     }
 
-    public Place(User owner, String name, String description, Point coordinates, CategoryEnum category) {
-        this(owner, name, description, DEFAULT_IMAGE, coordinates, category);
+    public Place(User owner, String name, String description, double latitude, double longitude, CategoryEnum category) {
+        this(owner, name, description, null, latitude, longitude, category);
     }
 
     public User getOwner() {
@@ -105,14 +108,6 @@ public class Place {
         this.image = image;
     }
 
-    public Point getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Point coordinates) {
-        this.coordinates = coordinates;
-    }
-
     public CategoryEnum getCategory() {
         return category;
     }
@@ -139,5 +134,21 @@ public class Place {
 
     public void setLists(Collection<List> lists) {
         this.lists = lists;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }

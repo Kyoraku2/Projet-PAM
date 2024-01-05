@@ -50,4 +50,13 @@ public enum CategoryEnum {
         return false;
     }
 
+    public static CategoryEnum getCategory(String s){
+        for(CategoryEnum c : CategoryEnum.values()){
+            if(c.name().equals(s) || c.name().toLowerCase().equals(s)){
+                return c;
+            }
+        }
+        return null;
+    }
+
 }

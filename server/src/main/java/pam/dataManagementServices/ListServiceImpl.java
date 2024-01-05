@@ -3,6 +3,7 @@ package pam.dataManagementServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pam.model.List;
+import pam.model.ListRequestBody;
 import pam.model.Place;
 import pam.model.User;
 import pam.repositories.ListRepository;
@@ -10,7 +11,6 @@ import pam.repositories.PlaceRepository;
 
 @Service
 public class ListServiceImpl implements ListService{
-
     @Autowired
     private ListRepository listRepository;
 
@@ -47,12 +47,22 @@ public class ListServiceImpl implements ListService{
 
     @Override
     public List createList(User owner, String name, String description, boolean isShared) {
-        List list = new List(owner, name, description, List.DEFAULT_IMAGE, isShared);
+        List list = new List(owner, name, description, null, isShared);
         return listRepository.save(list);
     }
 
     @Override
     public List createList(List list) {
+        return listRepository.save(list);
+    }
+    @Override
+    public List createList(ListRequestBody listRequestBody) {
+        List list = new List(
+                userService.getUser(listRequestBody.getOwnerID()),
+                listRequestBody.getName(),
+                listRequestBody.getDescription(),
+                listRequestBody.isShared()
+        );
         return listRepository.save(list);
     }
 
@@ -75,6 +85,15 @@ public class ListServiceImpl implements ListService{
     }
 
     @Override
+    public List updateList(long listID, ListRequestBody listRequestBody) {
+        List listFromDB = listRepository.findOne(listID);
+        listFromDB.setName(listRequestBody.getName());
+        listFromDB.setDescription(listRequestBody.getDescription());
+        listFromDB.setShared(listRequestBody.isShared());
+        return listRepository.save(listFromDB);
+    }
+
+    @Override
     public void deleteList(List list) {
         listRepository.delete(list.getId());
     }
@@ -86,8 +105,12 @@ public class ListServiceImpl implements ListService{
 
     @Override
     public List removePlace(List list, Place place) {
-        list.getPlaces().remove(place);
-        return listRepository.save(list);
+        List listFromBD = listRepository.findOne(list.getId());
+        Place placeFromBD = placeRepository.findOne(place.getId());
+        listFromBD.getPlaces().remove(place);
+        placeFromBD.getLists().remove(list);
+        placeRepository.save(placeFromBD);
+        return listRepository.save(listFromBD);
     }
 
     @Override
@@ -95,13 +118,19 @@ public class ListServiceImpl implements ListService{
         List list = listRepository.findOne(listID);
         Place place = placeRepository.findOne(placeID);
         list.getPlaces().remove(place);
+        place.getLists().remove(list);
+        placeRepository.save(place);
         return listRepository.save(list);
     }
 
     @Override
     public List addPlace(List list, Place place) {
-        list.getPlaces().add(place);
-        return listRepository.save(list);
+        List listFromBD = listRepository.findOne(list.getId());
+        Place placeFromBD = placeRepository.findOne(place.getId());
+        listFromBD.getPlaces().add(place);
+        placeFromBD.getLists().add(list);
+        placeRepository.save(placeFromBD);
+        return listRepository.save(listFromBD);
     }
 
     @Override
@@ -109,6 +138,8 @@ public class ListServiceImpl implements ListService{
         List list = listRepository.findOne(listID);
         Place place = placeRepository.findOne(placeID);
         list.getPlaces().add(place);
+        place.getLists().add(list);
+        placeRepository.save(place);
         return listRepository.save(list);
     }
 }

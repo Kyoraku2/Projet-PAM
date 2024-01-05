@@ -4,6 +4,9 @@ import SimpleFilter from "./SimpleFilter";
 import RadiusFilter from "./RadiusFilter";
 
 const FilterList = (props) => {
+  const MEDIA_QUERY = 600;
+  const [isMobile, setIsMobile] = useState(false);
+
   const className = props.class !== undefined ? props.class+'__filters' : '__filters';
   const [activeFilter, setActiveFilter] = useState(undefined);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -14,6 +17,7 @@ const FilterList = (props) => {
 
   const radiusOptions = [1, 5, 10, 20, 30, 50, 100];
   const [selectedRadius, setSelectedRadius] = useState(radiusOptions[0]);
+  const [selectedRadiusID, setSelectedRadiusID] = useState(0);
 
   const spaceBeforeShowingArrow = 30;
   const [scrollStep, setScrollStep] = useState(window.innerWidth-100);
@@ -29,17 +33,23 @@ const FilterList = (props) => {
       setScrollPosition(element.scrollLeft);
       setMaxScroll(element.scrollWidth);
       setListWidth(element.offsetWidth);
+      setIsMobile(window.innerWidth <= MEDIA_QUERY);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [props.filters]);
+  }, [props, className]);
 
 
   const handleRadius = (radius) => {
     setSelectedRadius(radius);
+  }
+
+  const handleSlideRadius = (event) => {
+    setSelectedRadius(radiusOptions[event.target.value]);
+    setSelectedRadiusID(event.target.value);
   }
 
   const handleActiveFilter = (event) => {
@@ -105,18 +115,28 @@ const FilterList = (props) => {
       {
         subMenuDisplayed !== false?
           (
-            subMenuDisplayed.id === 'radius'? // TODO : think about mobile version
+            subMenuDisplayed.id === 'radius'?
               (
-                <div className={className+'__subMenu'+ ' radiusSubMenu'}>
-                  <span className='radiusSubMenu__title'>Dans un rayon de</span>
-                  <div className='radiusSubMenu__options'>
-                    {
-                      radiusOptions.map((radius, index) => {
-                        return <button key={index} className={'radiusSubMenu__options__item' + (selectedRadius===radius?' radiusSubMenu__options__item--active':'')} onClick={() => handleRadius(radius)}>{radius}km</button>
-                      })
-                    }
+                isMobile ? (
+                  <div className={className+'__subMenu radiusSubMenu'}>
+                    <span className='radiusSubMenu__title'>Dans un rayon de</span>
+                    <label htmlFor='radius' className='radiusSubMenu__label'>{selectedRadius}km</label>
+                    <input type='range' id='radius' className='radiusSubMenu__slider' min={0} max={radiusOptions.length-1} value={selectedRadiusID} step={1} onChange={handleSlideRadius}/>
                   </div>
-                </div>
+                )
+                :
+                (
+                  <div className={className+'__subMenu radiusSubMenu'}>
+                    <span className='radiusSubMenu__title'>Dans un rayon de</span>
+                    <div className='radiusSubMenu__options'>
+                      {
+                        radiusOptions.map((radius, index) => {
+                          return <button key={index} className={'radiusSubMenu__options__item' + (selectedRadius===radius?' radiusSubMenu__options__item--active':'')} onClick={() => handleRadius(radius)}>{radius}km</button>
+                        })
+                      }
+                    </div>
+                  </div>
+                )
               ):null
           )
           :null

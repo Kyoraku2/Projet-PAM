@@ -6,16 +6,37 @@
   border-bottom: 1px solid $borderColor;
   display: flex;
   justify-content: space-between;
+  background: $navbarBackground;
 
   &__logo{
     display: flex;
     align-items: center;
     img{
       height: 100%;
+      aspect-ratio: 1;
     }
   }
 
-  &__search{
+  &__link{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    &__item{
+      a{
+        @include resetLinks();
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        margin-right: 1rem;
+        font-size: 1rem;
+        font-weight: 400;
+        &:hover{
+          background: $navbarHoverBackground;
+        }
+      }
+    }
+  }
+
+  /*&__search{
     display: flex;
     align-items: center;
     form{
@@ -44,13 +65,14 @@
         aspect-ratio: 1;
       }
     }
-  }
+  }*/
 
   &__right{
     display: flex;
     align-items: center;
 
     &__create{
+      @include resetLinks();
       padding: 0.5rem 0.75rem;
       border-radius: 20px;
       margin-right: 1rem;
@@ -65,13 +87,49 @@
       display: flex;
       align-items: center;
       padding-right: 1rem;
+      margin: 0 1rem;
+
       img {
         margin-left: 0.75rem;
         height: calc(0.75 * $navbarHeight);
         border-radius: 50%;
       }
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      &__list {
+        position: absolute;
+        z-index: 1000;
+        background: $navbarBackground;
+        top: calc($navbarHeight * 0.8 + 1.25rem);
+        right: 0.5rem;
+        border-radius: 5px;
+        box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.075);
+        a{
+          display: flex;
+          padding: 1rem;
+          color: $navbarIconColor;
+          &:hover{
+            background: $navbarHoverBackground;
+          }
+          svg{
+            margin-right: 0.75rem;
+          }
+        }
+      }
     }
   }
+}
+
+.clickToClose{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
 }
 
 @media screen and (max-width: 600px) {
@@ -80,7 +138,7 @@
     background: white ;
     bottom: 0;
     border-top: 2px solid $borderColor;
-    z-index: 10000000000;
+    z-index: 1000;
     height: $navbarHeight;
     width: 100%;
     display: flex;

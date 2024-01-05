@@ -4,6 +4,11 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +16,7 @@ import pam.dataManagementServices.CommentService;
 import pam.dataManagementServices.PlaceService;
 import pam.dataManagementServices.UserService;
 import pam.model.Comment;
+import pam.model.CommentRequestBody;
 import pam.utils.ApiResponse;
 
 import java.util.ArrayList;
@@ -19,7 +25,7 @@ import java.util.List;
 import static pam.model.Comment.MAX_COMMENT_LENGTH;
 
 @RestController
-@RequestMapping("api/comments")
+@RequestMapping("api")
 public class CommentController {
     @Autowired
     private CommentService commentService;
@@ -44,7 +50,7 @@ public class CommentController {
         }
     }
 
-    private void verifyUserID(Integer userID, List<String> errors){
+    private void verifyUserID(Long userID, List<String> errors){
         // Check userID
         if(userID == null){
             errors.add("Missing userID");
@@ -55,7 +61,7 @@ public class CommentController {
         }
     }
 
-    private void verifyPlaceID(Integer placeID, List<String> errors){
+    private void verifyPlaceID(Long placeID, List<String> errors){
         // Check placeID
         if(placeID == null){
             errors.add("Missing placeID");
@@ -66,16 +72,16 @@ public class CommentController {
         }
     }
 
-    @RequestMapping("all")
+    @GetMapping("comments")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> list(){
         return ApiResponse.ok(commentService.getAllComments());
     }
 
-    @RequestMapping("details")
+    @GetMapping("comments/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getOneComment(
-            @RequestParam(value="id", required = false) Integer id
+        @RequestParam(value="id") Long id
     ){
         if(id == null){
             return ApiResponse.badRequest("Missing id");
@@ -87,39 +93,43 @@ public class CommentController {
         return ApiResponse.ok(comment);
     }
 
-    @RequestMapping("create")
+    @PostMapping("comments")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> create(
-            @RequestParam(value="userID") Integer userID,
-            @RequestParam(value="placeID") Integer placeID,
-            @RequestParam(value="content") String content
+            @RequestParam(value="comment") String commentJson
     ){
+        CommentRequestBody comment = CommentRequestBody.fromJson(commentJson);
         List<String> errors = new ArrayList<>();
 
         // Check userID
-        verifyUserID(userID, errors);
+        verifyUserID(comment.getOwnerID(), errors);
 
         // Check placeID
-        verifyPlaceID(placeID, errors);
+        verifyPlaceID(comment.getPlaceID(), errors);
 
         // Check content
-        verifyContent(content, errors);
+        verifyContent(comment.getContent(), errors);
 
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
 
         return ApiResponse.ok(
-                commentService.addComment(userID,placeID,content)
+            commentService.addComment(
+                comment.getOwnerID(),
+                comment.getPlaceID(),
+                comment.getContent()
+            )
         );
     }
 
-    @RequestMapping("update")
+    @PutMapping("comments/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> update(
-            @RequestParam(value="id") Integer id,
-            @RequestParam(value="content", required = false) String content
+            @PathVariable Long id,
+            @RequestParam(value="comment") String commentJson
     ){
+        CommentRequestBody comment = CommentRequestBody.fromJson(commentJson);
         List<String> errors = new ArrayList<>();
 
         // Check id
@@ -132,10 +142,10 @@ public class CommentController {
         }
 
         // Check content
-        if(content != null){
-            verifyContent(content, errors);
+        if(comment.getContent() != null){
+            verifyContent(comment.getContent(), errors);
         }else{
-            content = "<Empty comment>";
+            comment.setContent("");
         }
 
         if(!errors.isEmpty()){
@@ -143,14 +153,14 @@ public class CommentController {
         }
 
         return ApiResponse.ok(
-                commentService.updateComment(id,content)
+                commentService.updateComment(id,comment.getContent())
         );
     }
 
-    @RequestMapping("delete")
+    @DeleteMapping("comments/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> delete(
-            @RequestParam(value="id") Integer id
+            @PathVariable Long id
     ){
         List<String> errors = new ArrayList<>();
 
@@ -171,10 +181,10 @@ public class CommentController {
         return ApiResponse.ok("Comment deleted");
     }
 
-    @RequestMapping("user")
+    @GetMapping("comments/user/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getCommentsByUser(
-            @RequestParam(value="id") Integer userID
+            @RequestParam(value="id") Long userID
     ){
         List<String> errors = new ArrayList<>();
 
@@ -196,10 +206,10 @@ public class CommentController {
         );
     }
 
-    @RequestMapping("place")
+    @GetMapping("comments/place/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getCommentsByPlace(
-            @RequestParam(value="id") Integer placeID
+            @RequestParam(value="id") Long placeID
     ){
         List<String> errors = new ArrayList<>();
 
