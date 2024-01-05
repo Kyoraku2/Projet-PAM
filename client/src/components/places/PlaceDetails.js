@@ -1,10 +1,14 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import DefaultListIcone from '../../assets/images/defaultList.svg';
 import '../places/place.scss';
 import {FaHeart, FaEdit} from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 import { PiListPlusFill } from "react-icons/pi";
 import {useNavigate, useParams} from "react-router-dom";
+import axiosSpring from "../../utils/axios/axiosSpring";
+import AlertContext from "../context/alerts/AlertContext";
+import { ALERT_TYPES } from '../context/alerts/Alert';
+
 
 
 const PlaceDetails = (props) => {
@@ -24,12 +28,46 @@ const PlaceDetails = (props) => {
     const {placeID} = useParams();
     const navigate = useNavigate();
 
+    const {setAlert} = useContext(AlertContext);
+
     const [name, setName] = useState(DEFAULT_STR);
     const [description, setDescription] = useState(DEFAULT_STR);
     const [image, setImage] = useState(DefaultListIcone);
     const [owner, setOwner] = useState(DEFAULT_STR);
-    const [coordinates, setCoordinates] = useState(["15°N","30°E"]); //todo default
+    const [coordinates, setCoordinates] = useState([0,0]); //todo default
     const [category, setCategory] = useState(DEFAULT_STR);
+
+    useEffect(() => {
+        if(name===DEFAULT_STR){
+            axiosSpring.get('api/places/'+placeID).then((response)=>{
+                if(response.status === 200){
+                    setName(response.data.name);
+                    setDescription(response.data.description);
+                    setOwner(response.data.ownerName);
+                    setCategory(response.data.category);
+                    setCoordinates([response.data.latitude,response.data.longitude]);
+
+                    // TODO image du lieu
+
+                }else{
+                    setAlert({
+                        type: ALERT_TYPES.ERROR.type,
+                        message: 'Erreur lors de la récupération du lieu',
+                        icon: ALERT_TYPES.ERROR.icon
+                    });
+                }
+
+            }).catch((error)=>{
+                console.log(error);
+                setAlert({
+                    type: ALERT_TYPES.ERROR.type,
+                    message: 'Erreur lors de la récupération du lieu',
+                    icon: ALERT_TYPES.ERROR.icon
+                });
+            });
+        }
+
+    }, [setAlert, name, placeID]);
 
 
 
@@ -48,8 +86,31 @@ const PlaceDetails = (props) => {
     }
 
     const handleDelete= () =>{
-        //todo
-        console.log("handleDelete");
+        if(window.confirm("Voulez-vous vraiment supprimer ce lieu ?")){
+            axiosSpring.delete('api/places/'+placeID).then((response)=>{
+                if (response.status === 200){
+                    setAlert({
+                        type: ALERT_TYPES.SUCCESS.type,
+                        message: 'Lieu supprimé avec succès',
+                        icon: ALERT_TYPES.SUCCESS.icon
+                    });
+                    navigate('/places');
+                }else{
+                    setAlert({
+                        type: ALERT_TYPES.ERROR.type,
+                        message: 'Erreur lors de la suppression du lieu',
+                        icon: ALERT_TYPES.ERROR.icon
+                    });
+                }
+            }).catch((error)=>{
+                console.log(error);
+                setAlert({
+                    type: ALERT_TYPES.ERROR.type,
+                    message: 'Erreur lors de la suppression du lieu',
+                    icon: ALERT_TYPES.ERROR.icon
+                });
+            });
+        }
     }
 
 
