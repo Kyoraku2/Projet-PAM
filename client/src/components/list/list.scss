@@ -1,6 +1,21 @@
 @import "../../utils/styles/vars";
 @import "../../utils/styles/mixins";
 
+.addBtn{
+  position: absolute;
+  display: block;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: 3rem;
+  @include resetLinks($hightlightColor);
+}
+
+@media screen and (max-width: 600px){
+  .addBtn{
+    bottom: $navbarHeight;
+  }
+}
+
 .react-tabs{
   &__tab-list{
     display: flex;
@@ -21,11 +36,11 @@
     border-bottom: solid white 2px;
 
     &--selected{
-      border-bottom: solid red 2px;
+      border-bottom: solid $hightlightColor 2px;
     }
 
     &:hover{
-      border-bottom: solid red 2px;
+      border-bottom: solid $hightlightColor 2px;
       background-color: lighten($borderColor, 15%);
     }
 

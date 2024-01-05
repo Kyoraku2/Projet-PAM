@@ -57,9 +57,12 @@ const Header = () => {
         */}
 
         <div className='nav__right'>
+          {
+          /*
           <a className='nav__right__create' href='/places/create'>
             Créer un lieu
           </a>
+          */}
 
           <ProfileCard class='nav__right'/>
         </div>

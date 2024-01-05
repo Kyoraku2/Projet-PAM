@@ -3,10 +3,13 @@ import './list.scss';
 import ListCollection from "./ListCollection";
 //import Tabs from "./Tabs";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { IoAddCircle } from 'react-icons/io5';
 
 const ListsPage = (props) => {
 
     return (
+        <>
+            <a href='/lists/create' className="addBtn" title='Créer une liste de lieux'><IoAddCircle /></a>
             <Tabs className="listsPage">
                 <TabList>
                     <Tab>Mes listes</Tab>
@@ -19,6 +22,7 @@ const ListsPage = (props) => {
                     <ListCollection class="listsPage" shared={true}/>
                 </TabPanel>
             </Tabs>
+        </>
     );
 };
 
