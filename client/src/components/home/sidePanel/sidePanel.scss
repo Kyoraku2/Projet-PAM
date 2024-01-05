@@ -1,14 +1,13 @@
 @import "../../../utils/styles/vars";
 @import "../../../utils/styles/mixins";
 .sidePanel{
-  z-index: 1000;
+  z-index: 999;
   background: $sidePanelBackground;
   box-shadow: 0 1px 1px 1px rgba(0,0,0,0.1);
   border-top: 1px solid $borderColor;
   position: absolute;
   top: calc($navbarHeight + $filterHeight + 1px);
-  padding: 1rem;
-  height: calc(100vh - $navbarHeight - $filterHeight - 2rem - 2px);
+  height: calc(100vh - $navbarHeight - $filterHeight - 2px);
   transition: width 0.15s ease-in-out;
   &.open{
     width: 20rem;
@@ -32,3 +31,11 @@
     border: 1px solid $borderColor;
   }
 }
+
+@media only screen and (max-width: 600px) {
+  .sidePanel{
+    top: 0;
+    height: calc(100vh - $navbarHeight - 2px);
+  }
+}
+
