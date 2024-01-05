@@ -6,7 +6,7 @@ import NotFound from "./components/errors/NotFound";
 import Profile from "./components/profile/Profile";
 import './base.scss';
 import ListsPage from "./components/list/ListsPage";
-import Place from "./components/place/Place";
+import PlaceDetails from "./components/places/PlaceDetails";
 import PlaceCreateForm from "./components/places/PlaceCreateForm";
 import ListCreateForm from "./components/list/ListCreateForm";
 import Alert from "./components/context/alerts/Alert";
@@ -21,7 +21,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>} />
           <Route path="/lists" element={<ListsPage />} />
-          <Route path="/place" element={<Place/>} />
           <Route path="/example" element={<ExampleList />} />
           <Route path="/profil" element={<Profile />} />
 
@@ -35,6 +34,7 @@ function App() {
           <Route path="/places" element={<PlacesPage />} />
           <Route path="/places/create" element={<PlaceCreateForm />} />
           <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
+          <Route path="/places/:placeID" element={<PlaceDetails/>} />
 
           {/* Errors */}
           <Route path="*" element={<NotFound/>} />
