@@ -254,7 +254,8 @@ public class ListController {
     @GetMapping("/lists/user/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getUserLists(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestParam(value = "shared", required = false) Boolean shared
     ){
         java.util.List<String> errors = new ArrayList<>();
         // Check ownerID
@@ -263,10 +264,14 @@ public class ListController {
             return ApiResponse.badRequest(errors);
         }
 
-        Iterable<ListRequestBody> listRequestBodies = ListRequestBody.convert(
+        if(shared == null || !shared){
+            Iterable<ListRequestBody> listRequestBodies = ListRequestBody.convert(
                 listService.getListsByOwnerID(id)
-        );
+            );
 
-        return ApiResponse.ok(listRequestBodies);
+            return ApiResponse.ok(listRequestBodies);
+        }
+
+        return ApiResponse.noContent("Not Implemented");
     }
 }

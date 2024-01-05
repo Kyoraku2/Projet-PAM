@@ -10,6 +10,7 @@ import PlaceCreateForm from "./components/places/PlaceCreateForm";
 import ListCreateForm from "./components/list/ListCreateForm";
 import Alert from "./components/context/alerts/Alert";
 import ListDetails from "./components/list/ListDetails";
+import PlacesPage from "./components/places/PlacesPage";
 
 function App() {
   return (
@@ -23,12 +24,12 @@ function App() {
 
           {/* Lists */}
           <Route path="/lists" element={<ListsPage />} />
-          {/* <Route path="/lists/create" element={<ListCreateForm isUpdate={true} listID={3}/>} /> */}
           <Route path="/lists/create" element={<ListCreateForm />} />
           <Route path="/lists/update/:listID" element={<ListCreateForm isUpdate={true}/>} />
           <Route path="/lists/:listID" element={<ListDetails />} />
 
           {/* Places */}
+          <Route path="/places" element={<PlacesPage />} />
           <Route path="/places/create" element={<PlaceCreateForm />} />
           <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
 
