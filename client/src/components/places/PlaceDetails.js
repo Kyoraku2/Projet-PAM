@@ -58,28 +58,28 @@ const PlaceDetails = (props) => {
 
             <img src={image} alt="PlaceDetails image"/>
 
-            <div className="content">
+            <div className="placeDetails__content">
 
-                <div className="actions">
-                    <span className="name">{name}</span>
+                <div className="placeDetails__actions">
+                    <span className="placeDetails__actions__name">{name}</span>
 
-                    <button className="button" onClick={handleFavorite}><FaHeart />
+                    <button className="placeDetails__actions__button" onClick={handleFavorite}><FaHeart />
                     </button>
-                    <button className="button" onClick={handleAddToList}><PiListPlusFill/>
+                    <button className="placeDetails__actions__button" onClick={handleAddToList}><PiListPlusFill/>
                     </button>
                     {/*TODO : edit only accessible if we are ownner*/ }
-                    <button className="button" onClick={handleEdit}><FaEdit />
+                    <button className="placeDetails__actions__button" onClick={handleEdit}><FaEdit />
                     </button>
-                    <button className="button" onClick={handleDelete}><FaTrashAlt />
+                    <button className="placeDetails__actions__button" onClick={handleDelete}><FaTrashAlt />
                     </button>
                 </div>
 
-                <p className="owner">Créé par {owner}</p>
+                <p className="placeDetails__owner">Créé par {owner}</p>
 
-                <p className="category">{category}</p>
-                <p className="coordinates">{coordinates[0]} , {coordinates[1]}</p>
+                <p className="placeDetails__category">{category}</p>
+                <p className="placeDetails__coordinates">{coordinates[0]} , {coordinates[1]}</p>
 
-                <p className="description">{description}</p>
+                <p className="placeDetails__description">{description}</p>
 
             </div>
 

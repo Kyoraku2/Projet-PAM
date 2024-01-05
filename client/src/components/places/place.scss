@@ -96,9 +96,8 @@
   }
 }
 
-
-
 .placeDetails{
+
   height: calc(100vh - $navbarHeight - 2px);
   padding: 1rem;
 
@@ -108,74 +107,74 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-}
 
-.placeDetails img{
-  width: 90%;
-  max-width: 25rem;
-  display: block;
-  background-color: $navbarHoverBackground ;
-  padding: 0.5rem;
-  border-radius: 20px;
-  margin-bottom: 1rem;
-}
+  img{
+    width: 90%;
+    max-width: 25rem;
+    display: block;
+    background-color: $navbarHoverBackground ;
+    padding: 0.5rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
 
-.placeDetails .content{
-  width: 90%;
-  max-width: 25rem;
-}
+  &__content{
+    width: 90%;
+    max-width: 25rem;
+  }
 
-.placeDetails .content .actions{
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
+  &__actions{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
 
-.placeDetails .content .actions .name{
-  margin-right: auto;
-}
+    &__name{
+      margin-right: auto;
+      font-size: 2rem;
+      font-weight: bold;
+    }
 
-.placeDetails .content .actions .button{
-  height: 1.5rem;
-  width: 1.5rem;
-  margin-left: 1rem;
-}
+    &__button{
+      height: 1.5rem;
+      width: 1.5rem;
+      margin-left: 1rem;
 
-.placeDetails .content .actions .button svg{
-  height: 1.5rem;
-  width: 1.5rem;
-}
+      svg{
+        height: 1.5rem;
+        width: 1.5rem;
+      }
 
-.placeDetails p{
-  display: block;
-}
+    }
 
-.placeDetails .name{
-  font-size: 2rem;
-  font-weight: bold;
-}
+  }
 
-.placeDetails .owner{
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-}
+  p{
+    display: block;
+  }
 
-.placeDetails .category{
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
+  &__owner{
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
 
-.placeDetails .description{
-  font-size: 1rem;
-}
+  &__description{
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
 
-.placeDetails .coordinates{
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
+  &__category{
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+  }
 
+  &__coordinates{
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+  }
+
+}
 
 
