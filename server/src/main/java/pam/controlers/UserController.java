@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import static pam.model.User.*;
 
+// TODO : check if user is connected before updating position
 @RestController
 @RequestMapping("api")
 public class UserController {

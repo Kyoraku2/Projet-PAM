@@ -21,6 +21,25 @@ public class ListRequestBody {
             return name;
         }
     }
+
+    public class ReducedUser {
+        private Long id;
+        private String username;
+
+        public ReducedUser(Long id, String username) {
+            this.id = id;
+            this.username = username;
+        }
+
+        public Long getId() {
+            return id;
+        }
+        
+        public String getUsername() {
+            return username;
+        }
+    }
+
     private Long id;
     private String name;
     private String description;
@@ -28,6 +47,7 @@ public class ListRequestBody {
     private String ownerName;
     private boolean isShared;
     private Collection<ReducedPlace> placesResp;
+    private Collection<ReducedUser> contributorsResp;
 
     public ListRequestBody() {
     }
@@ -43,6 +63,12 @@ public class ListRequestBody {
             placesResp = new java.util.ArrayList<>();
             for(Place place : list.getPlaces()){
                 placesResp.add(new ReducedPlace(place.getId(), place.getName()));
+            }
+        }
+        if(list.getContributors() != null){
+            contributorsResp = new java.util.ArrayList<>();
+            for(User user : list.getContributors()){
+                contributorsResp.add(new ReducedUser(user.getUserID(), user.getUsername()));
             }
         }
     }
@@ -114,6 +140,14 @@ public class ListRequestBody {
 
     public void setPlaces(Collection<ReducedPlace> places) {
         this.placesResp = places;
+    }
+
+    public Collection<ReducedUser> getContributors() {
+        return contributorsResp;
+    }
+
+    public void setContributors(Collection<ReducedUser> contributors) {
+        this.contributorsResp = contributors;
     }
 
     public String toString(){

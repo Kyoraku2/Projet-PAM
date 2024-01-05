@@ -23,35 +23,35 @@ public class User {
 
     @Id
     @GeneratedValue
-    long id;
+    private long id;
 
     @NotBlank(message = "Username may not be empty")
     @Column(unique=true, length = USERNAME_MAX_LENGTH)
     @Size(min = USERNAME_MIN_LENGTH, max = USERNAME_MAX_LENGTH)
-    String username;
+    private String username;
 
     @NotBlank(message = "Password may not be empty")
     //@Column(length = PASSWORD_MAX_LENGTH)
     //@Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
-    String password;
+    private String password;
 
-    String image;
+    private String image;
 
     @Column(length = DESCRIPTION_MAX_LENGTH)
     @Size(min = DESCRIPTION_MIN_LENGTH, max = DESCRIPTION_MAX_LENGTH)
-    String description;
+    private String description;
 
     @NotBlank(message = "Mail may not be empty")
     @Column(unique=true)
-    String email;
+    private String email;
 
-    Date signInDate;
+    private Date signInDate;
 
-    double latitude;
-    double longitude;
+    private double latitude;
+    private double longitude;
 
     @Enumerated(EnumType.STRING)
-    RoleEnum role;
+    private RoleEnum role;
 
     @ManyToMany
     @JoinTable(
@@ -59,7 +59,15 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id", referencedColumnName="id"),
         inverseJoinColumns = @JoinColumn(name = "place_id", referencedColumnName="id")
     )
-    private Collection<Place> favorites=new Vector<Place>();
+    private Collection<Place> favorites=new Vector<>();
+
+    @ManyToMany
+    @JoinTable(
+            name= "contributors",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name = "list_id", referencedColumnName="id")
+    )
+    private Collection<List> contributors=new Vector<>();
 
     public User(){}
 
@@ -163,5 +171,13 @@ public class User {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public Collection<List> getContributedLists() {
+        return contributors;
+    }
+
+    public void setContributedLists(Collection<List> contributors) {
+        this.contributors = contributors;
     }
 }

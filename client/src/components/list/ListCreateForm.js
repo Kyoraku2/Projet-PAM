@@ -121,7 +121,11 @@ const ListCreateForm = (props) => {
         isShared: false,
       }));
 
-      axiosSpring.put('/api/lists/'+listID, formData)
+      await axiosSpring.put('/api/lists/'+listID, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
         .then((response) => {
         if(response.status === 200) {
           setAlert({
@@ -155,7 +159,11 @@ const ListCreateForm = (props) => {
         isShared: false,
       }));
 
-      axiosSpring.post('/api/lists', formData).then((response) => {
+      await axiosSpring.post('/api/lists', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((response) => {
         if(response.status === 200) {
           setAlert({
             type: ALERT_TYPES.SUCCESS.type,
