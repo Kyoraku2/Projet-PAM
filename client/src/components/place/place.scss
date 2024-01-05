@@ -1,0 +1,76 @@
+@import "../../utils/styles/vars";
+@import "../../utils/styles/mixins";
+
+.placePage{
+  height: calc(100vh - $navbarHeight - 2px);
+  padding: 1rem;
+
+  overflow: scroll;
+
+  @include scrollBarBis();
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+.placePage img{
+  width: 80%;
+  max-width: 25rem;
+  display: block;
+  background-color: $navbarHoverBackground ;
+  padding: 0.5rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+
+.placePage .content{
+  width: 80%;
+  max-width: 25rem;
+}
+
+.placePage .content .actions{
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.placePage .content .actions .name{
+  margin-right: auto;
+}
+
+.placePage .content .actions .button{
+  height: 1.5rem;
+  width: 1.5rem;
+  margin-left: 1rem;
+}
+
+.placePage .content .actions .button svg{
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.placePage p{
+  display: block;
+}
+
+.placePage .name{
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.placePage .category{
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.placePage .description{
+  font-size: 1rem;
+}
+
+.placePage .coordinates{
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}

@@ -6,6 +6,7 @@ import NotFound from "./components/errors/NotFound";
 import './base.scss';
 import ListCollection from "./components/list/ListCollection";
 import ListsPage from "./components/list/ListsPage";
+import Place from "./components/place/Place";
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/example" element={<ExampleList />} />/>
           <Route path="/lists" element={<ListsPage />} />/>
+          <Route path="/place" element={<Place/>} />
           <Route path="*" element={<NotFound/>} />
         </Routes>
         {/*<Footer/> TODO : display correclty*/}
