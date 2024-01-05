@@ -12,7 +12,7 @@ import {ALERT_TYPES} from "../context/alerts/Alert";
 import { useParams } from 'react-router-dom';
 
 const PlaceCreateForm = (props) => {
-  const {alert, setAlert} = useContext(AlertContext);
+  const {setAlert} = useContext(AlertContext);
   const {placeID} = useParams();
 
   const [image, setImage] = useState(DefaultList);

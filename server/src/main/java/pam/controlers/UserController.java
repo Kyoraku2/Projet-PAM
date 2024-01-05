@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import pam.dataManagementServices.ImageService;
 import pam.dataManagementServices.UserService;
 import pam.model.User;
 import pam.model.UserRequestBody;
@@ -30,6 +32,9 @@ import static pam.model.User.*;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ImageService imageService;
 
     private static final Logger logger = Logger.getLogger(UserController.class);
 
@@ -136,7 +141,8 @@ public class UserController {
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> updateUser(
         @PathVariable(value="id") Long id,
-        @RequestParam(value = "user") String userJson
+        @RequestParam(value = "user") String userJson,
+        @RequestParam(value = "image", required = false) MultipartFile image
     ){
         UserRequestBody user = UserRequestBody.fromJson(userJson);
         List<String> errors = new ArrayList<>();
@@ -167,6 +173,18 @@ public class UserController {
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
+
+        if(image != null){
+            try{
+                if(userService.getUser(id).getImage() != null){
+                    imageService.deleteProfileImage(id);
+                }
+                imageService.uploadProfileImage(id, image);
+            }catch (Exception e){
+                return ApiResponse.badRequest("Error while saving image : " + e.getMessage());
+            }
+        }
+
         return ApiResponse.ok(
                 userService.updateUser(
                         id,

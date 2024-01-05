@@ -8,7 +8,7 @@ const SetViewOnClick = (props) => {
 
   useEffect(() => {
     map.setView(props.center, props.zoom);
-  }, []);
+  }, [map, props]);
 
   const handleClick = () => {
     map.setView(props.center, props.zoom);

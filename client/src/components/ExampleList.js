@@ -6,8 +6,8 @@ import {ALERT_TYPES} from "./context/alerts/Alert";
 
 const ExampleList = (props) => {
   const [exampleList, setExampleList] = useState([]);
-  const {alert, setAlert} = useContext(AlertContext);
-  const [image, setImage] = useState(null);
+  const {setAlert} = useContext(AlertContext);
+  //const [image, setImage] = useState(null);
 
   const showAlert = () => {
     setAlert({
@@ -30,7 +30,7 @@ const ExampleList = (props) => {
       }
     )
 
-    axiosSpring.get("/api/place/image?placeID="+1,{
+    /*axiosSpring.get("/api/place/image?placeID="+1,{
       responseType: 'arraybuffer',
     }).then(
       response => {
@@ -47,16 +47,16 @@ const ExampleList = (props) => {
       error => {
         console.log(error);
       }
-    )
+    )*/
   }, [setExampleList]);
 
 
   return (
     <>
-      {
+      {/*
         image !== null &&
-        <img src={image} alt="Default image" />
-      }
+        <img src={image} alt="Default" />
+      */}
       <button onClick={showAlert}>Show alert</button>
       <ul>
         {exampleList.map((example, index) => {

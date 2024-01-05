@@ -109,6 +109,7 @@ public class ListServiceImpl implements ListService{
         Place placeFromBD = placeRepository.findOne(place.getId());
         listFromBD.getPlaces().remove(place);
         placeFromBD.getLists().remove(list);
+        placeRepository.save(placeFromBD);
         return listRepository.save(listFromBD);
     }
 
@@ -118,6 +119,7 @@ public class ListServiceImpl implements ListService{
         Place place = placeRepository.findOne(placeID);
         list.getPlaces().remove(place);
         place.getLists().remove(list);
+        placeRepository.save(place);
         return listRepository.save(list);
     }
 
@@ -127,6 +129,7 @@ public class ListServiceImpl implements ListService{
         Place placeFromBD = placeRepository.findOne(place.getId());
         listFromBD.getPlaces().add(place);
         placeFromBD.getLists().add(list);
+        placeRepository.save(placeFromBD);
         return listRepository.save(listFromBD);
     }
 
@@ -136,6 +139,7 @@ public class ListServiceImpl implements ListService{
         Place place = placeRepository.findOne(placeID);
         list.getPlaces().add(place);
         place.getLists().add(list);
+        placeRepository.save(place);
         return listRepository.save(list);
     }
 }

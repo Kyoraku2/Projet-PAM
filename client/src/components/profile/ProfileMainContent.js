@@ -57,7 +57,6 @@ const ProfileMainContent = (props) => {
     }
   }, [name, setAlert, setName, setEmail, setDescription]);
 
-  // TODO : connect to backend
   return (
     <div className="profile__content">
       <div className="profile__content__item">

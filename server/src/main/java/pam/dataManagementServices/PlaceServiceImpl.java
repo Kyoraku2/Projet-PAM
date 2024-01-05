@@ -83,7 +83,6 @@ public class PlaceServiceImpl implements PlaceService{
         return placeRepository.save(place);
     }
 
-    // TODO maybe add verifications
     @Override
     public Place updatePlace(PlaceRequestBody placeRequestBody) {
         Place placeFromDB = placeRepository.findOne(placeRequestBody.getId());
@@ -103,30 +102,40 @@ public class PlaceServiceImpl implements PlaceService{
     @Override
     public Place addToFavorite(long userId, long placeId) {
         Place placeFromDB = placeRepository.findOne(placeId);
-        boolean added = placeFromDB.getFavorites().add(
-                userRepository.findOne(userId)
-        );
-        return added ? placeRepository.save(placeFromDB) : null;
+        User userFromDB = userRepository.findOne(userId);
+        placeFromDB.getFavorites().add(userFromDB);
+        userFromDB.getFavorites().add(placeFromDB);
+        userRepository.save(userFromDB);
+        return placeRepository.save(placeFromDB);
     }
 
     @Override
     public Place addToFavorite(User user, Place place) {
-        boolean added = place.getFavorites().add(user);
-        return added ? placeRepository.save(place) : null;
+        Place placeFromDB = placeRepository.findOne(place.getId());
+        User userFromDB = userRepository.findOne(user.getUserID());
+        placeFromDB.getFavorites().add(userFromDB); 
+        userFromDB.getFavorites().add(placeFromDB);
+        userRepository.save(userFromDB);
+        return placeRepository.save(placeFromDB);
     }
 
     @Override
     public Place removeFromFavorite(long userId, long placeId) {
         Place placeFromDB = placeRepository.findOne(placeId);
-        boolean removed = placeFromDB.getFavorites().remove(
-                userRepository.findOne(userId)
-        );
-        return removed ? placeRepository.save(placeFromDB) : null;
+        User userFromDB = userRepository.findOne(userId);
+        placeFromDB.getFavorites().remove(userFromDB);
+        userFromDB.getFavorites().remove(placeFromDB);
+        userRepository.save(userFromDB);
+        return placeRepository.save(placeFromDB);
     }
 
     @Override
     public Place removeFromFavorite(User user, Place place) {
-        boolean removed = place.getFavorites().remove(user);
-        return removed ? placeRepository.save(place) : null;
+        Place placeFromDB = placeRepository.findOne(place.getId());
+        User userFromDB = userRepository.findOne(user.getUserID());
+        placeFromDB.getFavorites().remove(userFromDB);
+        userFromDB.getFavorites().remove(placeFromDB);
+        userRepository.save(userFromDB);
+        return placeRepository.save(placeFromDB);
     }
 }

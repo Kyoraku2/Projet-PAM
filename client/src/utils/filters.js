@@ -23,7 +23,7 @@ import {FaKiwiBird, FaTheaterMasks} from "react-icons/fa";
 import {GiGreekTemple} from "react-icons/gi";
 import {BsCupHot} from "react-icons/bs";
 
-const icons = [
+export const icons = [
   <IoFastFoodOutline />,
   <IoRestaurantOutline />,
   <CiBeerMugFull />,

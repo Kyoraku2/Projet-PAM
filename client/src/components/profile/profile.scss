@@ -88,6 +88,11 @@
     &__item{
       width: 90%;
 
+      &__error{
+        color: red;
+        font-size: 0.75rem;
+      }
+
       article{
         padding: 1rem;
         background: #eeeeee;
@@ -97,6 +102,10 @@
           display: grid;
           grid-template-columns: 1fr 1fr;
           grid-gap: 1rem;
+
+          &:hover{
+            cursor: pointer;
+          }
 
           img {
             border-radius: 25px;
@@ -182,7 +191,7 @@
             background: darken(red, 10%);
           }
         }
-        [for="new_password"]{
+        [for="new_password"], [for="password"]{
           display: flex;
           flex-direction: column;
           span{
