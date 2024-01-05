@@ -58,5 +58,25 @@
   &::-webkit-scrollbar-thumb:hover {
     background: darken($borderColor, 20%);
   }
+}
 
+@mixin centerBtn(){
+  &__center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 1000;
+    bottom: 10px;
+    left: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 0.54rem;
+    border-radius: 5px;
+    box-shadow: 0 0 1px 1px rgba(0,0,0,0.4);
+    &:hover{
+      cursor: pointer;
+      background: #eee;
+    }
+  }
 }

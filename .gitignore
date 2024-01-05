@@ -2,8 +2,12 @@
 .DS_Store
 Thumbs.db
 
+# Ressource files
+server/src/main/resources/static/
+
 # IDEs and editors
 .idea/
+.vscode/
 .project
 .classpath
 .c9/

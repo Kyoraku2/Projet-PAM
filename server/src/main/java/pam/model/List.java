@@ -14,7 +14,6 @@ public class List {
 
     public static final int MAX_DESCRIPTION_LENGTH = 255;
 
-    public static final String DEFAULT_IMAGE = "default.png";
     public static final String DEFAULT_DESCRIPTION = "No description";
 
     @Id
@@ -49,18 +48,22 @@ public class List {
         this.name = name;
         this.isShared = false;
         this.description = DEFAULT_DESCRIPTION;
-        this.image = DEFAULT_IMAGE;
+        this.image = null;
     }
 
     public List(User owner, String name, String description, String image, boolean isShared) {
         this(owner, name);
-        this.description = description;
+        if(description != null){
+            this.description = description;
+        }else{
+            this.description = DEFAULT_DESCRIPTION;
+        }
         this.image = image;
         this.isShared = isShared;
     }
 
     public List(User owner, String name, String description, boolean isShared) {
-        this(owner, name, description, DEFAULT_IMAGE, isShared);
+        this(owner, name, description, null, isShared);
     }
 
     public User getOwner() {
@@ -115,5 +118,17 @@ public class List {
 
     public void setPlaces(Collection<Place> places) {
         this.places = places;
+    }
+
+    public void addPlace(Place place){
+        this.places.add(place);
+    }
+
+    public void removePlace(Place place){
+        this.places.remove(place);
+    }
+
+    public String toString(){
+        return "List: " + this.name + " " + this.description + " " + this.image + " " + this.isShared + " " + this.owner + " " + this.places + " " + this.id;
     }
 }
