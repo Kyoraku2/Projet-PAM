@@ -104,7 +104,7 @@
 
     @include centerBtn();
 
-    & .leaflet-control-zoom{
+    .leaflet-control-zoom{
       margin-top: calc($filterHeight + 0.25rem);
       transition: all 0.2s ease-in-out;
     }

@@ -6,11 +6,19 @@ import java.util.Collection;
 public class ListRequestBody {
     public class ReducedPlace {
         private Long id;
-        private String name;    
+        private String name;
+        private double latitude;
+        private double longitude;
+        private String category;
+        private String description;
 
-        public ReducedPlace(Long id, String name) {
+        public ReducedPlace(Long id, String name, double latitude, double longitude, String category, String description){
             this.id = id;
             this.name = name;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.category = category;
+            this.description = description;
         }
 
         public Long getId() {
@@ -19,6 +27,18 @@ public class ListRequestBody {
         
         public String getName() {
             return name;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public String getCategory(){
+            return category;
         }
     }
 
@@ -62,7 +82,7 @@ public class ListRequestBody {
         if(list.getPlaces() != null){
             placesResp = new java.util.ArrayList<>();
             for(Place place : list.getPlaces()){
-                placesResp.add(new ReducedPlace(place.getId(), place.getName()));
+                placesResp.add(new ReducedPlace(place.getId(), place.getName(), place.getLatitude(), place.getLongitude(), place.getCategory().toString(), place.getDescription()));
             }
         }
         if(list.getContributors() != null){

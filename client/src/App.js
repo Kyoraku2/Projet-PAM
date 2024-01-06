@@ -23,13 +23,13 @@ function App() {
           <Route path="/profil" element={<Profile />} />
 
           {/* Lists */}
-          <Route path="/lists" element={<ListsPage />} />
+          <Route path="/lists" element={<ListsPage canCreate={true}/>} />
           <Route path="/lists/create" element={<ListCreateForm />} />
           <Route path="/lists/update/:listID" element={<ListCreateForm isUpdate={true}/>} />
           <Route path="/lists/:listID" element={<ListDetails />} />
 
           {/* Places */}
-          <Route path="/places" element={<PlacesPage />} />
+          <Route path="/places" element={<PlacesPage canCreate={true}/>} />
           <Route path="/places/create" element={<PlaceCreateForm />} />
           <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
 

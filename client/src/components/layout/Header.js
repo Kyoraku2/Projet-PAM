@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import logo from '../../assets/images/logo.svg';
+import logo from '../../assets/images/logo.png';
 import {Link} from "react-router-dom";
 import ProfileCard from "./ProfileCard";
 import './header.scss';

@@ -9,7 +9,11 @@ const ListsPage = (props) => {
 
     return (
         <>
-            <a href='/lists/create' className="addBtn" title='Créer une liste de lieux'><IoAddCircle /></a>
+            {
+                props.canCreate ?
+                  <a href='/lists/create' className="addBtn" title='Créer une liste de lieux'><IoAddCircle /></a>
+                  :null
+            }
             <Tabs className="listsPage">
                 <TabList>
                     <Tab>Mes listes</Tab>

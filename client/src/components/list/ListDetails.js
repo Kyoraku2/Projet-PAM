@@ -5,7 +5,7 @@ import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
 import { ALERT_TYPES } from '../context/alerts/Alert';
 import './details.scss';
-import { MdAddCircleOutline, MdDelete, MdEdit } from 'react-icons/md';
+import {MdAddCircleOutline, MdDelete, MdEdit, MdEditLocationAlt} from 'react-icons/md';
 import { FaShareAlt } from "react-icons/fa";
 import AddPlaceModal from './AddPlaceModal';
 
@@ -152,7 +152,7 @@ const ListDetails = (props) => {
                         <p><span>Description : </span>{description}</p>
                         <div>
                             <h2>Lieux</h2>
-                            <button className="listDetails__content__infos__addPlace" onClick={handleAddPlace}><MdAddCircleOutline /></button>
+                            <button className="listDetails__content__infos__addPlace" onClick={handleAddPlace}><MdEditLocationAlt /></button>
                         </div>
                         <ul className="listDetails__content__infos__places">
                             {places.map((place) => (
