@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import axiosSpring from "../../../utils/axios/axiosSpring";
-import PlacePreviewCheckbox from "./PlacePreviewCheckbox";
 import ListPreviewCheckbox from "./ListPreviewCheckbox";
 
 const ListCollectionCheckbox = (props) => {

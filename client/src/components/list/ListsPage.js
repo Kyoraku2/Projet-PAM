@@ -3,7 +3,7 @@ import './list.scss';
 import ListCollection from "./ListCollection";
 //import Tabs from "./Tabs";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import { IoAddCircle } from 'react-icons/io5';
+import {IoAddCircle} from 'react-icons/io5';
 
 const ListsPage = (props) => {
 

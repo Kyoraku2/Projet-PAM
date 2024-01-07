@@ -1,0 +1,73 @@
+@import "../../utils/styles/vars";
+@import "../../utils/styles/mixins";
+
+.position{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - $navbarHeight - 2rem -  1px);
+  width: 100%;
+
+  row-gap: 2rem;
+
+  &__item{
+    padding: 1.5rem;
+    background: #eeeeee;
+    border-radius: 5px;
+    width: 30rem;
+    max-width: 75vw;
+
+    h1{
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    p{
+      font-size: 1rem;
+      font-style: italic;
+      color: #5A5A5A;
+      margin-bottom: 1rem;
+    }
+
+    &__share{
+      background: $hightlightColor;
+      color: white;
+      font-weight: bold;
+      padding: 0.5rem 0.75rem;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      column-gap: 0.5rem;
+      margin: auto;
+    }
+
+    &__list{
+      background: lighten(#eeeeee, 20%);
+      max-height: 10rem;
+      overflow-y: scroll;
+      border-radius: 5px;
+      @include scrollBarBis();
+      border: 1px solid $borderColor;
+      li{
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      &__stop{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 1rem;
+        color: #5A5A5A;
+        &:hover{
+          color: $hightlightColor;
+        }
+      }
+    }
+  }
+}

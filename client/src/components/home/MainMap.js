@@ -1,24 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import SetViewOnClick from "../MapControls/SetViewOnClick";
-import L from "leaflet";
 import MarkerPopup from "./MarkerPopup";
 import {Icon} from "leaflet/src/layer";
+import PositionContext from "../context/position/PositionContext";
 
 const MainMap = (props) => {
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-
+  const [defaultPosition, setDefaultPosition] = useState([0, 0]);
+  const {myPosition, friendsPosition} = useContext(PositionContext);
   const [popupID, setPopupID] = useState(null);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position)=>{
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition((position) => {
+        setDefaultPosition([position.coords.latitude, position.coords.longitude]);
       });
     }
-  }, [longitude,latitude,setLatitude,setLongitude]);
+  }, [setDefaultPosition]);
 
   const computeDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // metres
@@ -47,7 +45,12 @@ const MainMap = (props) => {
   const userIcon = new Icon ({
     iconUrl : require(`../../assets/images/markers/user.png`),
     iconSize : [35, 35]
-  })
+  });
+
+  const friendIcon = new Icon ({
+    iconUrl : require(`../../assets/images/markers/friend.png`),
+    iconSize : [35, 35]
+  });
 
   const handlePopupClose = () => {
     setPopupID(null);
@@ -65,28 +68,44 @@ const MainMap = (props) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {
-          latitude !== null && longitude !== null ?
-            <SetViewOnClick center={[latitude, longitude]} zoom={12} class={props.class === undefined ? 'mainMap__center' : props.class+'__map'}/> : null
-        }
+        <SetViewOnClick center={[myPosition.latitude, myPosition.longitude]} zoom={12} class={props.class === undefined ? 'mainMap__center' : props.class+'__map'}/> : null
 
         <Marker
           icon={userIcon}
           position={
-            latitude !== null && longitude !== null ?
-              [latitude, longitude]:[0, 0]
+            myPosition.latitude !== null && myPosition.longitude !== null ?
+              [myPosition.latitude, myPosition.longitude] : defaultPosition
           }
           eventHandlers={{
             click: (e) => {
               handleMarkerClick(e, -1);
             },
+
           }}
         />
 
         {
+          friendsPosition.length > 0 ?
+            friendsPosition.map((friend, index) => {
+              return (
+                <Marker
+                  key={'marker-'+index+'friend.id'}
+                  icon={friendIcon}
+                  position={[friend.latitude, friend.longitude]}
+                >
+                  <Popup>
+                    <span>C'est {friend.username} !</span>
+                  </Popup>
+                </Marker>
+              );
+            })
+            : null
+        }
+
+        {
           props.places !== undefined ?
             props.places.map((place, index) => {
-              const distance = computeDistance(latitude, longitude, place.latitude, place.longitude);
+              const distance = computeDistance(myPosition.latitude, myPosition.longitude, place.latitude, place.longitude);
               if(props.activeFilter === undefined || props.activeFilter === null){
                 return (
                   <Marker

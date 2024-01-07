@@ -5,7 +5,7 @@ import axiosSpring from "../../utils/axios/axiosSpring";
 import './create.scss';
 import AlertContext from "../context/alerts/AlertContext";
 import {ALERT_TYPES} from "../context/alerts/Alert";
-import { useNavigate, useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 const ListCreateForm = (props) => {
   const {setAlert} = useContext(AlertContext);

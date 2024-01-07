@@ -11,6 +11,7 @@ import ListCreateForm from "./components/list/ListCreateForm";
 import Alert from "./components/context/alerts/Alert";
 import ListDetails from "./components/list/ListDetails";
 import PlacesPage from "./components/places/PlacesPage";
+import SharePosition from "./components/position/SharePosition";
 
 function App() {
   return (
@@ -32,6 +33,9 @@ function App() {
           <Route path="/places" element={<PlacesPage canCreate={true}/>} />
           <Route path="/places/create" element={<PlaceCreateForm />} />
           <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
+
+          {/* position */}
+          <Route path="/share-position" element={<SharePosition />} />
 
           {/* Errors */}
           <Route path="*" element={<NotFound/>} />

@@ -18,9 +18,6 @@ public class User {
     public static final int DESCRIPTION_MIN_LENGTH = 0;
     public static final int DESCRIPTION_MAX_LENGTH = 255;
 
-
-
-
     @Id
     @GeneratedValue
     private long id;
@@ -31,8 +28,6 @@ public class User {
     private String username;
 
     @NotBlank(message = "Password may not be empty")
-    //@Column(length = PASSWORD_MAX_LENGTH)
-    //@Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
     private String password;
 
     private String image;
@@ -68,6 +63,27 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "list_id", referencedColumnName="id")
     )
     private Collection<List> contributors=new Vector<>();
+
+
+    // Self referencing many to many relationship
+    // Share my position with other users
+    @ManyToMany
+    @JoinTable(
+            name = "shared_position",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id")
+    )
+    private Collection<User> sharedPositionWith=new Vector<>();
+
+    // Self referencing many to many relationship
+    // Share other users position with me
+    @ManyToMany
+    @JoinTable(
+            name = "shared_position",
+            joinColumns = @JoinColumn(name = "friend_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName="id")
+    )
+    private Collection<User> sharedPositionBy=new Vector<>();
 
     public User(){}
 
@@ -179,5 +195,21 @@ public class User {
 
     public void setContributedLists(Collection<List> contributors) {
         this.contributors = contributors;
+    }
+
+    public Collection<User> getSharedPositionWith() {
+        return sharedPositionWith;
+    }
+
+    public void setSharedPositionWith(Collection<User> sharedPositionWith) {
+        this.sharedPositionWith = sharedPositionWith;
+    }
+
+    public Collection<User> getSharedPositionBy() {
+        return sharedPositionBy;
+    }
+
+    public void setSharedPositionBy(Collection<User> sharedPositionBy) {
+        this.sharedPositionBy = sharedPositionBy;
     }
 }

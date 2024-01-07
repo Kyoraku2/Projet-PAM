@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import DefaultListIcone from '../../../assets/images/defaultList.svg';
 import axiosSpring from "../../../utils/axios/axiosSpring";
 

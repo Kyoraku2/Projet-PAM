@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './markerPopup.scss';
 import DefaultPP from '../../assets/images/defaultPp.png';
-import { IoClose } from 'react-icons/io5';
+import {IoClose} from 'react-icons/io5';
 import axiosSpring from "../../utils/axios/axiosSpring";
 
 const MarkerPopup = (props) => {

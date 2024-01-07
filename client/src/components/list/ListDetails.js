@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react'
+import {useNavigate, useParams} from 'react-router-dom';
 import DefaultList from "../../assets/images/defaultList.svg";
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 import './details.scss';
-import {MdAddCircleOutline, MdDelete, MdEdit, MdEditLocationAlt} from 'react-icons/md';
-import { FaShareAlt } from "react-icons/fa";
+import {MdDelete, MdEdit, MdEditLocationAlt} from 'react-icons/md';
+import {FaShareAlt} from "react-icons/fa";
 import AddPlaceModal from './AddPlaceModal';
 
 const ListDetails = (props) => {

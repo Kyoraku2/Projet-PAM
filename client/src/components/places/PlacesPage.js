@@ -3,7 +3,7 @@ import './place.scss';
 import PlaceCollection from "./PlaceCollection";
 //import Tabs from "./Tabs";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import { IoAddCircle } from 'react-icons/io5';
+import {IoAddCircle} from 'react-icons/io5';
 
 const PlacesPage = (props) => {
 
