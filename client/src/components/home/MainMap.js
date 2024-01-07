@@ -3,6 +3,7 @@ import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import SetViewOnClick from "../MapControls/SetViewOnClick";
 import L from "leaflet";
 import MarkerPopup from "./MarkerPopup";
+import {Icon} from "leaflet/src/layer";
 
 const MainMap = (props) => {
   const [latitude, setLatitude] = useState(null);
@@ -18,13 +19,6 @@ const MainMap = (props) => {
       });
     }
   }, [longitude,latitude,setLatitude,setLongitude]);
-
-  const getIcon = (size, name) => {
-    return L.icon({
-      iconUrl: require(`../../assets/images/markers/${name}.png`),
-      iconSize: size,
-    });
-  }
 
   const computeDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // metres
@@ -50,6 +44,11 @@ const MainMap = (props) => {
     }
   }
 
+  const userIcon = new Icon ({
+    iconUrl : require(`../../assets/images/markers/user.png`),
+    iconSize : [35, 35]
+  })
+
   const handlePopupClose = () => {
     setPopupID(null);
   }
@@ -71,9 +70,8 @@ const MainMap = (props) => {
             <SetViewOnClick center={[latitude, longitude]} zoom={12} class={props.class === undefined ? 'mainMap__center' : props.class+'__map'}/> : null
         }
 
-        {/*TODO : custom pointer for user*/}
         <Marker
-          //icon={getIcon(35, 'user')}
+          icon={userIcon}
           position={
             latitude !== null && longitude !== null ?
               [latitude, longitude]:[0, 0]

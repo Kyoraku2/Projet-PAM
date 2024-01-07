@@ -11,7 +11,6 @@ import {ALERT_TYPES} from "../context/alerts/Alert";
 
 export const radiusOptions = [1, 5, 10, 20, 30, 50, 100];
 
-// TODO : change marker icon
 const Home = (props) => {
   const {setAlert} = useContext(AlertContext);
 
