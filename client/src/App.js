@@ -11,6 +11,9 @@ import ListCreateForm from "./components/list/ListCreateForm";
 import Alert from "./components/context/alerts/Alert";
 import ListDetails from "./components/list/ListDetails";
 import PlacesPage from "./components/places/PlacesPage";
+import Connexion from './components/connexion/Connexion';
+
+
 
 function App() {
   return (
@@ -21,7 +24,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/example" element={<ExampleList />} />
           <Route path="/profil" element={<Profile />} />
-
+          <Route path="/connexion" element={<Connexion/>} />
           {/* Lists */}
           <Route path="/lists" element={<ListsPage />} />
           <Route path="/lists/create" element={<ListCreateForm />} />
