@@ -6,8 +6,9 @@ import './header.scss';
 import {FaListUl, FaMapMarkerAlt, FaRegPlusSquare} from "react-icons/fa";
 import {FaMap, FaUser} from "react-icons/fa6";
 
-const Header = () => {
-  const MEDIA_QUERY = 600;
+export const MEDIA_QUERY = 600;
+
+const Header = (props) => {
   const [isMobile, setIsMobile] = useState(false);
   const [activeLink, setActiveLink] = useState(0);
 
@@ -61,7 +62,7 @@ const Header = () => {
             Créer un lieu
           </a>
 
-          <ProfileCard class='nav__right'/>
+          <ProfileCard class='nav__right' name={props.name}/>
         </div>
       </>
       ):(

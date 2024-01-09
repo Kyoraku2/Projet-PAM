@@ -3,13 +3,16 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {AlertProvider} from "./components/context/alerts/AlertContext";
+import {AuthProvider} from "./components/context/AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AlertProvider>
-      <App />
-    </AlertProvider>
+    <AuthProvider>
+      <AlertProvider>
+        <App />
+      </AlertProvider>
+    </AuthProvider>
   </React.StrictMode>
 );
 

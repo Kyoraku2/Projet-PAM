@@ -1,114 +1,124 @@
-import './connexion.css';
-import myImage from './username-icon.jpg';
-import  {  useContext, useState } from 'react';
+import './connexion.scss';
+import myImage from '../../assets/images/logo.svg';
+import {useContext, useEffect, useState} from 'react';
 import axiosSpring from '../../utils/axios/axiosSpring';
-import { useNavigate } from 'react-router-dom';
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {useNavigate} from 'react-router-dom';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 import AlertContext from '../context/alerts/AlertContext';
+import {SHA256} from "crypto-js";
+import AuthContext from "../context/AuthContext";
+import {COOKIE_MINUTE_TO_EXPIRE, COOKIE_USER_KEY} from "../../utils/consts";
+import {isLogged, setCookie} from "../../utils/functions";
 
-const Login =() => {
-let navigate = useNavigate()
+const Login = () => {
+  const {setAuth} = useContext(AuthContext);
+  const navigate = useNavigate()
 
-const { setAlert } = useContext(AlertContext);
-const [credentials, setCredentials] = useState({
+  const {setAlert} = useContext(AlertContext);
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [error, setError] = useState(null);
 
-    username: '',
-    password: ''
-})
+  useEffect(() => {
+    if(isLogged()){
+      navigate('/');
+    }
+  }, [navigate]);
 
-const onChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials({
-        ...credentials,
-        [name]: value
-    })
-}
-const onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    console.log("Données soumises :", credentials);
 
-    const queryString = Object.keys(credentials)
-        .map(key => key === 'email' ? `${key}=${encodeURIComponent(credentials[key])}` : `${key}=${credentials[key]}`)
-        .join('&');
-
-    axiosSpring.get(`/api/auth/login?${queryString}`)
-        .then(res => {
-            console.log(res);
-            if (res.status === 200) {
-            setAlert({
+    const hashedPassword = SHA256(password).toString();
+    axiosSpring.get(`/api/auth/login?password=${hashedPassword}&username=${username}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAuth({
+            username: res.data.username,
+            accessToken: res.data.jwt,
+            id: res.data.id
+          });
+          setCookie(COOKIE_USER_KEY, {
+            username: res.data.username,
+            accessToken: res.data.jwt,
+            id: res.data.id
+          }, COOKIE_MINUTE_TO_EXPIRE);
+          setAlert({
             type: ALERT_TYPES.SUCCESS.type,
             message: 'Utilisateur connecté avec succès.',
             icon: ALERT_TYPES.SUCCESS.icon
-            });
-            navigate('/*');
-            } else {
-            setAlert({
+          });
+          navigate('/');
+        } else {
+          setAlert({
             type: ALERT_TYPES.ERROR.type,
             message: 'Erreur lors de la connexion.',
             icon: ALERT_TYPES.ERROR.icon
-            });
-            }
-        })
-        .catch(error => {
-        setAlert({
-        type: ALERT_TYPES.ERROR.type,
-        message: 'Erreur lors de la connexion.',
-        icon: ALERT_TYPES.ERROR.icon
-        });
-        });
-}
+          });
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          setError('Nom d\'utilisateur ou mot de passe incorrect.');
+        } else {
+          setAlert({
+            type: ALERT_TYPES.ERROR.type,
+            message: 'Erreur lors de la connexion.',
+            icon: ALERT_TYPES.ERROR.icon
+          });
+        }
+      });
+  }
 
 
-return (
-
-<div className='form'>
-     <form onSubmit={onSubmit}>
-        <div className='form-group'>
-            <h1>Se connecter</h1>
-        </div>
-        <div className="form-group">
-            <img src={myImage} alt="" className="class-img " />
-            <label htmlFor="username">
+  return (
+    <section className="login">
+      <img src={myImage} alt="" className="class-img "/>
+      <h1>Se connecter</h1>
+      <form onSubmit={onSubmit} className="login__form">
+        <div className="login__form__group">
+          <label htmlFor="username">
             Nom d'utilisateur :
-            </label>
-            <input type='text'
-            name='username'
-            className="input form-control"
-            placeholder="Username"
-            value={credentials.username}
-            onChange={onChange} />
-
-        </div>
-        <div className="form-group">
-            <label htmlFor="password">
-             Mot de passe :
-             </label>
-            <input type='password'
-            name = 'password'
-            className="input form-control"
-            placeholder="Password"
-            value={credentials.password}
-            onChange={onChange}/>
-
-        </div>
-        <div className="form-group form-check inline">
-            <input type="checkbox"
-            className="form-check-input"
-            id="exampleCheck1" />
-            <label className="form-check-label" htmlFor="exampleCheck1">Remember me</label>
+          </label>
+          <input type='text'
+                 name='username'
+                 placeholder="Username"
+                 value={username}
+                 onChange={(e) => setUsername(e.target.value)}/>
         </div>
 
-        <div className="center-container form-group">
-            <button type='submit'>
-                Connexion
-            </button>
+        <div className="login__form__group">
+          <label htmlFor="password">
+            Mot de passe :
+          </label>
+          <input type='password'
+                 name='password'
+                 placeholder="Password"
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}/>
+
         </div>
-        <div className='form-group'>
-            Nouveau ici ? <a href='/connexion/inscription' className='form-link'>S'inscrire</a>
-        </div>
-    </form>
-</div>
-    );
+
+        {
+          error ? <p className="login__form__error">{error}</p> : null
+        }
+
+        {/*<div className="form-group form-check inline">
+          <input type="checkbox"
+                 className="form-check-input"
+                 id="exampleCheck1"/>
+          <label className="form-check-label" htmlFor="exampleCheck1">Remember me</label>
+        </div>*/}
+
+        <button type='submit'>
+          Connexion
+        </button>
+      </form>
+      <div className='login__register'>
+        Nouveau ici ? <a href='/register'>S'inscrire</a>
+      </div>
+    </section>
+)
+  ;
 };
 
 export default Login;
