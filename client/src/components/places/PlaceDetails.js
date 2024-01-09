@@ -1,14 +1,15 @@
 import React, {useContext, useEffect, useState} from 'react';
 import DefaultListIcone from '../../assets/images/defaultList.svg';
 import '../places/place.scss';
+
 import {FaHeart, FaEdit} from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 import { PiListPlusFill } from "react-icons/pi";
 import {useNavigate, useParams} from "react-router-dom";
+
 import axiosSpring from "../../utils/axios/axiosSpring";
 import AlertContext from "../context/alerts/AlertContext";
 import { ALERT_TYPES } from '../context/alerts/Alert';
-
 
 
 const PlaceDetails = (props) => {
@@ -25,6 +26,9 @@ const PlaceDetails = (props) => {
 * */
 
     const DEFAULT_STR = '<No data>';
+
+    const userID = 1; //todo
+
     const {placeID} = useParams();
     const navigate = useNavigate();
 
@@ -36,6 +40,7 @@ const PlaceDetails = (props) => {
     const [owner, setOwner] = useState(DEFAULT_STR);
     const [coordinates, setCoordinates] = useState([0,0]); //todo default
     const [category, setCategory] = useState(DEFAULT_STR);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
         if(name===DEFAULT_STR){
@@ -46,8 +51,26 @@ const PlaceDetails = (props) => {
                     setOwner(response.data.ownerName);
                     setCategory(response.data.category);
                     setCoordinates([response.data.latitude,response.data.longitude]);
+                    setIsFavorite(response.data.isFavorite);
 
-                    // TODO image du lieu
+                    axiosSpring.get("/api/place/"+placeID+"/image",{
+                        responseType: 'arraybuffer',
+                    }).then(
+                        response => {
+                            if(response.status === 200){
+                                // Create a blob from the image
+                                const blob = new Blob([response.data], {type: 'image/png'});
+                                // Create a data URL from the blob
+                                const dataUrl = URL.createObjectURL(blob);
+                                // Set the data URL to display the image
+                                setImage(dataUrl);
+                            }
+                        }
+                    ).catch(
+                        error => {
+                            console.log(error);
+                        }
+                    )
 
                 }else{
                     setAlert({
@@ -72,8 +95,45 @@ const PlaceDetails = (props) => {
 
 
     const handleFavorite=()=> {
-        //todo
-        console.log("handleFavorite");
+
+
+
+        let action = "addToFavorite";
+        let msg = "Lieu ajouté aux favoris";
+        let errorMsg = "Erreur lors de l'ajout du lieu aux favoris";
+
+        if(isFavorite){
+            action = "removeFromFavorite";
+            msg = "Lieu retiré des favoris";
+            errorMsg = "Erreur lors du retrait du lieu des favoris";
+        }
+
+        axiosSpring.patch('api/places/user/'+ userID+'/'+action+'/'+placeID).then((response)=>{
+            if(response.status === 200){
+                setAlert({
+                    type: ALERT_TYPES.SUCCESS.type,
+                    message: msg,
+                    icon: ALERT_TYPES.SUCCESS.icon
+                });
+            }else{
+                setAlert({
+                    type: ALERT_TYPES.ERROR.type,
+                    message: errorMsg,
+                    icon: ALERT_TYPES.ERROR.icon
+                });
+            }
+        }).catch((error)=>{
+            console.log(error);
+            setAlert({
+                type: ALERT_TYPES.ERROR.type,
+                message: errorMsg,
+                icon: ALERT_TYPES.ERROR.icon
+            });
+        });
+
+        setIsFavorite(!isFavorite);
+
+
     }
 
     const handleAddToList=()=> {
@@ -123,11 +183,10 @@ const PlaceDetails = (props) => {
 
                 <div className="placeDetails__actions">
                     <span className="placeDetails__actions__name">{name}</span>
-
-                    <button className="placeDetails__actions__button" onClick={handleFavorite}><FaHeart />
+                    <button className={isFavorite? "placeDetails__actions__button fav" : "placeDetails__actions__button"} onClick={handleFavorite}><FaHeart />
                     </button>
-                    <button className="placeDetails__actions__button" onClick={handleAddToList}><PiListPlusFill/>
-                    </button>
+                    {/*<button className="placeDetails__actions__button" onClick={handleAddToList}><PiListPlusFill/>
+                    </button>*/}
                     {/*TODO : edit only accessible if we are ownner*/ }
                     <button className="placeDetails__actions__button" onClick={handleEdit}><FaEdit />
                     </button>
