@@ -80,15 +80,11 @@
       position: absolute;
       top: 1rem;
       right: 1rem;
-
       display: flex;
-
       border: solid lighten($borderColor, 5%) 1px;
       border-radius: 7px;
       padding: 0.2rem;
       background: lighten($borderColor, 16%);
-
-
 
       input{
         display: none;
@@ -97,9 +93,7 @@
           svg{
             color: red;
           }
-
         }
-
       }
 
       label{
@@ -108,9 +102,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-
-
-
       }
 
     }
@@ -174,10 +165,7 @@
           font-size: 1.25rem;
           overflow: hidden;
         }
-
       }
-
-
     }
 
   }

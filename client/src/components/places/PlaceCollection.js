@@ -4,11 +4,14 @@ import './place.scss';
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
 import {ALERT_TYPES} from '../context/alerts/Alert';
+import {CgMenuGridR} from "react-icons/cg";
+import {SlList} from "react-icons/sl";
 
 const PlaceCollection = (props) => {
     const {setAlert} = useContext(AlertContext);
 
     const [places, setPlaces] = useState([]);
+    const [view, setView] = useState('card');
 
     useEffect(() => {
         axiosSpring.get('/api/places/user/'+ 1 + (props.favorites ? '/favorites' : '')) // TODO: get user id from context
@@ -32,13 +35,30 @@ const PlaceCollection = (props) => {
             });
     }, [setAlert, setPlaces, props]);
 
+    const handleChangeView = (e) => {
+        setView(e.target.value);
+    }
+
     return (
-        <div className={props.class+'__placeCollection'}>
+        <div className={props.class+'__placeCollection '+view}>
             {places.map((place) => {
                 return (
                     <PlacePreview key={place.id} id={place.id} class = {props.class+'__placeCollection'}/>
                 );
             })}
+
+            <div className="view">
+
+                <input type="checkbox" name="view" value="card" checked={view==="card"} id="radioCard" onChange={handleChangeView}/>
+                <label className="labelForChecked" htmlFor="radioCard"><CgMenuGridR />
+                </label>
+
+                <input type="checkbox" name="view" value="list" id="radioList" checked={view==="list"} onChange={handleChangeView}/>
+                <label className="labelForChecked" htmlFor="radioList"><SlList />
+
+                </label>
+            </div>
+
         </div>
     );
 };

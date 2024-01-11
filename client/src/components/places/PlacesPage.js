@@ -9,11 +9,7 @@ const PlacesPage = (props) => {
 
     return (
         <>
-{
-                props.canCreate ?
-                  <a href='/places/create' className="addBtn" title='Créer un lieu'><IoAddCircle /></a>
-                  :null
-            }
+
             <Tabs className="placesPage">
                 <TabList>
                     <Tab>Mes Lieux</Tab>
@@ -26,6 +22,11 @@ const PlacesPage = (props) => {
                     <PlaceCollection class="placesPage" favorites={true}/>
                 </TabPanel>
             </Tabs>
+            {
+                props.canCreate ?
+                    <a href='/places/create' className="addBtn" title='Créer un lieu'><IoAddCircle /></a>
+                    :null
+            }
         </>
     );
 };
