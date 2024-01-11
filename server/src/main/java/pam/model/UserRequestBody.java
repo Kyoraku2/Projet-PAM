@@ -1,8 +1,11 @@
 package pam.model;
 
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 
 public class UserRequestBody {
+    private long id;
     private String username;
     private String password;
     private String email;
@@ -11,6 +14,7 @@ public class UserRequestBody {
     private double longitude;
     
     public UserRequestBody(User user) {
+        this.id = user.getUserID();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.email = user.getEmail();
@@ -20,6 +24,7 @@ public class UserRequestBody {
     }
 
     public UserRequestBody(String username, String password, String email, String description, double latitude, double longitude) {
+        this.id = -1;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -52,8 +57,16 @@ public class UserRequestBody {
     public double getLongitude() {
         return longitude;
     }
+    public long getId() {
+        return id;
+    }
+
 
     // Setters
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -91,5 +104,13 @@ public class UserRequestBody {
 
     public static UserRequestBody fromJson(String json) {
         return new Gson().fromJson(json, UserRequestBody.class); 
+    }
+
+    public static Iterable<UserRequestBody> convert(Iterable<User> users) {
+        java.util.List<UserRequestBody> userRequestBodies = new ArrayList<>();
+        for (User user : users) {
+            userRequestBodies.add(new UserRequestBody(user));
+        }
+        return userRequestBodies;
     }
 }

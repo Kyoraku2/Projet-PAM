@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ListPreview from "./ListPreview";
 import './list.scss';
 import axiosSpring from '../../utils/axios/axiosSpring';

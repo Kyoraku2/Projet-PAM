@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import logo from '../../assets/images/logo.svg';
+import logo from '../../assets/images/logo.png';
 import {Link} from "react-router-dom";
 import ProfileCard from "./ProfileCard";
 import './header.scss';
@@ -57,9 +57,12 @@ const Header = () => {
         */}
 
         <div className='nav__right'>
+          {
+          /*
           <a className='nav__right__create' href='/places/create'>
             Créer un lieu
           </a>
+          */}
 
           <ProfileCard class='nav__right'/>
         </div>

@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react'
+import {useNavigate, useParams} from 'react-router-dom';
 import DefaultList from "../../assets/images/defaultList.svg";
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 import './details.scss';
-import { MdAddCircleOutline, MdDelete, MdEdit } from 'react-icons/md';
-import { FaShareAlt } from "react-icons/fa";
+import {MdDelete, MdEdit, MdEditLocationAlt} from 'react-icons/md';
+import {FaShareAlt} from "react-icons/fa";
 import AddPlaceModal from './AddPlaceModal';
 
 const ListDetails = (props) => {
@@ -105,13 +105,26 @@ const ListDetails = (props) => {
     }
 
     const handleShare = () => {
-        // TODO : share list
-        navigator.clipboard.writeText(window.location.href);
-        setAlert({
-            type: ALERT_TYPES.SUCCESS.type,
-            message: 'Lien copié dans le presse-papier',
-            icon: ALERT_TYPES.SUCCESS.icon
-        });
+        // Prompt to ask the username to share the list with
+        const username = window.prompt("Avec qui voulez-vous partager cette liste ?");
+        
+        if(username !== null || username !== undefined || username !== ''){
+            axiosSpring.patch(`/api/lists/${listID}/share/${username}`)
+            .then((response) => {
+                setAlert({
+                    type: ALERT_TYPES.SUCCESS.type,
+                    message: 'Si l\'utilisateur "'+username+'" existe, la liste lui a été partagée avec succès',
+                    icon: ALERT_TYPES.SUCCESS.icon
+                });
+            })
+            .catch((error) => {
+                setAlert({
+                    type: ALERT_TYPES.SUCCESS.type,
+                    message: 'Si l\'utilisateur existe, la liste lui a été partagée avec succès',
+                    icon: ALERT_TYPES.SUCCESS.icon
+                });
+            })
+        }
     }
 
     const handleAddPlace = () => {
@@ -139,7 +152,7 @@ const ListDetails = (props) => {
                         <p><span>Description : </span>{description}</p>
                         <div>
                             <h2>Lieux</h2>
-                            <button className="listDetails__content__infos__addPlace" onClick={handleAddPlace}><MdAddCircleOutline /></button>
+                            <button className="listDetails__content__infos__addPlace" onClick={handleAddPlace}><MdEditLocationAlt /></button>
                         </div>
                         <ul className="listDetails__content__infos__places">
                             {places.map((place) => (
