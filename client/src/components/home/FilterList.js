@@ -2,22 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {IoChevronBackCircleOutline, IoChevronForwardCircleOutline} from "react-icons/io5";
 import SimpleFilter from "./SimpleFilter";
 import RadiusFilter from "./RadiusFilter";
+import {radiusOptions} from "./Home";
 
 const FilterList = (props) => {
   const MEDIA_QUERY = 600;
   const [isMobile, setIsMobile] = useState(false);
 
   const className = props.class !== undefined ? props.class+'__filters' : '__filters';
-  const [activeFilter, setActiveFilter] = useState(undefined);
+
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const [subMenuDisplayed, setSubMenuDisplayed] = useState(false);
   const [maxScroll, setMaxScroll] = useState(0);
   const [listWidth, setListWidth] = useState(0);
-
-  const radiusOptions = [1, 5, 10, 20, 30, 50, 100];
-  const [selectedRadius, setSelectedRadius] = useState(radiusOptions[0]);
-  const [selectedRadiusID, setSelectedRadiusID] = useState(0);
 
   const spaceBeforeShowingArrow = 30;
   const [scrollStep, setScrollStep] = useState(window.innerWidth-100);
@@ -41,24 +38,6 @@ const FilterList = (props) => {
       window.removeEventListener('resize', handleResize);
     };
   }, [props, className]);
-
-
-  const handleRadius = (radius) => {
-    setSelectedRadius(radius);
-  }
-
-  const handleSlideRadius = (event) => {
-    setSelectedRadius(radiusOptions[event.target.value]);
-    setSelectedRadiusID(event.target.value);
-  }
-
-  const handleActiveFilter = (event) => {
-    if(event.target.value !== activeFilter){
-      setActiveFilter(event.target.value);
-    }else{
-      setActiveFilter(undefined);
-    }
-  }
 
   const handleScroll = (event) => {
     setScrollPosition(event.target.scrollLeft);
@@ -107,9 +86,9 @@ const FilterList = (props) => {
           :null
       }
       <ul className={className+'__list'} onScroll={handleScroll}>
-        <RadiusFilter index={-1} className={className} activeFilter={activeFilter} handleActiveFilter={handleActiveFilter} handleSubMenu={handleSubMenu}/>
+        <RadiusFilter index={-1} className={className} activeFilter={props.activeFilter} handleActiveFilter={props.handleActiveFilter} handleSubMenu={handleSubMenu}/>
         {props.filters.map((filter, index) => {
-          return <SimpleFilter key={index} index={index} className={className} filter={filter} activeFilter={activeFilter} handleActiveFilter={handleActiveFilter} handleSubMenu={handleSubMenu}/>
+          return <SimpleFilter key={index} index={index} className={className} filter={filter} activeFilter={props.activeFilter} handleActiveFilter={props.handleActiveFilter} handleSubMenu={handleSubMenu}/>
         })}
       </ul>
       {
@@ -120,8 +99,8 @@ const FilterList = (props) => {
                 isMobile ? (
                   <div className={className+'__subMenu radiusSubMenu'}>
                     <span className='radiusSubMenu__title'>Dans un rayon de</span>
-                    <label htmlFor='radius' className='radiusSubMenu__label'>{selectedRadius}km</label>
-                    <input type='range' id='radius' className='radiusSubMenu__slider' min={0} max={radiusOptions.length-1} value={selectedRadiusID} step={1} onChange={handleSlideRadius}/>
+                    <label htmlFor='radius' className='radiusSubMenu__label'>{props.selectedRadius}km</label>
+                    <input type='range' id='radius' className='radiusSubMenu__slider' min={0} max={radiusOptions.length-1} value={props.selectedRadiusID} step={1} onChange={props.handleSlideRadius}/>
                   </div>
                 )
                 :
@@ -131,7 +110,7 @@ const FilterList = (props) => {
                     <div className='radiusSubMenu__options'>
                       {
                         radiusOptions.map((radius, index) => {
-                          return <button key={index} className={'radiusSubMenu__options__item' + (selectedRadius===radius?' radiusSubMenu__options__item--active':'')} onClick={() => handleRadius(radius)}>{radius}km</button>
+                          return <button key={index} className={'radiusSubMenu__options__item' + (props.selectedRadius===radius?' radiusSubMenu__options__item--active':'')} onClick={() => props.handleRadius(radius)}>{radius}km</button>
                         })
                       }
                     </div>

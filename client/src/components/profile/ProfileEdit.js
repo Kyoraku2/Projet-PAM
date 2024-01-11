@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import DefaultPP from "../../assets/images/defaultPp.png";
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import { INVALID_CHARS, isEmailValid } from '../../utils/consts';
+import {INVALID_CHARS, isEmailValid} from '../../utils/consts';
 import {SHA256} from "crypto-js";
 
 const ProfileEdit = (props) => {

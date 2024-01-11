@@ -1,0 +1,41 @@
+@import "../../../utils/styles/vars";
+@import "../../../utils/styles/mixins";
+.sidePanel{
+  z-index: 999;
+  background: $sidePanelBackground;
+  box-shadow: 0 1px 1px 1px rgba(0,0,0,0.1);
+  border-top: 1px solid $borderColor;
+  position: absolute;
+  top: calc($navbarHeight + $filterHeight + 1px);
+  height: calc(100vh - $navbarHeight - $filterHeight - 2px);
+  transition: width 0.15s ease-in-out;
+  &.open{
+    width: 20rem;
+  }
+  &.close{
+    width: 0;
+    padding: 0;
+  }
+  &__toggle{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: -2rem;
+    width: 2rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: lighten($color: $borderColor, $amount: 10%);
+    border-radius: 0 5px 5px 0;
+    border: 1px solid $borderColor;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .sidePanel{
+    top: 0;
+    height: calc(100vh - $navbarHeight - 2px);
+  }
+}
+

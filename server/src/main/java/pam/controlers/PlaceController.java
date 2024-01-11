@@ -19,6 +19,8 @@ import java.util.List;
 
 import static pam.model.Place.*;
 
+// TODO : check if the user is the owner of the place before updating/deleting it
+// TODO : maybe same thing with reading it
 @RestController
 @RequestMapping("api")
 public class PlaceController {

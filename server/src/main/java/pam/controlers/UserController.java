@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import static pam.model.User.*;
 
+// TODO : check if user is connected before updating position
 @RestController
 @RequestMapping("api")
 public class UserController {
@@ -225,8 +226,113 @@ public class UserController {
             return ApiResponse.badRequest("Invalid id");
         }
         userService.updatePosition(id, latitude, longitude);
-        return ApiResponse.ok("Position updated");
+        return ApiResponse.ok(new UserRequestBody(userService.getUser(id)));
     }
+
+    @GetMapping("users/{id}/shareWith")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> getUsersThatUserSharePositionWith(
+        @PathVariable(value="id") Long id
+    ){
+        if(id == null){
+            return ApiResponse.badRequest("Missing id");
+        }
+        if(id < 0 || userService.getUser(id) == null){
+            return ApiResponse.badRequest("Invalid id");
+        }
+        return ApiResponse.ok(
+            UserRequestBody.convert(userService.getSharePositionWith(id))
+        );
+    }
+
+    @PatchMapping("users/{from}/shareWith/{username}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> sharePositionWith(
+        @PathVariable(value="from") Long from,
+        @PathVariable(value="username") String username
+    ){
+        if(from == null){
+            return ApiResponse.badRequest("Missing from");
+        }
+        if(from < 0 || userService.getUser(from) == null){
+            return ApiResponse.badRequest("Invalid from");
+        }
+        if(username == null){
+            return ApiResponse.badRequest("Missing username");
+        }
+        User user = userService.getUser(username);
+        if(user == null){
+            return ApiResponse.badRequest("Invalid username");
+        }
+        // Check if user is already sharing position with this user
+        for(User u : userService.getSharePositionWith(from)){
+            if(u.getUserID() == user.getUserID()){
+                return ApiResponse.noContent("Already sharing position with this user");
+            }
+        }
+        userService.sharePositionWith(from, user.getUserID());
+        return ApiResponse.ok(new UserRequestBody(user));
+    }
+
+    @DeleteMapping("users/{from}/shareWith/{userID}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> stopSharingPosition(
+        @PathVariable(value="from") Long from,
+        @PathVariable(value="userID") Long userID
+    ){
+        if(from == null){
+            return ApiResponse.badRequest("Missing from");
+        }
+        if(from < 0 || userService.getUser(from) == null){
+            return ApiResponse.badRequest("Invalid from");
+        }
+        User user = userService.getUser(userID);
+        if(user == null){
+            return ApiResponse.badRequest("Invalid username");
+        }
+        userService.stopSharingPositionWith(from, user.getUserID());
+        return ApiResponse.ok("Position sharing stopped");
+    }
+
+    @GetMapping("users/{id}/shareBy")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> getUsersThatSharePositionWithUser(
+        @PathVariable(value="id") Long id
+    ){
+        if(id == null){
+            return ApiResponse.badRequest("Missing id");
+        }
+        if(id < 0 || userService.getUser(id) == null){
+            return ApiResponse.badRequest("Invalid id");
+        }
+        return ApiResponse.ok(
+            UserRequestBody.convert(userService.getSharePositionBy(id))
+        );
+    }
+    
+    @DeleteMapping("users/{id}/shareBy/{userID}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> stopSharingPositionBy(
+        @PathVariable(value="id") Long id,
+        @PathVariable(value="userID") Long userID
+    ){
+        if(id == null){
+            return ApiResponse.badRequest("Missing id");
+        }
+        if(id < 0 || userService.getUser(id) == null){
+            return ApiResponse.badRequest("Invalid id");
+        }
+        User user = userService.getUser(userID);
+        if(user == null){
+            return ApiResponse.badRequest("Invalid user");
+        }
+        userService.stopSharingPositionBy(id, user.getUserID());
+        return ApiResponse.ok("Position sharing stopped");
+    }
+
+
+
+    
 
     // list : OK
     // details : OK

@@ -35,7 +35,12 @@ public class List {
     private String image;
 
     @ManyToMany(mappedBy = "lists")
-    private Collection<Place> places=new Vector<Place>();
+    private Collection<Place> places=new Vector<>();
+
+    @ManyToMany(mappedBy = "contributors")
+    private Collection<User> contributors=new Vector<>();
+
+    private boolean isShared;
 
 
     public List() {
@@ -106,8 +111,6 @@ public class List {
         isShared = shared;
     }
 
-    private boolean isShared;
-
     public Long getId() {
         return id;
     }
@@ -130,5 +133,21 @@ public class List {
 
     public String toString(){
         return "List: " + this.name + " " + this.description + " " + this.image + " " + this.isShared + " " + this.owner + " " + this.places + " " + this.id;
+    }
+
+    public Collection<User> getContributors() {
+        return contributors;
+    }
+
+    public void setContributors(Collection<User> contributors) {
+        this.contributors = contributors;
+    }
+
+    public void addContributor(User user){
+        this.contributors.add(user);
+    }
+
+    public void removeContributor(User user){
+        this.contributors.remove(user);
     }
 }

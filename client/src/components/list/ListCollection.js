@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ListPreview from "./ListPreview";
 import './list.scss';
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 
 const ListCollection = (props) => {
     const {setAlert} = useContext(AlertContext);

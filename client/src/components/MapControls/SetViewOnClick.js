@@ -6,10 +6,6 @@ import {FaRegDotCircle} from "react-icons/fa";
 const SetViewOnClick = (props) => {
   const map = useMap();
 
-  useEffect(() => {
-    map.setView(props.center, props.zoom);
-  }, [map, props]);
-
   const handleClick = () => {
     map.setView(props.center, props.zoom);
   }

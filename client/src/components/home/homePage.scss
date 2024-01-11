@@ -76,7 +76,7 @@
           background: $filterBackground;
           border: 1px solid $filerBorder;
           &.activeFilter{
-            background: darken($filterBackground, 10%);;
+            background: darken($filterBackground, 10%);
           }
           &:hover{
             cursor: pointer;
@@ -104,8 +104,9 @@
 
     @include centerBtn();
 
-    & .leaflet-control-zoom{
+    .leaflet-control-zoom{
       margin-top: calc($filterHeight + 0.25rem);
+      transition: all 0.2s ease-in-out;
     }
   }
 }

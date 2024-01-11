@@ -142,4 +142,36 @@ public class ListServiceImpl implements ListService{
         placeRepository.save(place);
         return listRepository.save(list);
     }
+
+    @Override
+    public List shareList(List list, User user) {
+        User userFromDB = userService.getUser(user.getUserID());
+        List listFromDB = listRepository.findOne(list.getId());
+        listFromDB.getContributors().add(userFromDB);
+        listFromDB.setShared(true);
+        userFromDB.getContributedLists().add(listFromDB);
+        userService.updateUser(userFromDB);
+        return listRepository.save(listFromDB);
+    }
+
+    @Override
+    public List shareList(long listID, long userID) {
+        User user = userService.getUser(userID);
+        List list = listRepository.findOne(listID);
+        list.getContributors().add(user);
+        list.setShared(true);
+        user.getContributedLists().add(list);
+        userService.updateUser(user);
+        return listRepository.save(list);
+    }
+
+    @Override
+    public Iterable<List> getListsByContributor(User contributor) {
+        return listRepository.findByContributors(contributor);
+    }
+
+    @Override
+    public Iterable<List> getListsByOwnerAndByShared(User owner, boolean shared) {
+        return listRepository.findByOwnerAndIsShared(owner, shared);
+    }
 }

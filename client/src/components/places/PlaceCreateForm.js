@@ -9,11 +9,12 @@ import axios from "axios";
 import {INVALID_CHARS, NOMINATIM_BASE_URL} from "../../utils/consts";
 import AlertContext from "../context/alerts/AlertContext";
 import {ALERT_TYPES} from "../context/alerts/Alert";
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 const PlaceCreateForm = (props) => {
   const {setAlert} = useContext(AlertContext);
   const {placeID} = useParams();
+  const navigate = useNavigate();
 
   const [image, setImage] = useState(DefaultList);
   const [imagePreview, setImagePreview] = useState(DefaultList);
@@ -31,6 +32,14 @@ const PlaceCreateForm = (props) => {
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
   };
+
+  const resetAndRedirect = (id) => {
+    setName("");
+    setDescription("");
+    setImage(DefaultList);
+    setImagePreview(DefaultList);
+    navigate('/places/'+id);
+  }
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -170,6 +179,7 @@ const PlaceCreateForm = (props) => {
               message: 'Lieu modifié avec succès',
               icon: ALERT_TYPES.SUCCESS.icon
             });
+            resetAndRedirect(response.data.id);
           }else{
             setAlert({
               type: ALERT_TYPES.ERROR.type,
@@ -204,6 +214,7 @@ const PlaceCreateForm = (props) => {
             message: 'Lieu créé avec succès',
             icon: ALERT_TYPES.SUCCESS.icon
           });
+          resetAndRedirect(response.data.id);
         }else{
           setAlert({
             type: ALERT_TYPES.ERROR.type,
