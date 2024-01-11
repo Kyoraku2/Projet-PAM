@@ -1,5 +1,6 @@
-import {createContext, useEffect, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import axiosSpring from "../../../utils/axios/axiosSpring";
+import AuthContext from "../AuthContext";
 
 const PositionContext = createContext(null);
 
@@ -7,6 +8,7 @@ export const PositionProvider = ({children}) => {
   const [myPosition, setMyPosition] = useState({latitude: 0, longitude: 0});
   const [friendsPosition, setFriendsPosition] = useState([]);
 
+  const {auth} = useContext(AuthContext);
   useEffect(() => {
     let timer = null;
     if (navigator.geolocation) {
@@ -14,7 +16,7 @@ export const PositionProvider = ({children}) => {
       timer = setInterval(() => {
         navigator.geolocation.getCurrentPosition((position)=>{
           setMyPosition({latitude: position.coords.latitude, longitude: position.coords.longitude});
-          axiosSpring.patch('/api/users/' + 1 + '/position?latitude=' + position.coords.latitude + '&longitude=' + position.coords.longitude) // TODO : get user id
+          axiosSpring.patch('/api/users/' + auth.id + '/position?latitude=' + position.coords.latitude + '&longitude=' + position.coords.longitude)
             .then((response) => {
             })
             .catch((error) => {
@@ -25,7 +27,7 @@ export const PositionProvider = ({children}) => {
     }
     // Set a time to get friends position every 15 seconds
     let friendsTimer = setInterval(() => {
-      axiosSpring.get('/api/users/' + 1 + '/shareBy') // TODO : get user id
+      axiosSpring.get('/api/users/' + auth.id + '/shareBy')
         .then((response) => {
           if(response.status === 200) {
             if(response.data.length > 0){
@@ -41,7 +43,7 @@ export const PositionProvider = ({children}) => {
       clearInterval(timer);
       clearInterval(friendsTimer);
     }
-  }, [setMyPosition]);
+  }, [auth,setMyPosition]);
 
   return (
     <PositionContext.Provider value={{myPosition, setMyPosition, friendsPosition, setFriendsPosition}}>

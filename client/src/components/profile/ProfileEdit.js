@@ -5,9 +5,11 @@ import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
 import {INVALID_CHARS, isEmailValid} from '../../utils/consts';
 import {SHA256} from "crypto-js";
+import AuthContext from "../context/AuthContext";
 
 const ProfileEdit = (props) => {
   const DEFAULT_STRING = '';
+  const {auth} = useContext(AuthContext);
   const {setAlert} = useContext(AlertContext);
   const [name, setName] = useState(DEFAULT_STRING);
   const [email, setEmail] = useState(DEFAULT_STRING);
@@ -26,7 +28,7 @@ const ProfileEdit = (props) => {
 
   useEffect(() => {
     if(name === DEFAULT_STRING) {
-      axiosSpring.get('/api/users/' + 1) // TODO : change 1 to user id
+      axiosSpring.get('/api/users/' + auth.id)
       .then(response => {
         if(response.status === 200) {
           setName(response.data.username);
@@ -34,7 +36,7 @@ const ProfileEdit = (props) => {
           setDescription(response.data.description);
           setPassToCompare(response.data.password);
 
-          axiosSpring.get('/api/user/' + 1 + '/profileImage', {
+          axiosSpring.get('/api/user/' + auth.id + '/profileImage', {
             responseType: 'arraybuffer'
           }).then(
             response => {
@@ -68,7 +70,7 @@ const ProfileEdit = (props) => {
       });
       });
     }
-  }, [name, setAlert, setName, setEmail, setDescription]);
+  }, [name, setAlert, setName, setEmail, setDescription,auth]);
   
   const handleImageChange = (file) => {
     setImage(file);
@@ -122,33 +124,14 @@ const ProfileEdit = (props) => {
     }
 
     // Check password
-    if(newPassword === DEFAULT_STRING) {
-      setNewPasswordError('Veuillez renseigner votre mot de passe.');  
+    if(currentPassword === DEFAULT_STRING) {
+      setCurrentPasswordError('Veuillez renseigner votre mot de passe.');
       return;
     }
 
-    if(newPassword === null || newPassword === undefined || newPassword === '') {
-      setNewPasswordError('Veuillez renseigner votre mot de passe.');
+    if(currentPassword === null || currentPassword === undefined || currentPassword === '') {
+      setCurrentPasswordError('Veuillez renseigner votre mot de passe.');
       return; 
-    }
-
-    if(newPassword.length < 8) {
-      setNewPasswordError('Votre mot de passe doit contenir au moins 8 caractères.');
-      return;
-    }
-
-    // Needs to contains 1 number, 1 uppercase, 1 lowercase and 1 special character
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/gm;
-    if(!regex.test(newPassword)) {
-      setNewPasswordError('Votre mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.');
-      return;
-    }
-
-    // Check password confirmation
-    if(newPassConf !== newPassword) {
-      setNewPasswordError('Les mots de passe ne correspondent pas.');
-      setNewPasswordConfError('Les mots de passe ne correspondent pas.');
-      return;
     }
 
     // Check current password
@@ -157,22 +140,44 @@ const ProfileEdit = (props) => {
       return;
     }
 
-    // Hash password
-    const hashedPassword = SHA256(newPassword).toString();
+    let hashedPassword = null;
+    if(newPassword !== DEFAULT_STRING) {
+      if(newPassword.length < 8) {
+        setNewPasswordError('Votre mot de passe doit contenir au moins 8 caractères.');
+        return;
+      }
+
+      // Needs to contains 1 number, 1 uppercase, 1 lowercase and 1 special character
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/gm;
+      if(!regex.test(newPassword)) {
+        setNewPasswordError('Votre mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.');
+        return;
+      }
+
+      // Check password confirmation
+      if(newPassConf !== newPassword) {
+        setNewPasswordError('Les mots de passe ne correspondent pas.');
+        setNewPasswordConfError('Les mots de passe ne correspondent pas.');
+        return;
+      }
+
+      // Hash password
+      hashedPassword = SHA256(newPassword).toString();
+    }
 
     let formData = new FormData();
 
     formData.append('image', image);
 
     formData.append('user', JSON.stringify({
-      id: 1, // TODO : change 1 to user id
+      id: auth.id,
       username: name,
       email: email,
       description: description,
-      password: hashedPassword
+      password: hashedPassword === null ? passToCompare : hashedPassword
     }));
 
-    axiosSpring.put('/api/users/' + 1, formData) // TODO : change 1 to user id
+    axiosSpring.put('/api/users/' + auth.id, formData)
       .then(response => {
         if(response.status === 200) {
           setAlert({

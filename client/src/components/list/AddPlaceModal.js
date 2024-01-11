@@ -4,14 +4,16 @@ import AlertContext from '../context/alerts/AlertContext';
 import {ALERT_TYPES} from '../context/alerts/Alert';
 import './modal.scss';
 import {IoClose} from 'react-icons/io5';
+import AuthContext from "../context/AuthContext";
 
 const AddPlaceModal = (props) => {
     const {setAlert} = useContext(AlertContext);
+    const {auth} = useContext(AuthContext);
     const [places, setPlaces] = useState([]);
     const [selectedPlaces, setSelectedPlaces] = useState(props.presentPlaces);
 
     useEffect(() => {
-        axiosSpring.get('/api/places/user/'+1) // TODO userID
+        axiosSpring.get('/api/places/user/'+auth.id)
         .then((response) => {
             if(response.status === 200) {
                 setPlaces(response.data);
@@ -31,7 +33,7 @@ const AddPlaceModal = (props) => {
                 icon: ALERT_TYPES.ERROR.icon
             });
         })
-    }, [setAlert, setPlaces]);
+    }, [setAlert, setPlaces, auth]);
 
     const handleCheck = (e) => {
         console.log('/api/lists/'+props.listID+'/removePlace/'+e.target.value);

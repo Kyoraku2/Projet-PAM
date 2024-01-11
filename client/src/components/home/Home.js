@@ -8,11 +8,13 @@ import {useContext, useEffect, useState} from "react";
 import axiosSpring from "../../utils/axios/axiosSpring";
 import AlertContext from "../context/alerts/AlertContext";
 import {ALERT_TYPES} from "../context/alerts/Alert";
+import AuthContext from "../context/AuthContext";
 
 export const radiusOptions = [1, 5, 10, 20, 30, 50, 100];
 
 const Home = (props) => {
   const {setAlert} = useContext(AlertContext);
+  const {auth} = useContext(AuthContext);
 
   const [fetched, setFetched] = useState(false);
 
@@ -87,7 +89,7 @@ const Home = (props) => {
   useEffect(() => {
     if(!fetched){
       setFetched(true);
-      axiosSpring.get('/api/places/user/' + 1) // TODO : change 1 to the user id
+      axiosSpring.get('/api/places/user/' + auth.id)
         .then((response) => {
           if(response.status === 200) {
             setPlaces(response.data);
@@ -108,7 +110,7 @@ const Home = (props) => {
           });
         });
 
-      axiosSpring.get('/api/lists/user/' + 1) // TODO : change 1 to the user id
+      axiosSpring.get('/api/lists/user/' + auth.id)
         .then((response) => {
           if(response.status === 200) {
             setLists(response.data);
@@ -129,7 +131,7 @@ const Home = (props) => {
           });
         });
     }
-  }, [checkedPlaces, checkedLists, activeFilter, selectedRadius, selectedRadiusID]);
+  }, [checkedPlaces, checkedLists, activeFilter, selectedRadius, selectedRadiusID, auth]);
 
   
   return <section className='home'>

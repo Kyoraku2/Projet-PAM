@@ -2,14 +2,13 @@ import React, {useContext, useEffect, useState} from 'react';
 import DefaultListIcone from '../../assets/images/defaultList.svg';
 import '../places/place.scss';
 
-import {FaHeart, FaEdit} from "react-icons/fa";
-import { FaTrashAlt } from "react-icons/fa";
-import { PiListPlusFill } from "react-icons/pi";
+import {FaEdit, FaHeart, FaTrashAlt} from "react-icons/fa";
 import {useNavigate, useParams} from "react-router-dom";
 
 import axiosSpring from "../../utils/axios/axiosSpring";
 import AlertContext from "../context/alerts/AlertContext";
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
+import AuthContext from "../context/AuthContext";
 
 
 const PlaceDetails = (props) => {
@@ -27,12 +26,11 @@ const PlaceDetails = (props) => {
 
     const DEFAULT_STR = '<No data>';
 
-    const userID = 1; //todo
-
     const {placeID} = useParams();
     const navigate = useNavigate();
 
     const {setAlert} = useContext(AlertContext);
+    const {auth} = useContext(AuthContext);
 
     const [name, setName] = useState(DEFAULT_STR);
     const [description, setDescription] = useState(DEFAULT_STR);
@@ -46,6 +44,9 @@ const PlaceDetails = (props) => {
         if(name===DEFAULT_STR){
             axiosSpring.get('api/places/'+placeID).then((response)=>{
                 if(response.status === 200){
+                    if(response.ownerID !== auth.id){
+                        navigate('/places');
+                    }
                     setName(response.data.name);
                     setDescription(response.data.description);
                     setOwner(response.data.ownerName);
@@ -90,7 +91,7 @@ const PlaceDetails = (props) => {
             });
         }
 
-    }, [setAlert, name, placeID]);
+    }, [setAlert, name, placeID, auth]);
 
 
 
@@ -108,7 +109,7 @@ const PlaceDetails = (props) => {
             errorMsg = "Erreur lors du retrait du lieu des favoris";
         }
 
-        axiosSpring.patch('api/places/user/'+ userID+'/'+action+'/'+placeID).then((response)=>{
+        axiosSpring.patch('api/places/user/'+ auth.id+'/'+action+'/'+placeID).then((response)=>{
             if(response.status === 200){
                 setAlert({
                     type: ALERT_TYPES.SUCCESS.type,
@@ -177,7 +178,7 @@ const PlaceDetails = (props) => {
     return (
         <div className="placeDetails">
 
-            <img src={image} alt="PlaceDetails image"/>
+            <img src={image} alt="lieu"/>
 
             <div className="placeDetails__content">
 
@@ -187,7 +188,6 @@ const PlaceDetails = (props) => {
                     </button>
                     {/*<button className="placeDetails__actions__button" onClick={handleAddToList}><PiListPlusFill/>
                     </button>*/}
-                    {/*TODO : edit only accessible if we are ownner*/ }
                     <button className="placeDetails__actions__button" onClick={handleEdit}><FaEdit />
                     </button>
                     <button className="placeDetails__actions__button" onClick={handleDelete}><FaTrashAlt />

@@ -36,8 +36,7 @@ const RequireAuth = () => {
       (auth.accessToken !== undefined)
         ? <Outlet />
         : <Navigate to="/login" state={{ from: location }} replace />
-      :
-      <></>
+      : <>1</>
   );
 }
 

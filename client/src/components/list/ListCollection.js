@@ -3,18 +3,20 @@ import ListPreview from "./ListPreview";
 import './list.scss';
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import { ALERT_TYPES } from '../context/alerts/Alert';
-import { CgMenuGridR} from "react-icons/cg";
+import {ALERT_TYPES} from '../context/alerts/Alert';
+import {CgMenuGridR} from "react-icons/cg";
 import {SlList} from "react-icons/sl";
+import AuthContext from "../context/AuthContext";
 
 const ListCollection = (props) => {
     const {setAlert} = useContext(AlertContext);
+    const {auth} = useContext(AuthContext);
 
     const [lists, setLists] = useState([]);
     const [view, setView] = useState('card');
 
     useEffect(() => {
-        axiosSpring.get('/api/lists/user/'+ 1 + (props.shared ?'?shared=true':'')) // TODO: get user id from context
+        axiosSpring.get('/api/lists/user/'+ auth.id + (props.shared ?'?shared=true':''))
             .then((response) => {
                 if(response.status === 200) {
                     setLists(response.data);
@@ -33,7 +35,7 @@ const ListCollection = (props) => {
                     icon: ALERT_TYPES.ERROR.icon
                   });
             });
-    }, [setAlert, setLists, props]);
+    }, [setAlert, setLists, props, auth]);
 
     const handleChangeView = (e) => {
         setView(e.target.value);

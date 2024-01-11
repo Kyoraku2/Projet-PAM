@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import './errorPage.scss';
 
-// TODO : make it funnier maybe?
 const NotFound = () => {
   return (
     <section className='errorPage'>

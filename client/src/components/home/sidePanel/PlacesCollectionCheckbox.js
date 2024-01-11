@@ -1,12 +1,14 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import axiosSpring from "../../../utils/axios/axiosSpring";
 import PlacePreviewCheckbox from "./PlacePreviewCheckbox";
+import AuthContext from "../../context/AuthContext";
 
 const PlacesCollectionCheckbox = (props) =>{
+    const {auth} = useContext(AuthContext);
     const [places, setPlaces] = useState([]);
 
     useEffect(() => {
-        axiosSpring.get('/api/places/user/'+ 1) // TODO: get user id from context
+        axiosSpring.get('/api/places/user/'+ auth.id)
             .then((response) => {
                 if(response.status === 200) {
                     setPlaces(response.data);
@@ -15,7 +17,7 @@ const PlacesCollectionCheckbox = (props) =>{
             .catch((error) => {
                 console.log(error);
             });
-    }, [setPlaces, props]);
+    }, [setPlaces, props, auth]);
 
     return (
         <ul className="collectionsCheck">

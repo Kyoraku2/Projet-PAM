@@ -5,14 +5,17 @@ import './position.scss';
 import {IoClose} from "react-icons/io5";
 import axiosSpring from "../../utils/axios/axiosSpring";
 import {ALERT_TYPES} from "../context/alerts/Alert";
+import AuthContext from "../context/AuthContext";
+
 const SharePosition = (props) => {
   const  {setAlert} = useContext(AlertContext);
+  const {auth} = useContext(AuthContext);
 
   const [friendThatSharePosition, setFriendThatSharePosition] = useState([]);
   const [sharePositionWith, setSharePositionWith] = useState([]);
 
   useEffect(() => {
-    axiosSpring.get('/api/users/' + 1 + '/shareWith') // TODO : get user id
+    axiosSpring.get('/api/users/' + auth.id + '/shareWith')
       .then((response) => {
         if(response.status === 200) {
           if(response.data.length > 0){
@@ -30,7 +33,7 @@ const SharePosition = (props) => {
         console.log(error);
       });
 
-    axiosSpring.get('/api/users/' + 1 + '/shareBy') // TODO : get user id
+    axiosSpring.get('/api/users/' + auth.id + '/shareBy')
       .then((response) => {
         if(response.status === 200) {
           if(response.data.length > 0){
@@ -47,13 +50,13 @@ const SharePosition = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, [setAlert, setFriendThatSharePosition, setSharePositionWith]);
+  }, [setAlert, setFriendThatSharePosition, setSharePositionWith,auth]);
 
   const handleSharePosition = () => {
     const username = window.prompt("Avec qui voulez-vous partager votre position ?");
 
     if(username !== null || username !== ''){
-      axiosSpring.patch('/api/users/' + 1 + '/shareWith/' + username) // TODO : get user id
+      axiosSpring.patch('/api/users/' + auth.id + '/shareWith/' + username)
         .then((response) => {
           if(response.status === 200) {
             setSharePositionWith([...sharePositionWith, response.data]);
@@ -93,7 +96,7 @@ const SharePosition = (props) => {
     if(!window.confirm("Voulez-vous vraiment arrêter de partager votre position avec cette personne ?")){
       return ;
     }
-    axiosSpring.delete('/api/users/' + 1 + '/shareWith/' + id) // TODO : get user id
+    axiosSpring.delete('/api/users/' + auth.id + '/shareWith/' + id)
       .then((response) => {
         if(response.status === 200) {
           setSharePositionWith(sharePositionWith.filter((friend) => friend.id !== id));
@@ -125,7 +128,7 @@ const SharePosition = (props) => {
     if(!window.confirm("Voulez-vous vraiment arrêter de suivre cette personne ?")){
       return ;
     }
-    axiosSpring.delete('/api/users/' + 1 + '/shareBy/' + id) // TODO : get user id
+    axiosSpring.delete('/api/users/' + auth.id + '/shareBy/' + id)
       .then((response) => {
         if(response.status === 200) {
           setFriendThatSharePosition(friendThatSharePosition.filter((friend) => friend.id !== id));

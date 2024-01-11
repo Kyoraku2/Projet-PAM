@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axiosSpring from "../../../utils/axios/axiosSpring";
 import ListPreviewCheckbox from "./ListPreviewCheckbox";
+import AuthContext from "../../context/AuthContext";
 
 const ListCollectionCheckbox = (props) => {
+  const {auth} = useContext(AuthContext);
   const [lists, setLists] = useState([]);
 
   useEffect(() => {
-    axiosSpring.get('/api/lists/user/'+ 1) // TODO: get user id from context
+    axiosSpring.get('/api/lists/user/'+ auth.id)
       .then((response) => {
         if(response.status === 200) {
           setLists(response.data);
@@ -15,7 +17,7 @@ const ListCollectionCheckbox = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [auth]);
 
   return (
     <ul className="collectionsCheck">

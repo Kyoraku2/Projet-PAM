@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import SetViewOnClick from "../MapControls/SetViewOnClick";
 import MarkerPopup from "./MarkerPopup";
 import {Icon} from "leaflet/src/layer";
@@ -9,6 +9,7 @@ const MainMap = (props) => {
   const [defaultPosition, setDefaultPosition] = useState([0, 0]);
   const {myPosition, friendsPosition} = useContext(PositionContext);
   const [popupID, setPopupID] = useState(null);
+  const [popupType, setPopupType] = useState(null);
 
   useEffect(() => {
     if(navigator.geolocation){
@@ -34,11 +35,23 @@ const MainMap = (props) => {
     return R * c;
   }
 
-  const handleMarkerClick = (e, id) => {
+  const handleMarkerPlaceClick = (e, id) => {
     if(popupID !== null && popupID === id){
       setPopupID(null);
+      setPopupType(null);
     }else{
       setPopupID(id);
+      setPopupType('place');
+    }
+  }
+
+  const handleMarkerFriendClick = (e, id) => {
+    if(popupID !== null && popupID === id){
+      setPopupID(null);
+      setPopupType(null);
+    }else{
+      setPopupID(id);
+      setPopupType('friend');
     }
   }
 
@@ -78,7 +91,7 @@ const MainMap = (props) => {
           }
           eventHandlers={{
             click: (e) => {
-              handleMarkerClick(e, -1);
+              handleMarkerPlaceClick(e, -1);
             },
 
           }}
@@ -92,11 +105,12 @@ const MainMap = (props) => {
                   key={'marker-'+index+'friend.id'}
                   icon={friendIcon}
                   position={[friend.latitude, friend.longitude]}
-                >
-                  <Popup>
-                    <span>C'est {friend.username} !</span>
-                  </Popup>
-                </Marker>
+                  eventHandlers={{
+                    click: (e) => {
+                      handleMarkerFriendClick(e, friend.id);
+                    },
+                  }}
+                />
               );
             })
             : null
@@ -113,7 +127,7 @@ const MainMap = (props) => {
                     position={[place.latitude, place.longitude]}
                     eventHandlers={{
                       click: (e) => {
-                        handleMarkerClick(e, place.id);
+                        handleMarkerPlaceClick(e, place.id);
                       },
                     }}
                   />
@@ -126,7 +140,7 @@ const MainMap = (props) => {
                       position={[place.latitude, place.longitude]}
                       eventHandlers={{
                         click: (e) => {
-                          handleMarkerClick(e, place.id);
+                          handleMarkerPlaceClick(e, place.id);
                         },
                       }}
                     />
@@ -139,7 +153,7 @@ const MainMap = (props) => {
       </MapContainer>
       {
         popupID !== null ?
-          <MarkerPopup id={popupID} closePopup={handlePopupClose}/> : null
+          <MarkerPopup id={popupID} type={popupType} closePopup={handlePopupClose}/> : null
       }
     </>
   );

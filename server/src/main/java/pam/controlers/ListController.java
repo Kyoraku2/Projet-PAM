@@ -195,6 +195,7 @@ public class ListController {
     @PatchMapping("/lists/{listID}/addPlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> addPlace( // TODO : check if its a contributor
+                                            // TODO : check if the place is already in the list
             @PathVariable(value = "listID") Long id,
             @PathVariable(value = "placeID") Long placeID
     ){

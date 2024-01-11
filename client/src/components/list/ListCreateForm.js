@@ -6,9 +6,11 @@ import './create.scss';
 import AlertContext from "../context/alerts/AlertContext";
 import {ALERT_TYPES} from "../context/alerts/Alert";
 import {useNavigate, useParams} from 'react-router-dom';
+import AuthContext from "../context/AuthContext";
 
 const ListCreateForm = (props) => {
   const {setAlert} = useContext(AlertContext);
+  const {auth} = useContext(AuthContext);
 
   const {listID} = useParams();
   const navigate = useNavigate();
@@ -117,7 +119,7 @@ const ListCreateForm = (props) => {
         id: listID,
         name: name,
         description: description,
-        ownerID: 1, // TODO ownerID
+        ownerID: auth.id,
         isShared: false,
       }));
 
@@ -155,7 +157,7 @@ const ListCreateForm = (props) => {
       formData.append('list', JSON.stringify({
         name: name,
         description: description,
-        ownerID: 1, // TODO ownerID
+        ownerID: auth.id,
         isShared: false,
       }));
 

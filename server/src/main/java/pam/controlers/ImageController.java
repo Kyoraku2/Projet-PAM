@@ -73,7 +73,7 @@ public class ImageController {
     @GetMapping("/place/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getPlaceImage(
-            @PathVariable(value = "id") Integer placeID
+            @PathVariable(value = "id") Long placeID
     ){
         // Verifications
         if(placeID == null){
@@ -107,7 +107,7 @@ public class ImageController {
     @GetMapping("/list/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getListImage(
-            @PathVariable(value = "id") Integer listID
+            @PathVariable(value = "id") Long listID
     ){
         // Verifications
         if(listID == null){
@@ -181,7 +181,7 @@ public class ImageController {
     @PostMapping("/place/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setPlaceImage(
-            @PathVariable(value = "id") Integer placeID,
+            @PathVariable(value = "id") Long placeID,
             @RequestBody MultipartFile image
     ){
         // Verifications
@@ -222,7 +222,7 @@ public class ImageController {
     @PostMapping("/list/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> setListImage(
-            @PathVariable(value = "id") Integer listID,
+            @PathVariable(value = "id") Long listID,
             @RequestBody MultipartFile image
     ){
         // Verifications
@@ -287,7 +287,7 @@ public class ImageController {
     @DeleteMapping("/place/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deletePlaceImage(
-            @PathVariable(value = "id") Integer placeID
+            @PathVariable(value = "id") Long placeID
     ) throws IOException {
         // Verifications
         if(placeID == null){
@@ -312,7 +312,7 @@ public class ImageController {
     @DeleteMapping("/list/{id}/image")
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> deleteListImage(
-            @PathVariable(value = "id") Integer listID
+            @PathVariable(value = "id") Long listID
     ) throws IOException {
         // Verifications
         if(listID == null){

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 
-// TODO : make it funnier maybe?
 const NotFound = () => {
   return (
     <section className='notFound'>

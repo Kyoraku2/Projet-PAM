@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {ALERT_TYPES} from '../context/alerts/Alert';
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import myImage from "../../assets/images/logo.svg";
+import myImage from "../../assets/images/logo.png";
 import {INVALID_CHARS, isEmailValid} from "../../utils/consts";
 import {SHA256} from "crypto-js";
 import {useNavigate} from "react-router-dom";

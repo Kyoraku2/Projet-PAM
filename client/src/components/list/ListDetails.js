@@ -8,11 +8,13 @@ import './details.scss';
 import {MdDelete, MdEdit, MdEditLocationAlt} from 'react-icons/md';
 import {FaShareAlt} from "react-icons/fa";
 import AddPlaceModal from './AddPlaceModal';
+import AuthContext from "../context/AuthContext";
 
 const ListDetails = (props) => {
     const DEFAULT_STR = '<No data>';
     const {listID} = useParams();
     const {setAlert} = useContext(AlertContext);
+    const {auth} = useContext(AuthContext);
     const navigate = useNavigate();
 
 
@@ -29,6 +31,9 @@ const ListDetails = (props) => {
             axiosSpring.get('/api/lists/' + listID)
             .then((response) => {
                 if(response.status === 200) {
+                    if(response.data.ownerID !== auth.id ){
+                        navigate('/lists');
+                    }
                     setName(response.data.name);
                     setDescription(response.data.description);
                     setOwnerName(response.data.ownerName);
@@ -68,7 +73,7 @@ const ListDetails = (props) => {
                 });
             })
         }
-    }, [setAlert, listID, name])
+    }, [setAlert, listID, name, auth, navigate])
 
     const handleEdit = () => {
         navigate('/lists/update/'+listID);

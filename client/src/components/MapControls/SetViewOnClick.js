@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {useMap} from "react-leaflet";
 import {FaRegDotCircle} from "react-icons/fa";
 

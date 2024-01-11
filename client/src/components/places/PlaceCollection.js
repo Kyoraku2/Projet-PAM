@@ -6,15 +6,17 @@ import AlertContext from '../context/alerts/AlertContext';
 import {ALERT_TYPES} from '../context/alerts/Alert';
 import {CgMenuGridR} from "react-icons/cg";
 import {SlList} from "react-icons/sl";
+import AuthContext from "../context/AuthContext";
 
 const PlaceCollection = (props) => {
     const {setAlert} = useContext(AlertContext);
+    const {auth} = useContext(AuthContext);
 
     const [places, setPlaces] = useState([]);
     const [view, setView] = useState('card');
 
     useEffect(() => {
-        axiosSpring.get('/api/places/user/'+ 1 + (props.favorites ? '/favorites' : '')) // TODO: get user id from context
+        axiosSpring.get('/api/places/user/'+ auth.id + (props.favorites ? '/favorites' : ''))
             .then((response) => {
                 if(response.status === 200) {
                     setPlaces(response.data);
@@ -33,7 +35,7 @@ const PlaceCollection = (props) => {
                     icon: ALERT_TYPES.ERROR.icon
                   });
             });
-    }, [setAlert, setPlaces, props]);
+    }, [setAlert, setPlaces, props, auth]);
 
     const handleChangeView = (e) => {
         setView(e.target.value);

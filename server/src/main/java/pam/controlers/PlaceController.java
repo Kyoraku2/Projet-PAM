@@ -272,7 +272,11 @@ public class PlaceController {
             return ApiResponse.badRequest(errors);
         }
 
-        return ApiResponse.ok(placeService.getFavorites(userID));
+        return ApiResponse.ok(
+                PlaceRequestBody.convert(
+                        placeService.getFavorites(userID)
+                )
+        );
     }
 
     @GetMapping("/places/user/{userID}")

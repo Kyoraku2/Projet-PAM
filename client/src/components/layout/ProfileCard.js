@@ -1,13 +1,32 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DefaultPP from '../../assets/images/defaultPp.png';
 import {MdLogout} from "react-icons/md";
 import {FaHome} from "react-icons/fa";
 import {Link} from "react-router-dom";
 import {FaUser} from "react-icons/fa6";
 import {RiUserLocationFill} from "react-icons/ri";
+import axiosSpring from "../../utils/axios/axiosSpring";
 
 const ProfileCard = (props) => {
   const [ listDisplayed, setListDisplayed ] = useState(false);
+  const [image, setImage] = useState(null);
+
+  useEffect(() => {
+    axiosSpring.get('/api/user/'+props.id+'/profileImage',
+      {responseType: 'arraybuffer'})
+      .then(response => {
+        if(response.status === 200){
+          let blob = new Blob([response.data], {type: 'image/png'});
+          let url = URL.createObjectURL(blob);
+          setImage(url);
+        }else{
+          setImage(DefaultPP);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, [props.id]);
 
   const handleClick = () => {
     setListDisplayed(!listDisplayed);
@@ -16,7 +35,7 @@ const ProfileCard = (props) => {
   return (
     <div className={props.class+'__profileCard'} onClick={handleClick}>
       <b>{props.name}</b>
-      <img src={DefaultPP} alt='Profile'/>
+      <img src={image} alt='Profile'/>
       { listDisplayed ?
         (
           <>

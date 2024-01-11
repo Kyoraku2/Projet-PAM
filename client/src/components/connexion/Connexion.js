@@ -1,5 +1,5 @@
 import './connexion.scss';
-import myImage from '../../assets/images/logo.svg';
+import myImage from '../../assets/images/logo.png';
 import {useContext, useEffect, useState} from 'react';
 import axiosSpring from '../../utils/axios/axiosSpring';
 import {useNavigate} from 'react-router-dom';
@@ -57,6 +57,7 @@ const Login = () => {
         }
       })
       .catch(error => {
+        console.log(error);
         if (error.response.status === 401) {
           setError('Nom d\'utilisateur ou mot de passe incorrect.');
         } else {

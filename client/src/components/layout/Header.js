@@ -65,7 +65,7 @@ const Header = (props) => {
           </a>
           */}
 
-          <ProfileCard class='nav__right' name={props.name}/>
+          <ProfileCard class='nav__right' name={props.name} id={props.id}/>
         </div>
       </>
       ):(

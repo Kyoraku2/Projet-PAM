@@ -3,10 +3,12 @@ import DefaultPP from "../../assets/images/defaultPp.png";
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
 import {ALERT_TYPES} from '../context/alerts/Alert';
+import AuthContext from "../context/AuthContext";
 
 const ProfileMainContent = (props) => {
   const DEFAULT_STRING = '';
   const {setAlert} = useContext(AlertContext);
+  const {auth} = useContext(AuthContext);
   const [name, setName] = useState(DEFAULT_STRING);
   const [email, setEmail] = useState(DEFAULT_STRING);
   const [description, setDescription] = useState(DEFAULT_STRING);
@@ -14,14 +16,15 @@ const ProfileMainContent = (props) => {
 
   useEffect(() => {
     if(name === DEFAULT_STRING) {
-      axiosSpring.get('/api/users/' + 1) // TODO : change 1 to user id
+      axiosSpring.get('/api/users/' + auth.id)
       .then(response => {
         if(response.status === 200) {
+          //console.log(response);
           setName(response.data.username);
           setEmail(response.data.email);
           setDescription(response.data.description);
 
-          axiosSpring.get('/api/user/' + 1 + '/profileImage', {
+          axiosSpring.get('/api/user/' + auth.id + '/profileImage', {
             responseType: 'arraybuffer'
           }).then(
             response => {
@@ -55,7 +58,7 @@ const ProfileMainContent = (props) => {
       });
       });
     }
-  }, [name, setAlert, setName, setEmail, setDescription]);
+  }, [name, setAlert, setName, setEmail, setDescription,auth]);
 
   return (
     <div className="profile__content">

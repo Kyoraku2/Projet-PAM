@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import static pam.model.User.*;
 
-// TODO : check if user is connected before updating position
 @RestController
 @RequestMapping("api")
 public class UserController {
@@ -91,7 +90,7 @@ public class UserController {
         if(id < 0 || user == null){
             return ApiResponse.badRequest("Invalid id");
         }
-        return ApiResponse.ok(user);
+        return ApiResponse.ok(new UserRequestBody(user));
     }
 
     @PostMapping("users")
