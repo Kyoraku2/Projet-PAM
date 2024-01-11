@@ -6,6 +6,7 @@ import NotFound from "./components/errors/NotFound";
 import Profile from "./components/profile/Profile";
 import './base.scss';
 import ListsPage from "./components/list/ListsPage";
+import PlaceDetails from "./components/places/PlaceDetails";
 import PlaceCreateForm from "./components/places/PlaceCreateForm";
 import ListCreateForm from "./components/list/ListCreateForm";
 import Alert from "./components/context/alerts/Alert";
@@ -43,11 +44,12 @@ function App() {
             <Route path="/lists/create" element={<ListCreateForm />} />
             <Route path="/lists/update/:listID" element={<ListCreateForm isUpdate={true}/>} />
             <Route path="/lists/:listID" element={<ListDetails />} />
-
+              
             {/* Places */}
             <Route path="/places" element={<PlacesPage />} />
             <Route path="/places/create" element={<PlaceCreateForm />} />
             <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
+            <Route path="/places/:placeID" element={<PlaceDetails/>} />
 
             {/* Position */}
             <Route path="/share-position" element={<SharePosition />} />

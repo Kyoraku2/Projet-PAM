@@ -12,6 +12,7 @@ public class PlaceRequestBody {
     private String category;
     private Long ownerID;
     private String ownerName;
+    private boolean isFavorite;
 
     public PlaceRequestBody() {
     }
@@ -25,6 +26,11 @@ public class PlaceRequestBody {
         this.ownerID = place.getOwner().getUserID();
         this.ownerName = place.getOwner().getUsername();
         this.id = place.getId();
+        if(place.getFavorites().contains(place.getOwner())) {
+            this.isFavorite = true;
+        }else {
+            this.isFavorite = false;
+        }
     }
 
     public PlaceRequestBody(String name, String description, Double latitude, Double longitude, String category, Long ownerID, String ownerName, MultipartFile image) {
@@ -35,6 +41,7 @@ public class PlaceRequestBody {
         this.category = category;
         this.ownerID = ownerID;
         this.ownerName = ownerName;
+        this.isFavorite = false;
     }
 
     public String getName() {
@@ -59,6 +66,10 @@ public class PlaceRequestBody {
 
     public Long getOwnerID() {
         return ownerID;
+    }
+
+    public boolean getIsFavorite() {
+        return isFavorite;
     }
 
     public String getOwnerName() {
@@ -95,6 +106,7 @@ public class PlaceRequestBody {
                 ", category='" + category + '\'' +
                 ", ownerID=" + ownerID +
                 ", ownerName='" + ownerName + '\'' +
+                ", isFavorite=" + isFavorite + '\'' +
                 '}';
     }
 
