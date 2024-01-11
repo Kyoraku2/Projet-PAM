@@ -68,4 +68,46 @@ public class UserServiceImpl implements UserService{
         userFromDB.setLongitude(longitude);
         return userRepository.save(userFromDB);
     }
+
+    @Override
+    public Iterable<User> getSharePositionBy(long id) {
+        User userFromDB = userRepository.findOne(id);
+        return userFromDB.getSharedPositionBy();
+    }
+
+    @Override
+    public Iterable<User> getSharePositionWith(long id) {
+        User userFromDB = userRepository.findOne(id);
+        return userFromDB.getSharedPositionWith();
+    }
+
+    @Override
+    public User sharePositionWith(long id, long idToShareWith) {
+        User from = userRepository.findOne(id);
+        User to = userRepository.findOne(idToShareWith);
+        from.getSharedPositionWith().add(to);
+        //to.getSharedPositionBy().add(from);
+        //userRepository.save(to);
+        return userRepository.save(from);
+    }
+
+    @Override
+    public User stopSharingPositionWith(long id, long idToStopSharingWith) {
+        User from = userRepository.findOne(id);
+        User to = userRepository.findOne(idToStopSharingWith);
+        from.getSharedPositionWith().remove(to);
+        to.getSharedPositionBy().remove(from);
+        userRepository.save(to);
+        return userRepository.save(from);
+    }
+
+    @Override
+    public User stopSharingPositionBy(long id, long idToStopSharingBy) {
+        User from = userRepository.findOne(id);
+        User to = userRepository.findOne(idToStopSharingBy);
+        from.getSharedPositionBy().remove(to);
+        to.getSharedPositionWith().remove(from);
+        userRepository.save(to);
+        return userRepository.save(from);
+    }
 }

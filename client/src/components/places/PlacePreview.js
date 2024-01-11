@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import DefaultListIcone from '../../assets/images/defaultList.svg';
 import AlertContext from '../context/alerts/AlertContext';
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 import axiosSpring from '../../utils/axios/axiosSpring';
 
 const PlacePreview = (props) => {

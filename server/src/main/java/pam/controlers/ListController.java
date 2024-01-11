@@ -11,10 +11,14 @@ import pam.dataManagementServices.PlaceService;
 import pam.dataManagementServices.UserService;
 import pam.model.List;
 import pam.model.ListRequestBody;
+import pam.model.User;
 import pam.utils.ApiResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static pam.model.List.*;
 
@@ -160,12 +164,18 @@ public class ListController {
             verifyDescription(list.getDescription(), errors);
         }
 
+        List listFromDB = listService.updateList(listID, list);
+
+        // Check it the owner is the same
+        if(listFromDB.getOwner().getUserID() != list.getOwnerID()){
+            errors.add("You can't change the information of a list you don't own");
+        }
+
+
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
-
-        List listFromDB = listService.updateList(listID, list);
-
+        
         if(image != null){
             try{
                 if(listFromDB.getImage() != null){
@@ -184,7 +194,7 @@ public class ListController {
 
     @PatchMapping("/lists/{listID}/addPlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> addPlace(
+    public ResponseEntity<Object> addPlace( // TODO : check if its a contributor
             @PathVariable(value = "listID") Long id,
             @PathVariable(value = "placeID") Long placeID
     ){
@@ -193,6 +203,7 @@ public class ListController {
         verifyListID(id, errors);
         // Check placeID
         verifyPlaceID(placeID, errors);
+        
         if(!errors.isEmpty()){
             return ApiResponse.badRequest(errors);
         }
@@ -207,7 +218,7 @@ public class ListController {
 
     @PatchMapping("/lists/{listID}/removePlace/{placeID}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> removePlace(
+    public ResponseEntity<Object> removePlace( // TODO : check if its a contributor
             @PathVariable(value = "listID") Long id,
             @PathVariable(value = "placeID") Long placeID
     ){
@@ -230,7 +241,7 @@ public class ListController {
 
     @DeleteMapping("/lists/{id}")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<Object> delete(
+    public ResponseEntity<Object> delete( // TODO : check if its the owner
             @PathVariable Long id
     ){
         java.util.List<String> errors = new ArrayList<>();
@@ -272,6 +283,69 @@ public class ListController {
             return ApiResponse.ok(listRequestBodies);
         }
 
-        return ApiResponse.noContent("Not Implemented");
+        Iterable<ListRequestBody> listRequestBodies = ListRequestBody.convert(
+            listService.getListsByContributor(
+                userService.getUser(id)
+            )
+        );
+
+        Iterable<ListRequestBody> listRequestBodies2 = ListRequestBody.convert(
+            listService.getListsByOwnerAndByShared(
+                userService.getUser(id),
+                true
+            )
+        );
+
+        Stream<ListRequestBody> stream1 = StreamSupport.stream(listRequestBodies.spliterator(), false);
+        Stream<ListRequestBody> stream2 = StreamSupport.stream(listRequestBodies2.spliterator(), false);
+        Stream<ListRequestBody> concatenatedStream = Stream.concat(stream1, stream2);
+        java.util.List<ListRequestBody> mergedList = concatenatedStream.collect(Collectors.toList());
+        Iterable<ListRequestBody> mergedLists = mergedList;
+
+        return ApiResponse.ok(mergedLists);
     }
+
+    @PatchMapping("/lists/{listID}/share/{username}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> shareList( // TODO : check if its a contributor
+            @PathVariable(value = "listID") Long listID,
+            @PathVariable(value = "username") String username
+    ){
+        java.util.List<String> errors = new ArrayList<>();
+        // Check listID
+        verifyListID(listID, errors);
+
+        User userFromDB = userService.getUser(username);
+
+        if(userFromDB == null){
+            return ApiResponse.ok("List shared");
+        }
+
+        if(!errors.isEmpty()){
+            return ApiResponse.badRequest(errors);
+        }
+
+        listService.shareList(
+                listService.getList(listID),
+                userService.getUser(userFromDB.getUserID())
+        );
+
+        return ApiResponse.ok("List shared");
+    }
+
+    /*// Get all lists where user is a contributor and owner
+    @GetMapping("/lists/user/{id}/contributor")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> getContributedLists(
+            @PathVariable Long id
+    ){
+        java.util.List<String> errors = new ArrayList<>();
+        // Check ownerID
+        verifyOwnerID(id, errors);
+        if(!errors.isEmpty()){
+            return ApiResponse.badRequest(errors);
+        }
+
+
+    }*/
 }

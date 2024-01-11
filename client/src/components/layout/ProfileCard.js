@@ -4,6 +4,7 @@ import {MdLogout} from "react-icons/md";
 import {FaHome} from "react-icons/fa";
 import {Link} from "react-router-dom";
 import {FaUser} from "react-icons/fa6";
+import {RiUserLocationFill} from "react-icons/ri";
 
 const ProfileCard = (props) => {
   const [ listDisplayed, setListDisplayed ] = useState(false);
@@ -23,6 +24,7 @@ const ProfileCard = (props) => {
             <div className={props.class+'__profileCard__list'}>
               <Link to='/'><FaHome/><span>Accueil</span></Link>
               <Link to='/profil'><FaUser/><span>Profile</span></Link>
+              <Link to='/share-position'><RiUserLocationFill /><span>Positions</span></Link>
               <Link to='/logout'><MdLogout/><span>Déconnexion</span></Link>
             </div>
           </>

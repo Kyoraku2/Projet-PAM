@@ -9,6 +9,8 @@ public interface ListService {
     Iterable<List> getAllLists();
     Iterable<List> getListsByOwner(User owner);
     Iterable<List> getListsByOwnerID(long ownerID);
+    Iterable<List> getListsByContributor(User contributor);
+    Iterable<List> getListsByOwnerAndByShared(User owner, boolean shared);
 
     List getList(long listID);
     List getList(List list);
@@ -29,4 +31,7 @@ public interface ListService {
 
     List addPlace(List list, Place place);
     List addPlace(long listID, long placeID);
+
+    List shareList(List list, User user);
+    List shareList(long listID, long userID);
 }

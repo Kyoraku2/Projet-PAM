@@ -4,15 +4,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {AlertProvider} from "./components/context/alerts/AlertContext";
 import {AuthProvider} from "./components/context/AuthContext";
+import {PositionProvider} from "./components/context/position/PositionContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AuthProvider>
+    <PositionProvider>
       <AlertProvider>
         <App />
       </AlertProvider>
-    </AuthProvider>
+    </PositionProvider>
   </React.StrictMode>
 );
 

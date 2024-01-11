@@ -18,8 +18,7 @@ import Unauthorized from "./components/errors/Unauthorized";
 import RequireAuth from "./components/connexion/RequireAuth";
 import {useContext} from "react";
 import AuthContext from "./components/context/AuthContext";
-
-
+import SharePosition from "./components/position/SharePosition";
 
 function App() {
   const {auth} = useContext(AuthContext);
@@ -49,6 +48,9 @@ function App() {
             <Route path="/places" element={<PlacesPage />} />
             <Route path="/places/create" element={<PlaceCreateForm />} />
             <Route path="/places/update/:placeID" element={<PlaceCreateForm isUpdate={true}/>} />
+
+            {/* Position */}
+            <Route path="/share-position" element={<SharePosition />} />
           </Route>
 
           {/* Authentification */}

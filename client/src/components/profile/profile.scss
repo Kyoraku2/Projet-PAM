@@ -46,7 +46,7 @@
       }
       &.active{
         width: calc(6rem - 4px);
-        border-left: 4px solid red;
+        border-left: 4px solid $hightlightColor;
       }
     }
   }
@@ -89,7 +89,7 @@
       width: 90%;
 
       &__error{
-        color: red;
+        color: $hightlightColor;
         font-size: 0.75rem;
       }
 
@@ -183,12 +183,12 @@
           align-self: flex-end;
           padding: 0.5rem 1rem;
           border-radius: 20px;
-          background: red;
+          background: $hightlightColor;
           color: white;
           font-size: 1rem;
           font-weight: 500;
           &:hover{
-            background: darken(red, 10%);
+            background: darken($hightlightColor, 10%);
           }
         }
         [for="new_password"], [for="password"]{

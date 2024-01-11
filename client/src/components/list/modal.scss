@@ -27,7 +27,7 @@
         font-size: 2rem;
         color: darken($color: #fff, $amount: 60%);
         &:hover{
-            color: #DA0100;
+            color: $hightlightColor;
         }
     }
 

@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import axiosSpring from '../../utils/axios/axiosSpring';
 import AlertContext from '../context/alerts/AlertContext';
-import { ALERT_TYPES } from '../context/alerts/Alert';
+import {ALERT_TYPES} from '../context/alerts/Alert';
 import './modal.scss';
-import { IoClose } from 'react-icons/io5';
+import {IoClose} from 'react-icons/io5';
 
 const AddPlaceModal = (props) => {
     const {setAlert} = useContext(AlertContext);

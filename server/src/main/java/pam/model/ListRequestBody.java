@@ -6,11 +6,19 @@ import java.util.Collection;
 public class ListRequestBody {
     public class ReducedPlace {
         private Long id;
-        private String name;    
+        private String name;
+        private double latitude;
+        private double longitude;
+        private String category;
+        private String description;
 
-        public ReducedPlace(Long id, String name) {
+        public ReducedPlace(Long id, String name, double latitude, double longitude, String category, String description){
             this.id = id;
             this.name = name;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.category = category;
+            this.description = description;
         }
 
         public Long getId() {
@@ -20,7 +28,38 @@ public class ListRequestBody {
         public String getName() {
             return name;
         }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public String getCategory(){
+            return category;
+        }
     }
+
+    public class ReducedUser {
+        private Long id;
+        private String username;
+
+        public ReducedUser(Long id, String username) {
+            this.id = id;
+            this.username = username;
+        }
+
+        public Long getId() {
+            return id;
+        }
+        
+        public String getUsername() {
+            return username;
+        }
+    }
+
     private Long id;
     private String name;
     private String description;
@@ -28,6 +67,7 @@ public class ListRequestBody {
     private String ownerName;
     private boolean isShared;
     private Collection<ReducedPlace> placesResp;
+    private Collection<ReducedUser> contributorsResp;
 
     public ListRequestBody() {
     }
@@ -42,7 +82,13 @@ public class ListRequestBody {
         if(list.getPlaces() != null){
             placesResp = new java.util.ArrayList<>();
             for(Place place : list.getPlaces()){
-                placesResp.add(new ReducedPlace(place.getId(), place.getName()));
+                placesResp.add(new ReducedPlace(place.getId(), place.getName(), place.getLatitude(), place.getLongitude(), place.getCategory().toString(), place.getDescription()));
+            }
+        }
+        if(list.getContributors() != null){
+            contributorsResp = new java.util.ArrayList<>();
+            for(User user : list.getContributors()){
+                contributorsResp.add(new ReducedUser(user.getUserID(), user.getUsername()));
             }
         }
     }
@@ -114,6 +160,14 @@ public class ListRequestBody {
 
     public void setPlaces(Collection<ReducedPlace> places) {
         this.placesResp = places;
+    }
+
+    public Collection<ReducedUser> getContributors() {
+        return contributorsResp;
+    }
+
+    public void setContributors(Collection<ReducedUser> contributors) {
+        this.contributorsResp = contributors;
     }
 
     public String toString(){

@@ -4,7 +4,8 @@ import ProfileMainContent from "./ProfileMainContent";
 import ProfileEdit from './ProfileEdit';
 import ListsPage from '../list/ListsPage';
 import PlacesPage from '../places/PlacesPage';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import SharePosition from '../position/SharePosition';
+import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
 
 const Profile = (props) => {
   const [active, setActive] = useState(1); // [1, 2, 3, 4
@@ -25,6 +26,9 @@ const Profile = (props) => {
         break;
       case 4:
         setContent(<PlacesPage/>);
+        break;
+      case 5:
+        setContent(<SharePosition/>);
         break;
       default:
         setContent(<ProfileMainContent/>);
@@ -68,6 +72,7 @@ const Profile = (props) => {
         <div className={"profile__nav__item" + (active === 2 ? ' active':'')} onClick={() => handleChangeContent(2)}>Editer</div>
         <div className={"profile__nav__item" + (active === 3 ? ' active':'')} onClick={() => handleChangeContent(3)}>Listes</div>
         <div className={"profile__nav__item" + (active === 4 ? ' active':'')} onClick={() => handleChangeContent(4)}>Lieux</div>
+        <div className={"profile__nav__item" + (active === 5 ? ' active':'')} onClick={() => handleChangeContent(5)}>Positions</div>
         <button className="profile__nav__show" onClick={handleShow}>{show ? <FaChevronLeft /> : <FaChevronRight />}</button>
       </div>
       {content}
