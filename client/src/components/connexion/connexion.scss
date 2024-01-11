@@ -1,0 +1,209 @@
+@import "../../utils/styles/vars";
+@import "../../utils/styles/mixins";
+
+.login{
+    width: 100vw;
+    height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    img{
+        width: 10rem;
+        aspect-ratio: 1;
+    }
+
+    h1{
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    &__form{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding: 1rem;
+        background: #f6f6f6;
+        border-radius: 5px;
+        min-width: 15rem;
+        max-width: 75vw;
+        box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+        row-gap: 0.25rem;
+        margin-bottom: 0.5rem;
+
+        .check{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            label{
+                margin-left: 0.5rem;
+                margin-top: 0.1rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        .checkError{
+            color: red;
+        }
+
+        &__group{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            label{
+                font-size: 1rem;
+                font-weight: 500;
+                margin-top: 0.75rem;
+                display: flex;
+                flex-direction: column;
+            }
+            input {
+                border: 1px solid darken($borderColor, 10%);
+                line-height: 1.25rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 8px;
+                margin: 0.25rem 0;
+            }
+            &__error{
+                color: red;
+                font-size: 0.75rem;
+                margin-left: 0.5rem;
+            }
+        }
+
+        &__error{
+            color: red;
+            font-size: 0.75rem;
+            margin: 0.25rem 0;
+        }
+
+        button{
+            background: red; // TODO
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            margin: 0.75rem 0;
+        }
+    }
+    &__register{
+        padding: 1rem;
+        background: #f6f6f6;
+        border-radius: 5px;
+        max-width: 75vw;
+        box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+        row-gap: 0.25rem;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #5A5A5A;
+        font-weight: 500;
+        a{
+            @include resetLinks(red);//TODO
+        }
+    }
+}
+
+/*
+.form{
+    margin: 5px auto 0 auto;
+    width: 500px ;
+    justify-content: center;
+    display: flex;
+    box-shadow: 0px 0px 10px 2px;
+    border-radius: 10px;
+    height: 380px;
+    padding-top: 15px;
+}
+
+.center {
+    text-align: center;
+}
+
+.center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+    }
+
+.form-group {
+        margin-bottom: 15px;
+ }
+
+.class-img {
+ width: 60px;
+ height: 60px;
+ display: block;
+    margin: auto;
+ }
+
+.inline {
+    display: flex;
+    align-items: center;
+}
+h1 {
+    color: rgb(0, 0, 80);
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+button[type="submit"]:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.form-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.form-link:hover {
+    color: #0056b3;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #001f3f;
+    font-weight: 500;
+    font-size: 16px;
+}
+.input {
+    width: 80%;
+    height: 35px;
+    display: block;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+*/

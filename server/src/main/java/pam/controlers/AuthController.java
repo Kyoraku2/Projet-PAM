@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pam.dataManagementServices.UserService;
+import pam.model.AuthResponseBody;
 import pam.model.User;
 import pam.utils.ApiResponse;
 import pam.web.JwtGenerator;
@@ -88,7 +89,7 @@ public class AuthController {
         // Treatment
         User user = userService.createUser(username, password, email, User.DEFAULT_DESCRIPTION);
         String jwt = jwtGenerator.generateJwt(user);
-        return ApiResponse.ok(jwt);
+        return ApiResponse.ok(new AuthResponseBody(user, jwt));
     }
 
     @RequestMapping("/login")
@@ -112,14 +113,12 @@ public class AuthController {
         // Treatment
         User user = userService.getUser(username);
         if(user == null){
-            return ApiResponse.notFound("Bad credentials...");
+            return ApiResponse.unauthorized("Bad credentials...");
         }
         if(!user.getPassword().equals(password)){
-            return ApiResponse.unauthorized("Bad credentials");
+            return ApiResponse.unauthorized("Bad credentials...");
         }
         String jwt = jwtGenerator.generateJwt(user);
-        return ApiResponse.ok(jwt);
+        return ApiResponse.ok(new AuthResponseBody(user, jwt));
     }
-
-    // TODO : maybe add a logout method
 }
