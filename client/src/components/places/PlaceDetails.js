@@ -44,7 +44,7 @@ const PlaceDetails = (props) => {
         if(name===DEFAULT_STR){
             axiosSpring.get('api/places/'+placeID).then((response)=>{
                 if(response.status === 200){
-                    if(response.ownerID !== auth.id){
+                    if(parseInt(response.data.ownerID) !== parseInt(auth.id)){
                         navigate('/places');
                     }
                     setName(response.data.name);
