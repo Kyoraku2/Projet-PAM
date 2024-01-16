@@ -31,6 +31,11 @@ const ListDetails = (props) => {
             axiosSpring.get('/api/lists/' + listID)
             .then((response) => {
                 if(response.status === 200) {
+                    let isContributor = response.data.contributors.find((contributor) => contributor.id === auth.id);
+                    let isOwner = response.data.ownerID === auth.id;
+                    if(!isContributor && !isOwner){
+                        navigate('/lists');
+                    }
                     setName(response.data.name);
                     setDescription(response.data.description);
                     setOwnerName(response.data.ownerName);

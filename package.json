@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Application Noro, gestion de lieux d'intérêt",
   "scripts": {
-    "start": "concurrently \"cd server && mvn spring-boot:run\" \"cd client && npm start\""
+    "start": "concurrently \"cd server && mvn spring-boot:run\" \"cd client && npm start\"",
+    "start_back": "cd server && mvn spring-boot:run",
+    "start_front": "cd client && npm start"
   },
   "author": "",
   "license": "ISC",
