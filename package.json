@@ -1,0 +1,17 @@
+{
+  "name": "noro",
+  "version": "1.0.0",
+  "description": "Application Noro, gestion de lieux d'intérêt",
+  "scripts": {
+    "start": "concurrently \"cd server && mvn spring-boot:run\" \"cd client && npm start\""
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kyoraku2/Projet-PAM"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

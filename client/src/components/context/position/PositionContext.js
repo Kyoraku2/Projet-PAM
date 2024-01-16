@@ -16,18 +16,21 @@ export const PositionProvider = ({children}) => {
       timer = setInterval(() => {
         navigator.geolocation.getCurrentPosition((position)=>{
           setMyPosition({latitude: position.coords.latitude, longitude: position.coords.longitude});
-          axiosSpring.patch('/api/users/' + auth.id + '/position?latitude=' + position.coords.latitude + '&longitude=' + position.coords.longitude)
+          if(auth !== null && auth !== undefined && auth.id !== null && auth.id !== undefined){
+            axiosSpring.patch('/api/users/' + auth.id + '/position?latitude=' + position.coords.latitude + '&longitude=' + position.coords.longitude)
             .then((response) => {
             })
             .catch((error) => {
               console.log(error);
             });
+          }
         });
       }, 3000);
     }
     // Set a time to get friends position every 15 seconds
     let friendsTimer = setInterval(() => {
-      axiosSpring.get('/api/users/' + auth.id + '/shareBy')
+      if(auth !== null && auth !== undefined && auth.id !== null && auth.id !== undefined){
+        axiosSpring.get('/api/users/' + auth.id + '/shareBy')
         .then((response) => {
           if(response.status === 200) {
             if(response.data.length > 0){
@@ -38,6 +41,7 @@ export const PositionProvider = ({children}) => {
         .catch((error) => {
           console.log(error);
         });
+      }
     }, 15000);
     return () => {
       clearInterval(timer);
